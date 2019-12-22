@@ -23,8 +23,12 @@ dependencies:
   provider: ^3.2.0
   http: ^0.12.0+2
   flutter_secure_storage: ^3.3.1+1
-  hive: ^1.1.1
+  #hive 1.1.1 is buggy, wait for 1.2.0 with 1.1.0+2
+  hive: 1.1.0+2
   hive_flutter: ^0.2.1
+  # path_provider 1.5.1 is buggy, use 1.5.0 for now
+  path_provider: 1.5.0
+
   
 
   # The following adds the Cupertino Icons font to your application.
@@ -53,6 +57,8 @@ flutter:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/btc.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
