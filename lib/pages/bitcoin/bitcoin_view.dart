@@ -34,18 +34,29 @@ class _BitcoinViewState extends State<BitcoinView> with TickerProviderStateMixin
           return <Widget>[
             SliverAppBar(
               backgroundColor: Colors.black,
+              leading: IconButton(
+                icon: Icon(Icons.notifications),
+                onPressed: () {},
+              ),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.insert_chart),
+                  onPressed: () {},
+                )
+              ],
               pinned: true,
               forceElevated: boxIsScrolled,
-              expandedHeight: 220,
+              expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text("\$3,792.11"),
                 centerTitle: true,
                 titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
+                collapseMode: CollapseMode.pin,
               ),
               bottom: TabBar(
                 indicator: UnderlineTabIndicator(
-                    insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                    borderSide: const BorderSide(width: 3.0, color: Colors.blue),
+                  insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                  borderSide: const BorderSide(width: 3.0, color: Colors.blue),
                 ),
                 controller: _tabController,
                 tabs: <Widget>[
@@ -62,12 +73,18 @@ class _BitcoinViewState extends State<BitcoinView> with TickerProviderStateMixin
         },
         body: ClipRRect(
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30)
+          ),
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              Container(color: Colors.white,),
-              Container(color: Colors.redAccent,),
+              Container(
+                color: Colors.white,
+              ),
+              Container(
+                color: Colors.redAccent,
+              ),
             ],
           ),
         ),

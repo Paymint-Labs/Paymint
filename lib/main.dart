@@ -64,7 +64,7 @@ class _InitViewState extends State<InitView> {
 
   _checkFirstLaunch() async {
     final mscData = await Hive.openBox('miscellaneous');
-    this._isFirstLaunch = mscData.get('first_launch');
+    _isFirstLaunch = mscData.get('first_launch');
   }
 
   @override

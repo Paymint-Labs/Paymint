@@ -69,7 +69,7 @@ class _MainViewState extends State<MainView> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.more_horiz,
+                Icons.more,
                 color: _buildIconColor(2), // Index 2
               ),
               title: Text(
