@@ -54,7 +54,10 @@ class _BitcoinViewState extends State<BitcoinView>
               forceElevated: boxIsScrolled,
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text("\$0.00", style: GoogleFonts.rubik()),
+                title: Text(
+                  "\$0.00",
+                  style: GoogleFonts.rubik(),
+                ),
                 centerTitle: true,
                 titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
                 collapseMode: CollapseMode.pin,
@@ -64,8 +67,8 @@ class _BitcoinViewState extends State<BitcoinView>
                     child: Text(
                       '0.0 BTC',
                       style: GoogleFonts.rubik(
-                          textStyle:
-                              TextStyle(color: Colors.white, fontSize: 20)),
+                        textStyle: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                 ),
