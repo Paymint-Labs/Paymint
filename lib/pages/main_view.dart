@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/pages/pages.dart';
 
 class MainView extends StatefulWidget {
@@ -26,9 +27,9 @@ class _MainViewState extends State<MainView> {
 
   TextStyle _buildTextStyle(int index) {
     if (index == this._currentIndex) {
-      return TextStyle(color: Colors.black);
+      return GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));
     } else {
-      return TextStyle(color: Colors.grey);
+      return GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey));
     }
   }
 
@@ -69,7 +70,7 @@ class _MainViewState extends State<MainView> {
             ),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.more,
+                Icons.more_horiz,
                 color: _buildIconColor(2), // Index 2
               ),
               title: Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BitcoinView extends StatefulWidget {
   BitcoinView({Key key}) : super(key: key);
@@ -7,7 +8,8 @@ class BitcoinView extends StatefulWidget {
   _BitcoinViewState createState() => _BitcoinViewState();
 }
 
-class _BitcoinViewState extends State<BitcoinView> with TickerProviderStateMixin {
+class _BitcoinViewState extends State<BitcoinView>
+    with TickerProviderStateMixin {
   TabController _tabController;
   ScrollController _scrollController;
 
@@ -28,6 +30,10 @@ class _BitcoinViewState extends State<BitcoinView> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+      ),
       body: NestedScrollView(
         controller: _scrollController,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
@@ -48,17 +54,29 @@ class _BitcoinViewState extends State<BitcoinView> with TickerProviderStateMixin
               forceElevated: boxIsScrolled,
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text("\$3,792.11"),
+                title: Text("\$0.00", style: GoogleFonts.rubik()),
                 centerTitle: true,
                 titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
                 collapseMode: CollapseMode.pin,
+                background: Padding(
+                  padding: EdgeInsets.only(bottom: 30),
+                  child: Center(
+                    child: Text(
+                      '0.0 BTC',
+                      style: GoogleFonts.rubik(
+                          textStyle:
+                              TextStyle(color: Colors.white, fontSize: 20)),
+                    ),
+                  ),
+                ),
               ),
               bottom: TabBar(
+                controller: _tabController,
+                labelStyle: GoogleFonts.rubik(),
                 indicator: UnderlineTabIndicator(
                   insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
                   borderSide: const BorderSide(width: 3.0, color: Colors.blue),
                 ),
-                controller: _tabController,
                 tabs: <Widget>[
                   Tab(
                     text: 'Activity',
@@ -73,17 +91,22 @@ class _BitcoinViewState extends State<BitcoinView> with TickerProviderStateMixin
         },
         body: ClipRRect(
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30)
-          ),
+              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
               Container(
                 color: Colors.white,
+                child: Center(
+                  child: Text(
+                    'When you receive some Bitcoin, you\'ll see it here',
+                    style: GoogleFonts.rubik(),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
               Container(
-                color: Colors.redAccent,
+                color: Colors.white,
               ),
             ],
           ),
