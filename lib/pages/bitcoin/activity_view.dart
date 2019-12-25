@@ -12,11 +12,127 @@ class _ActivityViewState extends State<ActivityView> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
-      child: Center(
+      color: Colors.white,      
           child: ListView(
-        addSemanticIndexes: true,
         children: <Widget>[
+          Container(height: 15),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Container(
+              child: Text('25 Dec, 2019 - Wednesday', style: GoogleFonts.rubik(), textScaleFactor: 1.25,),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              print('object');
+            },
+            enabled: true,
+            leading:
+                Icon(Icons.keyboard_arrow_up, color: Colors.pink, size: 40),
+            title: Text(
+              'Sent',
+              style: GoogleFonts.rubik(),
+            ),
+            subtitle: Text(
+              '0.01246385 BTC',
+              style: GoogleFonts.rubik(),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text('\$51.66 now', style: GoogleFonts.rubik()),
+                Text(
+                  '\$50.23 when sent',
+                  style: GoogleFonts.rubik(),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            onTap: () {},
+            enabled: true,
+            leading: Icon(Icons.keyboard_arrow_down,
+                color: Colors.blueAccent, size: 40),
+            title: Text(
+              'Received',
+              style: GoogleFonts.rubik(),
+            ),
+            subtitle: Text(
+              '0.65440143 BTC',
+              style: GoogleFonts.rubik(),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text('\$1,131.00 now', style: GoogleFonts.rubik()),
+                Text(
+                  '\$1,226.23 when received',
+                  style: GoogleFonts.rubik(),
+                ),
+              ],
+            ),
+          ),
+          Container(height: 40),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Container(
+              child: Text('24 Dec, 2019 - Tuesday', style: GoogleFonts.rubik(), textScaleFactor: 1.25,),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              print('object');
+            },
+            enabled: true,
+            leading:
+                Icon(Icons.keyboard_arrow_up, color: Colors.pink, size: 40),
+            title: Text(
+              'Sent',
+              style: GoogleFonts.rubik(),
+            ),
+            subtitle: Text(
+              '0.01246385 BTC',
+              style: GoogleFonts.rubik(),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text('\$51.66 now', style: GoogleFonts.rubik()),
+                Text(
+                  '\$50.23 when sent',
+                  style: GoogleFonts.rubik(),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            onTap: () {},
+            enabled: true,
+            leading: Icon(Icons.keyboard_arrow_down,
+                color: Colors.blueAccent, size: 40),
+            title: Text(
+              'Received',
+              style: GoogleFonts.rubik(),
+            ),
+            subtitle: Text(
+              '0.65440143 BTC',
+              style: GoogleFonts.rubik(),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text('\$1,131.00 now', style: GoogleFonts.rubik()),
+                Text(
+                  '\$1,226.23 when received',
+                  style: GoogleFonts.rubik(),
+                ),
+              ],
+            ),
+          ),
           ListTile(
             onTap: () {
               print('object');
@@ -94,8 +210,67 @@ class _ActivityViewState extends State<ActivityView> {
               ],
             ),
           ),
+          Container(height: 40),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Container(
+              child: Text('23 Dec, 2019 - Monday', style: GoogleFonts.rubik(), textScaleFactor: 1.25,),
+            ),
+          ),
+          ListTile(
+            onTap: () {
+              print('object');
+            },
+            enabled: true,
+            leading:
+                Icon(Icons.keyboard_arrow_up, color: Colors.pink, size: 40),
+            title: Text(
+              'Sent',
+              style: GoogleFonts.rubik(),
+            ),
+            subtitle: Text(
+              '0.01246385 BTC',
+              style: GoogleFonts.rubik(),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text('\$51.66 now', style: GoogleFonts.rubik()),
+                Text(
+                  '\$50.23 when sent',
+                  style: GoogleFonts.rubik(),
+                ),
+              ],
+            ),
+          ),
+          ListTile(
+            onTap: () {},
+            enabled: true,
+            leading: Icon(Icons.keyboard_arrow_down,
+                color: Colors.blueAccent, size: 40),
+            title: Text(
+              'Received',
+              style: GoogleFonts.rubik(),
+            ),
+            subtitle: Text(
+              '0.65440143 BTC',
+              style: GoogleFonts.rubik(),
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text('\$1,131.00 now', style: GoogleFonts.rubik()),
+                Text(
+                  '\$1,226.23 when received',
+                  style: GoogleFonts.rubik(),
+                ),
+              ],
+            ),
+          ),
         ],
-      )),
+      )
     );
   }
 }
