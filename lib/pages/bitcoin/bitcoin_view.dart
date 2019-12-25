@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// lazy import
+import './activity_view.dart';
+
 class BitcoinView extends StatefulWidget {
   BitcoinView({Key key}) : super(key: key);
 
@@ -93,21 +96,11 @@ class _BitcoinViewState extends State<BitcoinView>
           ];
         },
         body: ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
-              Container(
-                color: Colors.white,
-                child: Center(
-                  child: Text(
-                    'When you receive some Bitcoin, you\'ll see it here',
-                    style: GoogleFonts.rubik(),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+              ActivityView(),
               Container(
                 color: Colors.white,
               ),

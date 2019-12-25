@@ -93,7 +93,7 @@ class _MainViewState extends State<MainView> {
             child: Text('Buy'),
           ),
           Center(
-            child: Text('Settings'),
+            child: Text('More'),
           ),
         ],
       ),
