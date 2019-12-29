@@ -1,3 +1,5 @@
+import './actions_view.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -34,7 +36,9 @@ class _BitcoinViewState extends State<BitcoinView>
     return Scaffold(
       backgroundColor: Colors.black,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(CupertinoPageRoute(builder: (context) => ActionsView()));
+        },
         child: Icon(Icons.add),
       ),
       body: NestedScrollView(
@@ -58,7 +62,7 @@ class _BitcoinViewState extends State<BitcoinView>
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
-                  "\$0.00",
+                  "\$793.86",
                   style: GoogleFonts.rubik(),
                 ),
                 centerTitle: true,
@@ -68,7 +72,7 @@ class _BitcoinViewState extends State<BitcoinView>
                   padding: EdgeInsets.only(bottom: 30),
                   child: Center(
                     child: Text(
-                      '0.0 BTC',
+                      '0.11372974 BTC',
                       style: GoogleFonts.rubik(
                         textStyle: TextStyle(color: Colors.white, fontSize: 20),
                       ),
@@ -96,7 +100,8 @@ class _BitcoinViewState extends State<BitcoinView>
           ];
         },
         body: ClipRRect(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[
@@ -105,6 +110,68 @@ class _BitcoinViewState extends State<BitcoinView>
                 color: Colors.white,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Route _pushActionsRoute() {
+  //   return PageRouteBuilder(
+  //     pageBuilder: (context, animation, secondaryAnimation) => ActionsView(),
+  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+  //       return child;
+  //     },
+  //   );
+  // }
+}
+
+class FunkyOverlay extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => FunkyOverlayState();
+}
+
+class FunkyOverlayState extends State<FunkyOverlay>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+  Animation<double> scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    scaleAnimation =
+        CurvedAnimation(parent: controller, curve: Curves.easeOutQuart);
+
+    controller.addListener(() {
+      setState(() {});
+    });
+
+    controller.forward();
+  }
+
+  Container _buildFabTiles() {
+    return Container(height: 150, child: Text('This is cool'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: ScaleTransition(
+          scale: scaleAnimation,
+          child: Container(
+            decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0))),
+            child: Padding(
+              padding: const EdgeInsets.all(50.0),
+              child: _buildFabTiles(),
+            ),
           ),
         ),
       ),

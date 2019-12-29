@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -25,6 +26,7 @@ class _ActivityViewState extends State<ActivityView> {
           ListTile(
             onTap: () {
               print('object');
+              Navigator.of(context).push(CupertinoPageRoute(builder: (context) => EmptyWidget()));
             },
             enabled: true,
             leading:
@@ -50,7 +52,13 @@ class _ActivityViewState extends State<ActivityView> {
             ),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () { CupertinoPageRoute(
+              builder: (_) {
+                return Container(color: Colors.white,);
+              },
+              fullscreenDialog: false,
+              maintainState: true
+            ); },
             enabled: true,
             leading: Icon(Icons.keyboard_arrow_down,
                 color: Colors.blueAccent, size: 40),
@@ -271,6 +279,17 @@ class _ActivityViewState extends State<ActivityView> {
           ),
         ],
       )
+    );
+  }
+}
+
+class EmptyWidget extends StatelessWidget {
+  const EmptyWidget({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
     );
   }
 }
