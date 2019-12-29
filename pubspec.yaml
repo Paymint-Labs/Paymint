@@ -25,7 +25,6 @@ dependencies:
   flutter_secure_storage: ^3.3.1+1
   hive: 1.2.0
   hive_flutter: ^0.2.1
-  # path_provider 1.5.1 is buggy, use 1.5.0 for now
   path_provider: ^1.5.1
   
   google_fonts: ^0.2.0
