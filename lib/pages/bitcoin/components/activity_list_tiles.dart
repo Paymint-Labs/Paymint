@@ -105,7 +105,7 @@ class PurchaseListTile extends StatelessWidget {
         size: 30,
       ),
       title: Text(
-        'Bought ',
+        'Purchased ',
         style: GoogleFonts.rubik(),
       ),
       subtitle: Text(
