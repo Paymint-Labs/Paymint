@@ -1,4 +1,3 @@
-import './actions_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -124,57 +123,4 @@ class _BitcoinViewState extends State<BitcoinView>
   //     },
   //   );
   // }
-}
-
-class FunkyOverlay extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => FunkyOverlayState();
-}
-
-class FunkyOverlayState extends State<FunkyOverlay>
-    with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    scaleAnimation =
-        CurvedAnimation(parent: controller, curve: Curves.easeOutQuart);
-
-    controller.addListener(() {
-      setState(() {});
-    });
-
-    controller.forward();
-  }
-
-  Container _buildFabTiles() {
-    return Container(height: 150, child: Text('This is cool'));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Material(
-        color: Colors.transparent,
-        child: ScaleTransition(
-          scale: scaleAnimation,
-          child: Container(
-            decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0))),
-            child: Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: _buildFabTiles(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }

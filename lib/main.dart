@@ -15,7 +15,9 @@ void main() async {
   runApp(MyApp());
 
   final mscData = await Hive.openBox('miscellaneous');
-  if ( mscData.isEmpty ) { mscData.put('first_launch', true); }
+  if (mscData.isEmpty) {
+    mscData.put('first_launch', true);
+  }
 }
 
 // MyApp initialises relevant services with MultiProvider
@@ -45,11 +47,9 @@ class MaterialAppWithTheme extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Paymint beta',
-      theme: ThemeData(
-        primarySwatch: Colors.blue
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: InitView(),
-      onGenerateRoute: RouteGenerator.generateRoute
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }
@@ -87,13 +87,18 @@ class _InitViewState extends State<InitView> {
           }
         } else {
           return Scaffold(
-            backgroundColor: Colors.black,
-            body: Center(
-              child: Text('Paymint'),
-            ),
-          );
+              backgroundColor: Colors.black, body: _buildLoading(context));
         }
       },
     );
   }
+}
+
+// Returns Center widget to be placed inside of a Scaffold body (see above)
+Widget _buildLoading(BuildContext context) {
+  return Center(
+      child: Container(
+    width: MediaQuery.of(context).size.width / 2,
+    child: LinearProgressIndicator(),
+  ));
 }
