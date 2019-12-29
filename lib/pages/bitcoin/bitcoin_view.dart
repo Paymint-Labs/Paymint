@@ -37,7 +37,7 @@ class _BitcoinViewState extends State<BitcoinView>
       backgroundColor: Colors.black,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(CupertinoPageRoute(builder: (context) => ActionsView()));
+          Navigator.pushNamed(context, '/actions');
         },
         child: Icon(Icons.add),
       ),

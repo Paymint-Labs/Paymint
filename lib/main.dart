@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:paymint/route_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:paymint/pages/pages.dart';
@@ -48,6 +49,7 @@ class MaterialAppWithTheme extends StatelessWidget {
         primarySwatch: Colors.blue
       ),
       home: InitView(),
+      onGenerateRoute: RouteGenerator.generateRoute
     );
   }
 }
@@ -79,9 +81,9 @@ class _InitViewState extends State<InitView> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (this._isFirstLaunch) {
-            return OnBoard();
+            return OnboardView();
           } else {
-            return MainView(); 
+            return MainView();
           }
         } else {
           return Scaffold(

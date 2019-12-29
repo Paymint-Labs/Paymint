@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-class OnBoard extends StatelessWidget {
-  const OnBoard({Key key}) : super(key: key);
+class OnboardView extends StatelessWidget {
+  const OnboardView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
