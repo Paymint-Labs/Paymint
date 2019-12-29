@@ -114,13 +114,4 @@ class _BitcoinViewState extends State<BitcoinView>
       ),
     );
   }
-
-  // Route _pushActionsRoute() {
-  //   return PageRouteBuilder(
-  //     pageBuilder: (context, animation, secondaryAnimation) => ActionsView(),
-  //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-  //       return child;
-  //     },
-  //   );
-  // }
 }
