@@ -30,6 +30,7 @@ dependencies:
   
   google_fonts: ^0.2.0
   flutter_sticky_header: ^0.3.4
+  custom_navigator: ^0.3.0
   rubber: ^0.4.0
 
   
