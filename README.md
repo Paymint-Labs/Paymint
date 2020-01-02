@@ -1,4 +1,4 @@
-# paymint
+# Paymint
 
 A new Flutter project.
 
