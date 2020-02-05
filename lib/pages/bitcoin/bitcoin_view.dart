@@ -106,7 +106,7 @@ class _BitcoinViewState extends State<BitcoinView>
         },
         body: ClipRRect(
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           child: TabBarView(
             controller: _tabController,
             children: <Widget>[

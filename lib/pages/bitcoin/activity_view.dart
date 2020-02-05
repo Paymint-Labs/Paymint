@@ -18,7 +18,7 @@ class _ActivityViewState extends State<ActivityView> {
         child: ListView(
           children: <Widget>[
             Container(
-              height: 15,
+              height: 5,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
@@ -40,10 +40,19 @@ class _ActivityViewState extends State<ActivityView> {
               currentValue: '149.11',
               previousValue: '71.92',
             ),
-            PurchaseListTile(
-              purchaseAmount: '0.28593628',
-              valueAtTimeOfPurchase: '1,980',
-            )
+            Container(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Container(
+                child: Text(
+                  '23 Dec, 2019 - Tuesday',
+                  style: GoogleFonts.rubik(),
+                  textScaleFactor: 1.25,
+                ),
+              ),
+            ),
           ],
         ));
   }
