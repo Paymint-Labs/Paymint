@@ -3,7 +3,9 @@ import 'package:hive/hive.dart';
 import 'package:paymint/route_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
+
 import 'package:paymint/pages/pages.dart';
+import 'package:paymint/services/bitcoin_service.dart';
 
 // main() is the entry point to the app. It initializes Hive (local database),
 // runs the MyApp widget and checks for new users, caching the value in the
@@ -26,10 +28,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Init walletstate here
-        // ChangeNotifierProvider(
-        //   builder: (_) => BitcoinService(),
-        // )
+        ChangeNotifierProvider(
+          create: (_) => BitcoinService(),
+        )
       ],
       child: MaterialAppWithTheme(),
     );
@@ -62,7 +63,7 @@ class InitView extends StatefulWidget {
 }
 
 class _InitViewState extends State<InitView> {
-  bool _isFirstLaunch ;
+  bool _isFirstLaunch;
 
   _checkFirstLaunch() async {
     final mscData = await Hive.openBox('miscellaneous');

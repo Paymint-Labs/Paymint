@@ -4,8 +4,8 @@
 /// 
 
 class UtxoData {
-  final String satoshiBalance;
-  final String bitcoinBalance;
+  final int satoshiBalance;
+  final double bitcoinBalance;
   final List<UtxoObject> unspentOutputArray;
 
   UtxoData({this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});
@@ -26,7 +26,7 @@ class UtxoObject {
   final String txid;
   final String vout;
   final Status status;
-  final int value; 
+  final int value;
 
   UtxoObject({this.txid, this.vout, this.status, this.value});
 
