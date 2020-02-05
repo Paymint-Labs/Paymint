@@ -53,6 +53,11 @@ class _ActivityViewState extends State<ActivityView> {
                 ),
               ),
             ),
+            ReceiveListTile(
+              amount: '0.02163382',
+              currentValue: '149.11',
+              previousValue: '71.92',
+            ),
           ],
         ));
   }
