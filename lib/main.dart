@@ -62,7 +62,7 @@ class InitView extends StatefulWidget {
 }
 
 class _InitViewState extends State<InitView> {
-  bool _isFirstLaunch;
+  bool _isFirstLaunch ;
 
   _checkFirstLaunch() async {
     final mscData = await Hive.openBox('miscellaneous');

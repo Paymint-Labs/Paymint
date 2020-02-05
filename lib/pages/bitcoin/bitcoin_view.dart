@@ -39,89 +39,85 @@ class _BitcoinViewState extends State<BitcoinView>
   // since this needs to wait for the future to finish before rendering anyway
   Scaffold buildMainBitcoinView(BuildContext context) {
     return Scaffold(
-    backgroundColor: Colors.black,
-    floatingActionButton: FloatingActionButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/actions');
-      },
-      child: Icon(Icons.add),
-    ),
-    body: NestedScrollView(
-      controller: _scrollController,
-      headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
-        return <Widget>[
-          SliverAppBar(
-            backgroundColor: Colors.black,
-            leading: IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.insert_chart),
+      backgroundColor: Colors.black,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/actions');
+        },
+        child: Icon(Icons.add),
+      ),
+      body: NestedScrollView(
+        controller: _scrollController,
+        headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.black,
+              leading: IconButton(
+                icon: Icon(Icons.notifications),
                 onPressed: () {},
-              )
-            ],
-            pinned: true,
-            forceElevated: boxIsScrolled,
-            expandedHeight: MediaQuery.of(context).size.width / 1.75,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                "\$793.86",
-                style: GoogleFonts.rubik(),
               ),
-              centerTitle: true,
-              titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
-              collapseMode: CollapseMode.pin,
-              background: Padding(
-                padding: EdgeInsets.only(bottom: 30),
-                child: Center(
-                  child: Text(
-                    '0.11372974 BTC',
-                    style: GoogleFonts.rubik(
-                      textStyle: TextStyle(color: Colors.white, fontSize: 20),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.insert_chart),
+                  onPressed: () {},
+                )
+              ],
+              pinned: true,
+              forceElevated: boxIsScrolled,
+              expandedHeight: MediaQuery.of(context).size.width / 1.75,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  "\$793.86",
+                  style: GoogleFonts.rubik(),
+                ),
+                centerTitle: true,
+                titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
+                collapseMode: CollapseMode.pin,
+                background: Padding(
+                  padding: EdgeInsets.only(bottom: 30),
+                  child: Center(
+                    child: Text(
+                      '0.11372974 BTC',
+                      style: GoogleFonts.rubik(
+                        textStyle: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            bottom: TabBar(
-              controller: _tabController,
-              labelStyle: GoogleFonts.rubik(),
-              indicator: UnderlineTabIndicator(
-                insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
-                borderSide: const BorderSide(width: 3.0, color: Colors.blue),
+              bottom: TabBar(
+                controller: _tabController,
+                labelStyle: GoogleFonts.rubik(),
+                indicator: UnderlineTabIndicator(
+                  insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                  borderSide: const BorderSide(width: 3.0, color: Colors.blue),
+                ),
+                tabs: <Widget>[
+                  Tab(
+                    text: 'Activity',
+                  ),
+                  Tab(
+                    text: 'Security',
+                  ),
+                ],
               ),
-              tabs: <Widget>[
-                Tab(
-                  text: 'Activity',
-                ),
-                Tab(
-                  text: 'Security',
-                ),
-              ],
-            ),
-          )
-        ];
-      },
-      body: ClipRRect(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-        child: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            ActivityView(),
-            Container(
-              color: Colors.white,
-            ),
-          ],
+            )
+          ];
+        },
+        body: ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              ActivityView(),
+              Container(
+                color: Colors.white,
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
-}
-
-Scaffold buildBitcoinLoadingView() {
-  return Scaffold();
 }
