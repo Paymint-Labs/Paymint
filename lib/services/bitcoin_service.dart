@@ -24,14 +24,13 @@ class BitcoinService extends ChangeNotifier {
       "internalAndChangeAddressArray": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"]
     };
 
-    final response = await http.post('https://www.api.paymintapp.com/mock/outputs', body: requestBody);
+    final response = await http.post('https://www.api.paymintapp.com/mock/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
-    if (response.statusCode == 200) {
-      print('success');
+    if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();
       return UtxoData.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Something happened: ' + response.statusCode.toString());
+      throw Exception('Something happened: ' + response.statusCode.toString() + response.body );
     }
   }
 }

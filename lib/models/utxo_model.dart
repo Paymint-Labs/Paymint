@@ -24,7 +24,7 @@ class UtxoData {
 
 class UtxoObject {
   final String txid;
-  final String vout;
+  final int vout;
   final Status status;
   final int value;
 
