@@ -3,6 +3,38 @@
 /// provides the wallet with ordered transaction chunks with  
 ///
 
+class TransactionData {
+  final List<TransactionChunk> txChunks;
+
+  TransactionData({this.txChunks});
+
+  factory TransactionData.fromJson(Map<String, dynamic> json) {
+    var txChunkArray = json['txChunks'] as List;
+    List<TransactionChunk> txChunkList = txChunkArray.map((txChunk) => TransactionChunk.fromJson(txChunk)).toList();
+    
+    return TransactionData(
+      txChunks: txChunkList
+    );
+  }
+}
+
+class TransactionChunk {
+  final int timestamp;
+  final List<Transaction> transactions;
+
+  TransactionChunk({this.timestamp, this.transactions});
+
+  factory TransactionChunk.fromJson(Map<String, dynamic> json) {
+    var txArray = json['transactions'] as List;
+    List<Transaction> txList = txArray.map((tx) => Transaction.fromJson(tx)).toList();
+    
+    return TransactionChunk(
+      timestamp: json['timestamp'],
+      transactions: txList
+    );
+  }
+}
+
 class Transaction {
   final String txid;
   final bool confirmedStatus;

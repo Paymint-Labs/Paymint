@@ -8,11 +8,11 @@ class BitcoinService extends ChangeNotifier {
   /// - Internal accounting (BIP84 - HD Wallet structure for Native Segwit addresses)
   /// - Fetching wallet data from the Paymint API
   /// - Managing private keys
-
+  
+  // Holds final balances, utxos under control 
   Future<UtxoData> _utxoData;
   Future<UtxoData> get utxoData => _utxoData ??= fetchUtxoData();
 
-  // Constructor function
   BitcoinService() {
     _utxoData = fetchUtxoData();
   }
