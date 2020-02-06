@@ -13,8 +13,12 @@ class BitcoinService extends ChangeNotifier {
   Future<UtxoData> _utxoData;
   Future<UtxoData> get utxoData => _utxoData ??= fetchUtxoData();
 
+  Future<TransactionData> _transactionData;
+  Future<TransactionData> get transactionData => _transactionData ??= fetchTransactionData();
+
   BitcoinService() {
     _utxoData = fetchUtxoData();
+    _transactionData = fetchTransactionData();
   }
 
   Future<UtxoData> fetchUtxoData() async {
@@ -29,6 +33,23 @@ class BitcoinService extends ChangeNotifier {
     if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();
       return UtxoData.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Something happened: ' + response.statusCode.toString() + response.body );
+    }
+  }
+
+  Future<TransactionData> fetchTransactionData() async {
+    final requestBody = {
+      "currency": "USD",
+      "receivingAddresses": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"],
+      "internalAndChangeAddressArray": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"]
+    };
+
+    final response = await http.post('https://www.api.paymintapp.com/mock/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      notifyListeners();
+      return TransactionData.fromJson(json.decode(response.body));
     } else {
       throw Exception('Something happened: ' + response.statusCode.toString() + response.body );
     }
