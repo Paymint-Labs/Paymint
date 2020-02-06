@@ -19,6 +19,7 @@ class BitcoinService extends ChangeNotifier {
   BitcoinService() {
     _utxoData = fetchUtxoData();
     _transactionData = fetchTransactionData();
+    print(this._utxoData);
   }
 
   Future<UtxoData> fetchUtxoData() async {
