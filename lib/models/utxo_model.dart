@@ -11,8 +11,8 @@ class UtxoData {
   UtxoData({this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});
 
   factory UtxoData.fromJson(Map<String, dynamic> json) {
-    var list = json['outputArray'] as List;
-    List<UtxoObject> utxoList = list.map((i) => UtxoObject.fromJson(i)).toList(); 
+    var outputList = json['outputArray'] as List;
+    List<UtxoObject> utxoList = outputList.map((output) => UtxoObject.fromJson(output)).toList(); 
     
     return UtxoData(
       satoshiBalance: json['total_sats'],
