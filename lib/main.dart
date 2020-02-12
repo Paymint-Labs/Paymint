@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Note: MaterialAppWithTheme and InitView are only separated for clarity. No other reason.
+// Sidenote: MaterialAppWithTheme and InitView are only separated for clarity. No other reason.
+// Sidenote: Add theming service
 
 class MaterialAppWithTheme extends StatelessWidget {
   const MaterialAppWithTheme({
@@ -47,7 +48,7 @@ class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Paymint beta',
+      title: 'Paymint Beta',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: InitView(),
       onGenerateRoute: RouteGenerator.generateRoute,
@@ -88,7 +89,7 @@ class _InitViewState extends State<InitView> {
           }
         } else {
           return Scaffold(
-              backgroundColor: Colors.black, body: _buildLoading(context));
+            backgroundColor: Colors.black, body: _buildLoading(context));
         }
       },
     );

@@ -11,7 +11,7 @@ class RouteGenerator {
     // final args = settings.arguments;
 
     switch (settings.name) {
-      case '/':
+      case '/mainview':
         return CupertinoPageRoute(builder: (_) => MainView());
       case '/onboard':
         return CupertinoPageRoute(builder: (_) => OnboardView());

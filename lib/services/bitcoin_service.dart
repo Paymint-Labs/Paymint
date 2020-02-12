@@ -1,25 +1,26 @@
+/// This class is the main workhorse of the Paymint client. It handles several critical operations such as:
+/// - Internal accounting (BIP84 - HD Wallet structure for Native Segwit addresses)
+/// - Fetching wallet data from the Paymint API
+/// - Managing private keys
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:paymint/models/models.dart';
 
 class BitcoinService extends ChangeNotifier {
-  /// This class is the main workhorse of the Paymint client. It handles several critical operations such as:
-  /// - Internal accounting (BIP84 - HD Wallet structure for Native Segwit addresses)
-  /// - Fetching wallet data from the Paymint API
-  /// - Managing private keys
-  
   // Holds final balances, utxos under control 
   Future<UtxoData> _utxoData;
   Future<UtxoData> get utxoData => _utxoData ??= fetchUtxoData();
 
+  // Holds ordered and chunked transaction data
   Future<TransactionData> _transactionData;
   Future<TransactionData> get transactionData => _transactionData ??= fetchTransactionData();
 
+  // Constructor fn
   BitcoinService() {
     _utxoData = fetchUtxoData();
     _transactionData = fetchTransactionData();
-    print(this._utxoData);
   }
 
   Future<UtxoData> fetchUtxoData() async {
@@ -55,4 +56,5 @@ class BitcoinService extends ChangeNotifier {
       throw Exception('Something happened: ' + response.statusCode.toString() + response.body );
     }
   }
+
 }

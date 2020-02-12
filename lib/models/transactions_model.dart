@@ -84,7 +84,7 @@ class Input {
   final Output prevout;
   final String scriptsig;
   final String scriptsigAsm;
-  final List<String> witness;
+  final List<dynamic> witness;
   final bool isCoinbase;
   final int sequence;
   final String innerRedeemscriptAsm;

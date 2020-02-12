@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'components/activity_list_tiles.dart';
+import 'package:provider/provider.dart';
+import 'package:paymint/services/bitcoin_service.dart';
 
 class ActivityView extends StatefulWidget {
   ActivityView({Key key}) : super(key: key);
@@ -13,6 +15,8 @@ class ActivityView extends StatefulWidget {
 class _ActivityViewState extends State<ActivityView> {
   @override
   Widget build(BuildContext context) {
+    final test = Provider.of<BitcoinService>(context);
+
     return Material(
         color: Colors.white,
         child: ListView(
@@ -46,10 +50,15 @@ class _ActivityViewState extends State<ActivityView> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Container(
-                child: Text(
-                  '23 Dec, 2019 - Tuesday',
-                  style: GoogleFonts.rubik(),
-                  textScaleFactor: 1.25,
+                child: FutureBuilder(
+                  future: test.utxoData,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Text(snapshot.data.bitcoinBalance.toString() + ' BTC');
+                    } else {
+                      return Text('Loading...');
+                    }
+                  },
                 ),
               ),
             ),
