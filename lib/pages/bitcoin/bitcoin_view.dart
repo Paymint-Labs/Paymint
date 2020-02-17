@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-// lazy import
-import './activity_view.dart';
+import 'components/components.dart';
 
 class BitcoinView extends StatefulWidget {
   BitcoinView({Key key}) : super(key: key);
@@ -32,7 +30,7 @@ class _BitcoinViewState extends State<BitcoinView>
 
   @override
   Widget build(BuildContext context) {
-    return buildMainBitcoinView(context);
+    return buildMainBitcoinView(context); // Wrap in FutureBuilder, if complete return buildBitcoinMainView() but if it isn't return buildBitcoinMainViewLoading()
   }
 
   // No need to pass data into function. Instead create provider reference object and pull directly

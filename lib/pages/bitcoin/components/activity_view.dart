@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'components/activity_list_tiles.dart';
+import 'activity_list_tiles.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 
