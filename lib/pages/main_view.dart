@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/pages/pages.dart';
 
+// MainView refers to the main tab bar navigation and view system in place
 class MainView extends StatefulWidget {
   MainView({Key key}) : super(key: key);
 
