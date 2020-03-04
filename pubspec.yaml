@@ -1,5 +1,5 @@
 name: paymint
-description: A new Flutter project.
+description: Paymint client
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -21,6 +21,11 @@ dependencies:
     sdk: flutter
   provider: ^3.2.0
   http: ^0.12.0+2
+
+  # Bitcoin plugins
+  bitcoin_flutter: ^1.1.0
+  bip39: ^1.0.3
+  bip32: ^1.0.5
 
   # Storage plugins
   flutter_secure_storage: ^3.3.1+1

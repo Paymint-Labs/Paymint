@@ -24,6 +24,7 @@ class RouteGenerator {
 }
 
 Route<dynamic> _routeError() {
+  // Replace with robust ErrorView page
   Widget errorView = Scaffold(
     body: Center(
       child: Text('Error handling route', style: GoogleFonts.rubik()),

@@ -3,9 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:paymint/route_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
-
 import 'package:paymint/pages/pages.dart';
-import 'package:paymint/services/bitcoin_service.dart';
+import 'package:paymint/services/services.dart';
 
 // main() is the entry point to the app. It initializes Hive (local database),
 // runs the MyApp widget and checks for new users, caching the value in the
