@@ -18,6 +18,7 @@ class _MainViewState extends State<MainView> {
     keepPage: true,
   );
 
+  // Tab icon color based on tab selection
   Color _buildIconColor(int index) {
     if (index == this._currentIndex) {
       return Colors.black;
@@ -26,6 +27,7 @@ class _MainViewState extends State<MainView> {
     }
   }
 
+  // Tab text color based on tab selection
   TextStyle _buildTextStyle(int index) {
     if (index == this._currentIndex) {
       return GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));

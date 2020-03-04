@@ -12,8 +12,8 @@ import 'package:paymint/services/bitcoin_service.dart';
 // miscellaneous box for later use
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final appDirec = await path.getApplicationDocumentsDirectory();
-  Hive.init(appDirec.path);
+  final appDirectory = await path.getApplicationDocumentsDirectory();
+  Hive.init(appDirectory.path);
   runApp(MyApp());
 
   final mscData = await Hive.openBox('miscellaneous');
