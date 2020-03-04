@@ -34,7 +34,7 @@ dependencies:
   path_provider: ^1.5.1
   
   # Ui component plugins
-  google_fonts: ^0.2.0
+  google_fonts: ^0.2.0  # To be removed eventually
   flutter_sticky_header: ^0.3.4
   rubber: ^0.4.0
 
