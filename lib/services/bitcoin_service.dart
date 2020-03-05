@@ -22,7 +22,7 @@ class BitcoinService extends ChangeNotifier {
 
   // Constructor function
   BitcoinService() {
-    // Pull local data for internal and external chain addresses to feed into UTXO and transaction call functions 
+    // Pull local data for internal and external chain addresses to feed into UTXO and transaction call functions
     _utxoData = fetchUtxoData();
     _transactionData = fetchTransactionData();
   }
