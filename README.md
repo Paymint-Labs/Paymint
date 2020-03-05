@@ -1,16 +1,14 @@
 # Paymint
+NOTE: Paymint is currently in VERY EARLY alpha stage. Expected release is in q2-q3 2020.
 
-A new Flutter project.
+Paymint is a Bitcoin thin client written in Dart. Out of the box, it aims to be an HD wallet with support for Native Segwit addresses, full UTXO selection controls and payment batching.
 
-## Getting Started
+## Features
+- HD Native Segwit Addresses (BIP 84, 173)
+- Advanced UTXO selection/filtering
+- Payment Batching
+- Cloud wallet backups
+- Shamir's Secret Sharing Private Key Splitting [COMING SOON]
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Screenshots
+<img src="https://imgur.com/ib2IPoP.jpg" width="400" align="left"> <img src="https://imgur.com/hJQmhkw.jpg" width="400" align="right">
