@@ -4,7 +4,7 @@ NOTE: Paymint is currently in VERY EARLY alpha stage. Expected release is in q2-
 Paymint is a Bitcoin thin client written in Dart. Out of the box, it aims to be an HD wallet with support for Native Segwit addresses, full UTXO selection controls and payment batching.
 
 ## Build and run
-- Flutter version v1.12.13+hotfix.8 required
+- Flutter version v1.12.13+hotfix.8 required (minimum)
 - Android/iOS dev setup (Android Studio, xCode and subsequent dependencies)
 - Navigate into project root and run the following:
 ```
