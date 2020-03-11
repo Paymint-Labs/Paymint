@@ -21,6 +21,7 @@ dependencies:
     sdk: flutter
   provider: ^3.2.0
   http: ^0.12.0+2
+  animations: ^1.0.0+5
 
   # Bitcoin plugins
   bitcoin_flutter: ^1.1.0

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/pages/pages.dart';
+import 'package:animations/animations.dart';
 
 // MainView refers to the main tab bar navigation and view system in place
 class MainView extends StatefulWidget {
@@ -12,6 +13,16 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   int _currentIndex = 0;
+
+  List<Widget> children = [
+    BitcoinView(),
+    Container(
+      color: Colors.black,
+    ),
+    Container(
+      color: Colors.cyan,
+    ),
+  ];
 
   PageController _pageController = PageController(
     initialPage: 0,
@@ -36,19 +47,20 @@ class _MainViewState extends State<MainView> {
     }
   }
 
+  void _setCurrentIndex(int newIndex) {
+    setState(() {
+      _currentIndex = newIndex;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,
-          onTap: (int index) {
-            setState(() {
-              _currentIndex = index;
-              _pageController.jumpToPage(index);
-            });
-          },
-          items: [
+          onTap: _setCurrentIndex,
+      items: [
             BottomNavigationBarItem(
               icon: Image.asset(
                 'assets/images/btc.png',
@@ -82,23 +94,19 @@ class _MainViewState extends State<MainView> {
               ),
             )
           ]),
-      body: PageView(
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
-        onPageChanged: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
+      body: PageTransitionSwitcher(
+        transitionBuilder: (
+            Widget child,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            ) {
+          return FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
         },
-        children: <Widget>[
-          BitcoinView(),
-          Center(
-            child: Text('Buy'),
-          ),
-          Center(
-            child: Text('More'),
-          ),
-        ],
+        child: children[_currentIndex],
       ),
     );
   }
