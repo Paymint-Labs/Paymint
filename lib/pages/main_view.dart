@@ -17,10 +17,7 @@ class _MainViewState extends State<MainView> {
   List<Widget> children = [
     BitcoinView(),
     Container(
-      child: Container(
-        height: 200,
-        color: Colors.black
-      ),
+      color: Colors.amber,
     ),
     Container(
       color: Colors.cyan,
