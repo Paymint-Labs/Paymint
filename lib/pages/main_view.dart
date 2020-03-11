@@ -17,17 +17,15 @@ class _MainViewState extends State<MainView> {
   List<Widget> children = [
     BitcoinView(),
     Container(
-      color: Colors.black,
+      child: Container(
+        height: 200,
+        color: Colors.black
+      ),
     ),
     Container(
       color: Colors.cyan,
     ),
   ];
-
-  PageController _pageController = PageController(
-    initialPage: 0,
-    keepPage: true,
-  );
 
   // Tab icon color based on tab selection
   Color _buildIconColor(int index) {
