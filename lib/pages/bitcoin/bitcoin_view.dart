@@ -27,12 +27,6 @@ class _BitcoinViewState extends State<BitcoinView>
   }
 
   @override
-  void dispose() {
-    this._tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return buildMainBitcoinView(context); // Wrap in FutureBuilder, if complete return buildBitcoinMainView() but if it isn't return buildBitcoinMainViewLoading()
   }
@@ -45,9 +39,8 @@ class _BitcoinViewState extends State<BitcoinView>
       floatingActionButton: _OpenContainerWrapper(
         transitionType: _transitionType,
         closedBuilder: (BuildContext _, VoidCallback openContainer) {
-          return FloatingActionButton(
+          return FloatingActionButton(  // FAB errors on close animation
             child: Icon(Icons.add),
-            onPressed: () {},
           );
         },
       ),

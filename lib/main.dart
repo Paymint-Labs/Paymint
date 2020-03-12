@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:paymint/pages/pages.dart';
 import 'package:paymint/services/services.dart';
+import 'route_generator.dart';
 
 // main() is the entry point to the app. It initializes Hive (local database),
 // runs the MyApp widget and checks for new users, caching the value in the
@@ -47,6 +48,7 @@ class MaterialAppWithTheme extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Paymint Beta',
+        onGenerateRoute: RouteGenerator.generateRoute,
         theme: ThemeData(
           primarySwatch: Colors.blue,
           pageTransitionsTheme: const PageTransitionsTheme(
@@ -72,30 +74,21 @@ class _InitViewState extends State<InitView> {
   _checkFirstLaunch() async {
     final mscData = await Hive.openBox('miscellaneous');
     _isFirstLaunch = mscData.get('first_launch');
+    if (this._isFirstLaunch == false) {
+      Navigator.pushNamed(context, '/mainview');
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    this._checkFirstLaunch();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _checkFirstLaunch(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (this._isFirstLaunch) {
-            return OnboardView();
-          } else {
-            return MainView();
-          }
-        } else {
-          return Scaffold(
-              backgroundColor: Colors.black, body: _buildLoading(context));
-        }
-      },
-    );
+    return Scaffold(
+        backgroundColor: Colors.black, body: _buildLoading(context));
   }
 }
 
