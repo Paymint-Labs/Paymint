@@ -77,6 +77,9 @@ class _InitViewState extends State<InitView> {
     if (this._isFirstLaunch == false) {
       Navigator.pushNamed(context, '/mainview');
     }
+    else {
+      Navigator.pushNamed(context, '/onboard');
+    }
   }
 
   @override
