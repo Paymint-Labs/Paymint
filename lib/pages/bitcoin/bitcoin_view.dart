@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:animations/animations.dart';
+import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'components/components.dart';
 
 class BitcoinView extends StatefulWidget {
@@ -14,6 +16,8 @@ class _BitcoinViewState extends State<BitcoinView>
     with TickerProviderStateMixin {
   TabController _tabController;
   ScrollController _scrollController;
+
+  ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   @override
   void initState() {
@@ -33,16 +37,19 @@ class _BitcoinViewState extends State<BitcoinView>
     return buildMainBitcoinView(context); // Wrap in FutureBuilder, if complete return buildBitcoinMainView() but if it isn't return buildBitcoinMainViewLoading()
   }
 
-  // No need to pass data into function. Instead create provider reference object and pull directly
+  // No need to pass future data as function parameters. Instead create provider reference object and pull directly
   // since this needs to wait for the future to finish before rendering anyway
   Scaffold buildMainBitcoinView(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/actions');
+      floatingActionButton: _OpenContainerWrapper(
+        transitionType: _transitionType,
+        closedBuilder: (BuildContext _, VoidCallback openContainer) {
+          return FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {},
+          );
         },
-        child: Icon(Icons.add),
       ),
       body: NestedScrollView(
         controller: _scrollController,
@@ -116,6 +123,34 @@ class _BitcoinViewState extends State<BitcoinView>
           ),
         ),
       ),
+    );
+  }
+}
+
+class _OpenContainerWrapper extends StatelessWidget {
+  const _OpenContainerWrapper({
+    this.closedBuilder,
+    this.transitionType,
+  });
+
+  final OpenContainerBuilder closedBuilder;
+  final ContainerTransitionType transitionType;
+
+  @override
+  Widget build(BuildContext context) {
+    return OpenContainer(
+      closedElevation: 6.0,
+      closedShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(100),
+        ),
+      ),
+      transitionType: transitionType,
+      openBuilder: (BuildContext context, VoidCallback _) {
+        return ActionsView();
+      },
+      tappable: true,
+      closedBuilder: closedBuilder,
     );
   }
 }

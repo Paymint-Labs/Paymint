@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:paymint/route_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:paymint/pages/pages.dart';
@@ -47,11 +46,16 @@ class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Paymint Beta',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: InitView(),
-      onGenerateRoute: RouteGenerator.generateRoute,
-    );
+        title: 'Paymint Beta',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            },
+          )
+        ),
+        home: InitView());
   }
 }
 
@@ -88,7 +92,7 @@ class _InitViewState extends State<InitView> {
           }
         } else {
           return Scaffold(
-            backgroundColor: Colors.black, body: _buildLoading(context));
+              backgroundColor: Colors.black, body: _buildLoading(context));
         }
       },
     );

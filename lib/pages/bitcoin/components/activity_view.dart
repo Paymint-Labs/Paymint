@@ -50,16 +50,9 @@ class _ActivityViewState extends State<ActivityView> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Container(
-                child: FutureBuilder(
-                  future: test.utxoData,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return Text(snapshot.data.bitcoinBalance.toString() + ' BTC');
-                    } else {
-                      return Text('Loading...');
-                    }
-                  },
-                ),
+                child: Text('23 Dec, 2019 - Monday',
+                  style: GoogleFonts.rubik(),
+                  textScaleFactor: 1.25,)
               ),
             ),
             ReceiveListTile(
