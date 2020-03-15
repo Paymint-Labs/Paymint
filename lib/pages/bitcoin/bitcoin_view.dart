@@ -19,6 +19,8 @@ class _BitcoinViewState extends State<BitcoinView>
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
+  double _fabDimension = 56.0;
+
   @override
   void initState() {
     this._tabController = TabController(vsync: this, length: 2);
@@ -39,8 +41,16 @@ class _BitcoinViewState extends State<BitcoinView>
       floatingActionButton: _OpenContainerWrapper(
         transitionType: _transitionType,
         closedBuilder: (BuildContext _, VoidCallback openContainer) {
-          return FloatingActionButton(  // FAB errors on close animation
-            child: Icon(Icons.add),
+          return Container(
+            color: Colors.blue,
+            height: this._fabDimension,
+            width: this._fabDimension,
+            child: Center(
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            ),
           );
         },
       ),

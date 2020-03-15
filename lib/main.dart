@@ -99,7 +99,7 @@ class _InitViewState extends State<InitView> {
 Widget _buildLoading(BuildContext context) {
   return Center(
       child: Container(
-    width: MediaQuery.of(context).size.width / 2,
-    child: LinearProgressIndicator(),
+        width: MediaQuery.of(context).size.width / 2,
+        child: LinearProgressIndicator(),
   ));
 }
