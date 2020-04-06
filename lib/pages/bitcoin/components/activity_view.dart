@@ -50,12 +50,22 @@ class _ActivityViewState extends State<ActivityView> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Container(
-                child: Text('23 Dec, 2019 - Monday',
+                child: Text('22 Dec, 2019 - Sunday',
                   style: GoogleFonts.rubik(),
                   textScaleFactor: 1.25,)
               ),
             ),
             ReceiveListTile(
+              amount: '0.02163382',
+              currentValue: '149.11',
+              previousValue: '71.92',
+            ),
+            ReceiveListTile(
+              amount: '0.02163382',
+              currentValue: '149.11',
+              previousValue: '71.92',
+            ),
+            SendListTile(
               amount: '0.02163382',
               currentValue: '149.11',
               previousValue: '71.92',

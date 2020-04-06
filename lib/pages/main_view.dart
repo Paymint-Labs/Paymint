@@ -74,7 +74,7 @@ class _MainViewState extends State<MainView> {
                 color: _buildIconColor(1), // Index 1
               ),
               title: Text(
-                'Buy',
+                'Buy/Sell',
                 style: _buildTextStyle(1), // Index 1
               ),
             ),
