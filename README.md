@@ -20,4 +20,4 @@ flutter run --release
 - Cloud wallet backups
 
 ## Screenshots
-<img src="https://imgur.com/ib2IPoP.jpg" width="200" align="left"> <img src="https://imgur.com/hJQmhkw.jpg" width="200" align="right">
+<img src="https://imgur.com/ib2IPoP.jpg" width="200" align="left"> <img src="https://imgur.com/hJQmhkw.jpg" width="200">
