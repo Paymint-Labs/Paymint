@@ -1,3 +1,5 @@
+![Dart CI](https://github.com/RohanKapurDEV/paymint/workflows/Dart%20CI/badge.svg?event=check_suite)
+
 # Paymint
 NOTE: Paymint is currently in VERY EARLY alpha stage. Expected release is in q2-q3 2020.
 
