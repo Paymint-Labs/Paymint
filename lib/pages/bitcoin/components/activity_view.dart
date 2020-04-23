@@ -14,6 +14,7 @@ class ActivityView extends StatefulWidget {
 
 class _ActivityViewState extends State<ActivityView> {
   @override
+
   Widget build(BuildContext context) {
     final test = Provider.of<BitcoinService>(context);
 

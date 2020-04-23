@@ -1,21 +1,22 @@
 /// This class is meant for deserializing response objects from the Paymint API.
 /// It specifically handles data for the unspent outputs endpoint. This endpoint
 /// provides the wallet with a UTXO list and corresponding balances
-/// 
 
 class UtxoData {
-  final int satoshiBalance;
-  /// bitcoinBalance needs to be a double since user balance can be an int (when it's 0) or a double (the usual case)
-  final dynamic bitcoinBalance;
+  var totalUserCurrency;
+  var satoshiBalance;
+  /// bitcoinBalance needs to be dynamic since user balance can be an int (when it's 0) or a double (the usual case)
+  var bitcoinBalance;
   final List<UtxoObject> unspentOutputArray;
 
-  UtxoData({this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});
+  UtxoData({this.totalUserCurrency, this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});
 
   factory UtxoData.fromJson(Map<String, dynamic> json) {
     var outputList = json['outputArray'] as List;
     List<UtxoObject> utxoList = outputList.map((output) => UtxoObject.fromJson(output)).toList(); 
     
     return UtxoData(
+      totalUserCurrency: json['total_user_currency'],
       satoshiBalance: json['total_sats'],
       bitcoinBalance: json['total_btc'],
       unspentOutputArray: utxoList

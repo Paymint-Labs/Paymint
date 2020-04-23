@@ -32,6 +32,7 @@ class BitcoinService extends ChangeNotifier {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();
+      print(response.body);
       return UtxoData.fromJson(json.decode(response.body));
     } else {
       throw Exception('Something happened: ' + response.statusCode.toString() + response.body );
