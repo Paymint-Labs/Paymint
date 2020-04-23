@@ -5,6 +5,7 @@ import 'package:animations/animations.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'components/components.dart';
 
+/// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
   BitcoinView({Key key}) : super(key: key);
 

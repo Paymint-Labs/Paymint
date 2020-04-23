@@ -1,19 +1,14 @@
-/// This class is meant for deserializing response objects from the Paymint API.
-/// It specifically handles data for the transactions endpoint. This endpoint
-/// provides the wallet with ordered transaction chunks with  
-///
-
 class TransactionData {
   final List<TransactionChunk> txChunks;
 
   TransactionData({this.txChunks});
 
   factory TransactionData.fromJson(Map<String, dynamic> json) {
-    var txChunkArray = json['txChunks'] as List;
-    List<TransactionChunk> txChunkList = txChunkArray.map((txChunk) => TransactionChunk.fromJson(txChunk)).toList();
+    var dateTimeChunks = json['dateTimeChunks'] as List;
+    List<TransactionChunk> chunksList = dateTimeChunks.map((txChunk) => TransactionChunk.fromJson(txChunk)).toList();
     
     return TransactionData(
-      txChunks: txChunkList
+      txChunks: chunksList
     );
   }
 }
@@ -42,8 +37,9 @@ class Transaction {
   final String txType;
   final int amount;
   final List aliens;
-  final String worthNow;
-  final String worthAtBlockTimestamp;
+  final double worthNow;
+  /// worthAtBlockTimestamp has to be dynamic in case the server fucks up the price quote and returns null instead of a double
+  final dynamic worthAtBlockTimestamp;
   final int fees;
   final int inputSize;
   final int outputSize;

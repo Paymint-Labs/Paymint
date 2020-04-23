@@ -1,8 +1,3 @@
-/// This class is the main workhorse of the Paymint client. It handles several critical operations such as:
-/// - Internal accounting (BIP84 - HD Wallet structure for Native Segwit addresses)
-/// - Fetching wallet data from the Paymint API
-/// - Managing private keys
-
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -20,7 +15,6 @@ class BitcoinService extends ChangeNotifier {
   Future<TransactionData> _transactionData;
   Future<TransactionData> get transactionData => _transactionData ??= fetchTransactionData();
 
-  // Constructor function
   BitcoinService() {
     // Pull local data for internal and external chain addresses to feed into UTXO and transaction call functions
     _utxoData = fetchUtxoData();
@@ -30,11 +24,11 @@ class BitcoinService extends ChangeNotifier {
   Future<UtxoData> fetchUtxoData() async {
     final requestBody = {
       "currency": "USD",
-      "receivingAddresses": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"],
-      "internalAndChangeAddressArray": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"]
+      "receivingAddresses": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"],
+      "internalAndChangeAddressArray": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"]
     };
 
-    final response = await http.post('https://www.api.paymintapp.com/mock/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
+    final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();
@@ -47,11 +41,11 @@ class BitcoinService extends ChangeNotifier {
   Future<TransactionData> fetchTransactionData() async {
     final requestBody = {
       "currency": "USD",
-      "receivingAddresses": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"],
-      "internalAndChangeAddressArray": ["3KHPDaQPxUGWsmB6ik91UWRnuzFz5akCzz"]
+      "receivingAddresses": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"],
+      "internalAndChangeAddressArray": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"]
     };
 
-    final response = await http.post('https://www.api.paymintapp.com/mock/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
+    final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();

@@ -22,7 +22,7 @@ class _ActivityViewState extends State<ActivityView> {
         child: ListView(
           children: <Widget>[
             Container(
-              height: 5,
+              height: 10,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
@@ -45,7 +45,7 @@ class _ActivityViewState extends State<ActivityView> {
               previousValue: '71.92',
             ),
             Container(
-              height: 10,
+              height: 30,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),

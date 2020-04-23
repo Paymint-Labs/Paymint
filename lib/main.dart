@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
-import 'package:paymint/pages/pages.dart';
 import 'package:paymint/services/services.dart';
 import 'route_generator.dart';
 
@@ -12,7 +12,7 @@ import 'route_generator.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDirectory = await path.getApplicationDocumentsDirectory();
-  Hive.init(appDirectory.path);
+  await Hive.initFlutter(appDirectory.path);
   runApp(MyApp());
 
   final mscData = await Hive.openBox('miscellaneous');
@@ -21,7 +21,7 @@ void main() async {
   }
 }
 
-// MyApp initialises relevant services with MultiProvider
+/// MyApp initialises relevant services with a MultiProvider
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
 }
 
 // Sidenote: MaterialAppWithTheme and InitView are only separated for clarity. No other reason.
-// Sidenote: Add theming service
 
 class MaterialAppWithTheme extends StatelessWidget {
   const MaterialAppWithTheme({
@@ -61,6 +60,7 @@ class MaterialAppWithTheme extends StatelessWidget {
   }
 }
 
+/// The initView
 class InitView extends StatefulWidget {
   const InitView({Key key}) : super(key: key);
 

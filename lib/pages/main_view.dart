@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/pages/pages.dart';
 import 'package:animations/animations.dart';
 
-// MainView refers to the main tab bar navigation and view system in place
+/// MainView refers to the main tab bar navigation and view system in place
 class MainView extends StatefulWidget {
   MainView({Key key}) : super(key: key);
 

@@ -5,7 +5,8 @@
 
 class UtxoData {
   final int satoshiBalance;
-  final double bitcoinBalance;
+  /// bitcoinBalance needs to be a double since user balance can be an int (when it's 0) or a double (the usual case)
+  final dynamic bitcoinBalance;
   final List<UtxoObject> unspentOutputArray;
 
   UtxoData({this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});

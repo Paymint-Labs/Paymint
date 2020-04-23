@@ -74,7 +74,7 @@ class ReceiveListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OpenContainer(
-      openBuilder: (BuildContext _, VoidCallback OpenContainer) {
+      openBuilder: (BuildContext _, VoidCallback openContainer) {
         return _DetailsPage();
       },
       tappable: true,
