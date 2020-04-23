@@ -1,3 +1,5 @@
+![Dart CI](https://github.com/RohanKapurDEV/paymint/workflows/Dart%20CI/badge.svg?event=check_suite)
+
 # Paymint
 NOTE: Paymint is currently in VERY EARLY alpha stage. Expected release is in q2-q3 2020.
 
@@ -18,7 +20,6 @@ flutter run --release
 - Advanced UTXO selection/filtering
 - Payment Batching
 - Cloud wallet backups
-- Shamir's Secret Sharing Private Key Splitting [COMING SOON]
 
 ## Screenshots
-<img src="https://imgur.com/ib2IPoP.jpg" width="400" align="left"> <img src="https://imgur.com/hJQmhkw.jpg" width="400" align="right">
+<img src="https://imgur.com/ib2IPoP.jpg" width="200" align="left"> <img src="https://imgur.com/hJQmhkw.jpg" width="200">
