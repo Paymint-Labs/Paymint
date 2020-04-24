@@ -3,22 +3,23 @@
 /// provides the wallet with a UTXO list and corresponding balances
 
 class UtxoData {
-  var totalUserCurrency;
-  var satoshiBalance;
-  /// bitcoinBalance needs to be dynamic since user balance can be an int (when it's 0) or a double (the usual case)
-  var bitcoinBalance;
-  final List<UtxoObject> unspentOutputArray;
+  final dynamic totalUserCurrency;
+  final int satoshiBalance;
+  final dynamic bitcoinBalance;
+  List<UtxoObject> unspentOutputArray;
 
   UtxoData({this.totalUserCurrency, this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});
 
   factory UtxoData.fromJson(Map<String, dynamic> json) {
     var outputList = json['outputArray'] as List;
     List<UtxoObject> utxoList = outputList.map((output) => UtxoObject.fromJson(output)).toList(); 
+    final double totalUserCurr = json['total_user_currency'].toDouble(); 
+    final double totalBtc = json['total_btc'].toDouble(); 
     
     return UtxoData(
-      totalUserCurrency: json['total_user_currency'],
+      totalUserCurrency: totalUserCurr,
       satoshiBalance: json['total_sats'],
-      bitcoinBalance: json['total_btc'],
+      bitcoinBalance: totalBtc,
       unspentOutputArray: utxoList
     );
   }

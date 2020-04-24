@@ -17,22 +17,21 @@ class BitcoinService extends ChangeNotifier {
 
   BitcoinService() {
     // Pull local data for internal and external chain addresses to feed into UTXO and transaction call functions
-    _utxoData = fetchUtxoData();
     _transactionData = fetchTransactionData();
+    _utxoData = fetchUtxoData();
   }
 
   Future<UtxoData> fetchUtxoData() async {
     final requestBody = {
       "currency": "USD",
-      "receivingAddresses": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"],
-      "internalAndChangeAddressArray": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"]
+      "receivingAddresses": ["1PUhivT8B4scmLauhEikMDustjmTACFAtb"],
+      "internalAndChangeAddressArray": ["1PUhivT8B4scmLauhEikMDustjmTACFAtb"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();
-      print(response.body);
       return UtxoData.fromJson(json.decode(response.body));
     } else {
       throw Exception('Something happened: ' + response.statusCode.toString() + response.body );
