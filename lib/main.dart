@@ -46,16 +46,15 @@ class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Paymint Beta',
+        title: 'Paymint Alpha',
         onGenerateRoute: RouteGenerator.generateRoute,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
-          pageTransitionsTheme: const PageTransitionsTheme(
-            builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.android: ZoomPageTransitionsBuilder(),
-            },
-          )
-        ),
+            primarySwatch: Colors.blue,
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                TargetPlatform.android: ZoomPageTransitionsBuilder(),
+              },
+            )),
         home: InitView());
   }
 }
@@ -76,8 +75,7 @@ class _InitViewState extends State<InitView> {
     _isFirstLaunch = mscData.get('first_launch');
     if (this._isFirstLaunch == false) {
       Navigator.pushNamed(context, '/mainview');
-    }
-    else {
+    } else {
       Navigator.pushNamed(context, '/onboard');
     }
   }
@@ -95,11 +93,10 @@ class _InitViewState extends State<InitView> {
   }
 }
 
-// Returns Center widget to be placed inside of a Scaffold body (see above)
 Widget _buildLoading(BuildContext context) {
   return Center(
       child: Container(
-        width: MediaQuery.of(context).size.width / 2,
-        child: LinearProgressIndicator(),
+    width: MediaQuery.of(context).size.width / 2,
+    child: LinearProgressIndicator(),
   ));
 }

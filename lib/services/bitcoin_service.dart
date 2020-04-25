@@ -7,18 +7,21 @@ import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 
 class BitcoinService extends ChangeNotifier {
-  // Holds final balances, all utxos under control 
+  /// Holds final balances, all utxos under control 
   Future<UtxoData> _utxoData;
   Future<UtxoData> get utxoData => _utxoData ??= fetchUtxoData();
 
-  // Holds ordered and chunked transaction data
+  /// Holds wallet transaction data
   Future<TransactionData> _transactionData;
   Future<TransactionData> get transactionData => _transactionData ??= fetchTransactionData();
 
   BitcoinService() {
-    // Pull local data for internal and external chain addresses to feed into UTXO and transaction call functions
     _transactionData = fetchTransactionData();
     _utxoData = fetchUtxoData();
+  }
+  
+  /// Checks to see if a Bitcoin Wallet exists
+  void _initializeBitcoinWallet() {
   }
 
   Future<UtxoData> fetchUtxoData() async {

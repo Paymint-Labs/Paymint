@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
-import 'components/components.dart';
+import 'package:paymint/pages/bitcoin/activity_view.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -38,7 +38,7 @@ class _BitcoinViewState extends State<BitcoinView>
   // since this needs to wait for the future to finish before rendering anyway
   Scaffold buildMainBitcoinView(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       floatingActionButton: _OpenContainerWrapper(
         transitionType: _transitionType,
         closedBuilder: (BuildContext _, VoidCallback openContainer) {
@@ -113,18 +113,14 @@ class _BitcoinViewState extends State<BitcoinView>
             )
           ];
         },
-        body: ClipRRect(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              ActivityView(),
-              Container(
-                color: Colors.white,
-              ),
-            ],
-          ),
+        body: TabBarView(
+          controller: _tabController,
+          children: <Widget>[
+            ActivityView(),
+            Container(
+              color: Colors.white,
+            ),
+          ],
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'list_tile_components.dart';
+import 'package:paymint/components/list_tile_components.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 
@@ -22,9 +22,6 @@ class _ActivityViewState extends State<ActivityView> {
         color: Colors.white,
         child: ListView(
           children: <Widget>[
-            Container(
-              height: 10,
-            ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
               child: Container(
@@ -46,7 +43,7 @@ class _ActivityViewState extends State<ActivityView> {
               previousValue: '71.92',
             ),
             Container(
-              height: 30,
+              height: 15,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 10.0),
