@@ -8,13 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
-  after_layout:
-    dependency: transitive
-    description:
-      name: after_layout
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.7+2"
   analyzer:
     dependency: transitive
     description:
@@ -232,6 +225,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.11"
+  flare_dart:
+    dependency: transitive
+    description:
+      name: flare_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.4"
+  flare_flutter:
+    dependency: "direct main"
+    description:
+      name: flare_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.3"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -258,13 +265,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.3"
-  flutter_sticky_header:
-    dependency: "direct main"
-    description:
-      name: flutter_sticky_header
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -522,13 +522,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
-  rubber:
-    dependency: "direct main"
-    description:
-      name: rubber
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.0"
   shelf:
     dependency: transitive
     description:
