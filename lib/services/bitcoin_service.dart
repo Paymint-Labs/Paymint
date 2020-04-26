@@ -5,6 +5,7 @@ import 'package:paymint/models/models.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:paymint/services/utils/currency_map.dart';
 
 class BitcoinService extends ChangeNotifier {
   /// Holds final balances, all utxos under control 
@@ -15,13 +16,33 @@ class BitcoinService extends ChangeNotifier {
   Future<TransactionData> _transactionData;
   Future<TransactionData> get transactionData => _transactionData ??= fetchTransactionData();
 
+  /// Holds preferred fiat currency
+  Future<String> _currency;
+  Future<String> get currency => _currency ??= fetchPreferredCurrency();
+
+  /// Holds updated receiving address
+  Future<String> _currentReceivingAddress;
+  Future<String> get currentReceivingAddress => _currentReceivingAddress ??= getCurrentReceivingAddress(); // Not cuurently in constructor
+
   BitcoinService() {
     _transactionData = fetchTransactionData();
-    _utxoData = fetchUtxoData();
+    _utxoData = fetchUtxoData(); 
+    _currency = fetchPreferredCurrency();
   }
   
-  /// Checks to see if a Bitcoin Wallet exists
+  /// Checks to see if a Bitcoin Wallet exists, if not it will create one first
   void _initializeBitcoinWallet() {
+
+  }
+
+  /// Fetches the preferred currency by user, defaults to USD
+  Future<String> fetchPreferredCurrency() async {
+
+  }
+
+  /// Fetches the currentReceivingAddress for the wallet
+  Future<String> getCurrentReceivingAddress() async {
+
   }
 
   Future<UtxoData> fetchUtxoData() async {
