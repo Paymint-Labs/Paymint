@@ -192,6 +192,36 @@ class __DetailsPageState extends State<_DetailsPage> {
               child: Center(
                 child: FlareActor('assets/rive/success.flr', animation: 'Untitled')
               )
+            ),
+            ListTile(
+              title: Text('Date:'),
+              trailing: Text('23 Oct, 2019'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Time:'),
+              trailing: Text('5:05 PM'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Action:'),
+              trailing: Text('Sent'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Worth now:'),
+              trailing: Text('\$294.83'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Worth when sent:'),
+              trailing: Text('\$292.21'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Balance delta:'),
+              trailing: Text('Lost \$2.75 in transaction'),
+              onTap: () {},
             )
           ],
         ));
