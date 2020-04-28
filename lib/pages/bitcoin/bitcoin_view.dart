@@ -31,7 +31,8 @@ class _BitcoinViewState extends State<BitcoinView>
 
   @override
   Widget build(BuildContext context) {
-    return buildMainBitcoinView(context); // Wrap in FutureBuilder, if complete return buildBitcoinMainView() but if it isn't return buildBitcoinMainViewLoading()
+    return buildMainBitcoinView(
+        context); // Wrap in FutureBuilder, if complete return buildBitcoinMainView() but if it isn't return buildBitcoinMainViewLoading()
   }
 
   // No need to pass future data as function parameters. Instead create provider reference object and pull directly
@@ -75,10 +76,7 @@ class _BitcoinViewState extends State<BitcoinView>
               forceElevated: boxIsScrolled,
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  "\$793.86",
-                  style: GoogleFonts.rubik(),
-                ),
+                title: Text("\$793.86", style: GoogleFonts.rubik(),),
                 centerTitle: true,
                 titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
                 collapseMode: CollapseMode.pin,
@@ -87,9 +85,7 @@ class _BitcoinViewState extends State<BitcoinView>
                   child: Center(
                     child: Text(
                       '0.11372974 BTC',
-                      style: GoogleFonts.rubik(
-                        textStyle: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),

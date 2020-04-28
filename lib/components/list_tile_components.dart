@@ -37,11 +37,9 @@ class _SendListTileState extends State<SendListTile> {
           leading: Icon(Icons.keyboard_arrow_up, color: Colors.pink, size: 40),
           title: Text(
             'Sent',
-            style: GoogleFonts.rubik(),
           ),
           subtitle: Text(
             widget.amount + ' BTC',
-            style: GoogleFonts.rubik(),
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -49,11 +47,9 @@ class _SendListTileState extends State<SendListTile> {
             children: <Widget>[
               Text(
                 '\$' + widget.previousValue + ' when sent',
-                style: GoogleFonts.rubik(),
               ),
               Text(
                 '\$' + widget.currentValue + ' now',
-                style: GoogleFonts.rubik(),
               ),
             ],
           ),
@@ -87,11 +83,9 @@ class ReceiveListTile extends StatelessWidget {
               color: Colors.blueAccent, size: 40),
           title: Text(
             'Received',
-            style: GoogleFonts.rubik(),
           ),
           subtitle: Text(
             amount + ' BTC',
-            style: GoogleFonts.rubik(),
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -99,11 +93,9 @@ class ReceiveListTile extends StatelessWidget {
             children: <Widget>[
               Text(
                 '\$' + previousValue + ' when received',
-                style: GoogleFonts.rubik(),
               ),
               Text(
                 '\$' + currentValue + ' now',
-                style: GoogleFonts.rubik(),
               ),
             ],
           ),
@@ -133,15 +125,12 @@ class PurchaseListTile extends StatelessWidget {
       ),
       title: Text(
         'Purchased ',
-        style: GoogleFonts.rubik(),
       ),
       subtitle: Text(
         purchaseAmount + ' BTC',
-        style: GoogleFonts.rubik(),
       ),
       trailing: Text(
         '\$' + valueAtTimeOfPurchase + ' when bought',
-        style: GoogleFonts.rubik(),
       ),
     );
   }
@@ -180,19 +169,23 @@ class __DetailsPageState extends State<_DetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Transaction details'),
+          title: Text(
+            'Transaction details',
+            style: GoogleFonts.rubik(
+              textStyle: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
           backgroundColor: Colors.black,
           elevation: 10,
         ),
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.width / 2,
-              color: Colors.black,
-              child: Center(
-                child: FlareActor('assets/rive/success.flr', animation: 'Untitled')
-              )
-            ),
+                height: MediaQuery.of(context).size.width / 2,
+                color: Colors.black,
+                child: Center(
+                    child: FlareActor('assets/rive/success.flr',
+                        animation: 'Untitled'))),
             ListTile(
               title: Text('Date:'),
               trailing: Text('23 Oct, 2019'),

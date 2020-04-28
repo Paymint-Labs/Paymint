@@ -36,9 +36,9 @@ class _MainViewState extends State<MainView> {
   // Tab text color based on tab selection
   TextStyle _buildTextStyle(int index) {
     if (index == this._currentIndex) {
-      return GoogleFonts.poppins(textStyle: TextStyle(color: Colors.black));
+      return GoogleFonts.rubik(textStyle: TextStyle(color: Colors.black));
     } else {
-      return GoogleFonts.poppins(textStyle: TextStyle(color: Colors.grey));
+      return GoogleFonts.rubik(textStyle: TextStyle(color: Colors.grey));
     }
   }
 

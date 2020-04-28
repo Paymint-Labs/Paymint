@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +50,7 @@ class MaterialAppWithTheme extends StatelessWidget {
         title: 'Paymint Alpha',
         onGenerateRoute: RouteGenerator.generateRoute,
         theme: ThemeData(
+            textTheme: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme),
             primarySwatch: Colors.blue,
             pageTransitionsTheme: const PageTransitionsTheme(
               builders: <TargetPlatform, PageTransitionsBuilder>{

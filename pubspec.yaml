@@ -37,7 +37,8 @@ dependencies:
   
   # UI/Component plugins
   flare_flutter: ^2.0.3
-  google_fonts: ^0.2.0  # To be removed eventually
+  google_fonts: ^1.0.0  # To be removed eventually
+  pretty_qr_code: ^1.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -73,6 +74,7 @@ flutter:
   assets:
     - assets/images/btc.png
     - assets/rive/success.flr
+    - google_fonts/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
