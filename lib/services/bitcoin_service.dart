@@ -8,6 +8,7 @@ import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:paymint/services/utils/currency_utils.dart';
+import 'package:paymint/services/utils/dev_utils.dart';
 
 class BitcoinService extends ChangeNotifier {
   /// Returns boolean indicating whether or not constructor has completed wallet initialization method
@@ -16,11 +17,11 @@ class BitcoinService extends ChangeNotifier {
 
   /// Holds final balances, all utxos under control 
   Future<UtxoData> _utxoData;
-  Future<UtxoData> get utxoData => _utxoData ??= fetchUtxoData();
+  Future<UtxoData> get utxoData => _utxoData ??= _fetchUtxoData();
 
   /// Holds wallet transaction data
   Future<TransactionData> _transactionData;
-  Future<TransactionData> get transactionData => _transactionData ??= fetchTransactionData();
+  Future<TransactionData> get transactionData => _transactionData ??= _fetchTransactionData();
 
   /// Holds preferred fiat currency
   Future<String> _currency;
@@ -31,36 +32,46 @@ class BitcoinService extends ChangeNotifier {
   Future<String> get currentReceivingAddress => _currentReceivingAddress;
 
   BitcoinService() {
-    this._initializeBitcoinWallet();
     _currency = CurrencyUtilities.fetchPreferredCurrency();
-    this._initializationStatus = true;
-    
-    _utxoData = fetchUtxoData(); 
-    _transactionData = fetchTransactionData();
+    this._initializeBitcoinWallet().whenComplete(() {
+      _utxoData = _fetchUtxoData(); 
+      _transactionData = _fetchTransactionData();
+    });
   }
   
-  /// Checks to see if a Bitcoin Wallet exists, if not it will create one first
-  void _initializeBitcoinWallet() async {
+  /// Initializes the user's wallet and sets class getters. Will create a wallet if one does not
+  /// already exist.
+  Future<void> _initializeBitcoinWallet() async {
     final wallet = await Hive.openBox('wallet');
-    if (wallet.isEmpty) {  // Triggers for new users automatically
-      this.generateNewWallet(wallet);
+    if (wallet.isEmpty) {  // Triggers for new users automatically. Generates wallet and defaults currency to 'USD'
+      await this._generateNewWallet(wallet);
+      await DevUtilities.debugPrintWalletState();
     } else {  // Wallet already exists, returning user
-
+      _currentReceivingAddress = this._getCurrentAddressForChain(0);
+      DevUtilities.debugPrintWalletState();
     }
   }
 
-  Future<void> generateNewWallet(Box wallet) async {
+  /// Generates initial wallet values such as mnemonic, chain (receive/change) arrays and indexes.
+  Future<void> _generateNewWallet(Box<dynamic> wallet) async {
     final secureStore = new FlutterSecureStorage();
-    final mnemonic = bip39.generateMnemonic();
-    await secureStore.write(key: 'mnemonic', value: mnemonic);  // Write a new mnemonic to secure element when Hive finds empty wallet
-    wallet.put('receivingIndex', 0);  // Set receiving address index
-    wallet.put('changeIndex', 0);
+    await secureStore.write(key: 'mnemonic', value: bip39.generateMnemonic());
+    // Set relevant indexes
+    await wallet.put('receivingIndex', 0);
+    await wallet.put('changeIndex', 0);
+    await wallet.put('transaction_count', 0);
+    // Generate and add addresses to relevant arrays
+    final initialReceivingAddress = await this._generateAddress(0, 0);
+    final initialChangeAddress = await this._generateAddress(1, 0);
+    await this._addToAddressesArray(initialReceivingAddress, 0);
+    await this._addToAddressesArray(initialChangeAddress, 1);
+    this._currentReceivingAddress = Future(() => initialReceivingAddress);
   }
 
   /// Generates a new internal or external chain address for the wallet using a BIP84 derivation path.
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
   /// [index] - This can be any integer >= 0
-  Future<String> generateAddress(int chain, int index) async {
+  Future<String> _generateAddress(int chain, int index) async {
     final secureStore = new FlutterSecureStorage();
     final seed = bip39.mnemonicToSeed(await secureStore.read(key: 'mnemonic'));
     final root = bip32.BIP32.fromSeed(seed);
@@ -71,7 +82,7 @@ class BitcoinService extends ChangeNotifier {
 
   /// Increases the index for either the internal or external chain, depending on [chain].
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
-  void incrementAddressIndex(int chain) async {
+  void _incrementAddressIndex(int chain) async {
     final wallet = await Hive.openBox('wallet');
     if (chain == 0) {
       final newIndex = wallet.get('receivingIndex') + 1;
@@ -85,7 +96,7 @@ class BitcoinService extends ChangeNotifier {
   /// Adds [address] to the relevant chain's address array, which is determined by [chain].
   /// [address] - Expects a standard native segwit address
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
-  Future<void> addToAddressesArray(String address, int chain) async {
+  Future<void> _addToAddressesArray(String address, int chain) async {
     final wallet = await Hive.openBox('wallet');
     String chainArray = '';
     if (chain == 0) {
@@ -94,8 +105,9 @@ class BitcoinService extends ChangeNotifier {
       chainArray = 'changeAddresses';
     }
 
-    final List<String> receivingAddressArray = wallet.get(chainArray);
+    final receivingAddressArray = wallet.get(chainArray);
     if (receivingAddressArray == null) {
+      print('Attempting to add the following to array for chain $chain:' + [address].toString());
       await wallet.put(chainArray, [address]);
     } else {
       // Make a deep copy of the exisiting list 
@@ -106,16 +118,32 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
-  Future<UtxoData> fetchUtxoData() async {
+  /// Returns the latest receiving/change (external/internal) address for the wallet depending on [chain]
+  /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
+  Future<String> _getCurrentAddressForChain(int chain) async {
+    final wallet = await Hive.openBox('wallet');
+    if (chain == 0) {
+      final externalChainArray = wallet.get('receivingAddresses');
+      return externalChainArray.last;
+    } else {  // Here, we assume that chain == 1
+      final internalChainArray = wallet.get('changeAddresses');
+      return internalChainArray.last;
+    }
+  }
+
+  Future<UtxoData> _fetchUtxoData() async {
+    final wallet = await Hive.openBox('wallet');
+    
     final requestBody = {
-      "currency": "USD",
-      "receivingAddresses": ["1PUhivT8B4scmLauhEikMDustjmTACFAtb"],
+      "currency": await CurrencyUtilities.fetchPreferredCurrency(),
+      "receivingAddresses": await wallet.get('receivingAddresses'),
       "internalAndChangeAddressArray": ["1PUhivT8B4scmLauhEikMDustjmTACFAtb"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      print('utxo call done');
       notifyListeners();
       return UtxoData.fromJson(json.decode(response.body));
     } else {
@@ -123,16 +151,19 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
-  Future<TransactionData> fetchTransactionData() async {
+  Future<TransactionData> _fetchTransactionData() async {
+    final wallet = await Hive.openBox('wallet');
+    
     final requestBody = {
-      "currency": "USD",
-      "receivingAddresses": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"],
+      "currency": await CurrencyUtilities.fetchPreferredCurrency(),
+      "receivingAddresses": await wallet.get('receivingAddresses'),
       "internalAndChangeAddressArray": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      print('tx call done');
       notifyListeners();
       return TransactionData.fromJson(json.decode(response.body));
     } else {

@@ -37,7 +37,8 @@ class Transaction {
   final String txType;
   final int amount;
   final List aliens;
-  final double worthNow;
+  /// Keep worthNow as dynamic
+  final dynamic worthNow;
   /// worthAtBlockTimestamp has to be dynamic in case the server fucks up the price quote and returns null instead of a double
   final dynamic worthAtBlockTimestamp;
   final int fees;
