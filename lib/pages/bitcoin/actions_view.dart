@@ -85,41 +85,75 @@ class __ReceiveViewState extends State<_ReceiveView> {
     final _bitcoinService = Provider.of<BitcoinService>(context);
 
     return Scaffold(
-        body: Center(
-      child: FutureBuilder(
-        future: _bitcoinService.currentReceivingAddress,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            print(snapshot.data);
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                PrettyQr(
-                  data: snapshot.data,
-                  roundEdges: true,
-                  elementColor: Colors.black,
-                  typeNumber: 4,
-                  size: 200,
-                ),
-                Container(height: 30),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(18.0),
-                  ),
-                  onPressed: () {},
-                  color: Colors.black,
-                  child: Text(
-                    'Copy address',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                )
-              ],
-            );
-          } else {
-            return CircularProgressIndicator();
-          }
-        },
+      bottomNavigationBar: Container(
+        height: 125,
+        child: ListView(
+          children: <Widget>[
+            ListTile(
+              onTap: () {},
+              title: Text('Reveal address text'),
+              trailing: Icon(Icons.chevron_right),
+            ),
+            ListTile(
+              onTap: () {},
+              title: Text('Show previous addresses'),
+              trailing: Icon(Icons.chevron_right),
+            )
+          ],
+        ),
       ),
+      body: FutureBuilder(
+      future: _bitcoinService.currentReceivingAddress,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print(snapshot.data);
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(height: 50),
+              PrettyQr(
+                data: snapshot.data,
+                roundEdges: true,
+                elementColor: Colors.black,
+                typeNumber: 4,
+                size: 200,
+              ),
+              Container(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RawMaterialButton(
+                    onPressed: () {},
+                    fillColor: Colors.black,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(15),
+                    child:
+                        Icon(Icons.content_copy, color: Colors.white, size: 20),
+                  ),
+                  RawMaterialButton(
+                    onPressed: () {},
+                    fillColor: Colors.black,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(15),
+                    child:
+                        Icon(Icons.share, color: Colors.white, size: 20),
+                  ),
+                  RawMaterialButton(
+                    onPressed: () {},
+                    fillColor: Colors.black,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(15),
+                    child:
+                        Icon(Icons.save_alt, color: Colors.white, size: 20),
+                  ),
+                ],
+              ),
+            ],
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     ));
   }
 }

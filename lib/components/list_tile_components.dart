@@ -20,7 +20,7 @@ class SendListTile extends StatefulWidget {
 }
 
 class _SendListTileState extends State<SendListTile> {
-  ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+  ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
 
   @override
   Widget build(BuildContext context) {
@@ -187,18 +187,18 @@ class __DetailsPageState extends State<_DetailsPage> {
                     child: FlareActor('assets/rive/success.flr',
                         animation: 'Untitled'))),
             ListTile(
-              title: Text('Date:'),
-              trailing: Text('23 Oct, 2019'),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Time:'),
-              trailing: Text('5:05 PM'),
+              title: Text('Date/Time:'),
+              trailing: Text('23 Oct, 2019 - 5:05 PM'),
               onTap: () {},
             ),
             ListTile(
               title: Text('Action:'),
               trailing: Text('Sent'),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Amount:'),
+              trailing: Text('0.1839573 BTC'),
               onTap: () {},
             ),
             ListTile(

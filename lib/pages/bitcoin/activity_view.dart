@@ -14,21 +14,17 @@ class ActivityView extends StatefulWidget {
 
 class _ActivityViewState extends State<ActivityView> {
   @override
-
   Widget build(BuildContext context) {
-    final test = Provider.of<BitcoinService>(context);
-
     return Material(
         color: Colors.white,
         child: ListView(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left: 10.0),
+              padding: const EdgeInsets.only(left: 10, bottom: 5),
               child: Container(
                 child: Text(
                   '23 Dec, 2019 - Monday',
-                  style: GoogleFonts.rubik(),
-                  textScaleFactor: 1.25,
+                  textScaleFactor: 1.3,
                 ),
               ),
             ),
@@ -43,15 +39,15 @@ class _ActivityViewState extends State<ActivityView> {
               previousValue: '71.92',
             ),
             Container(
-              height: 15,
+              height: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0),
+              padding: const EdgeInsets.only(left: 10, bottom: 5),
               child: Container(
-                child: Text('22 Dec, 2019 - Sunday',
-                  style: GoogleFonts.rubik(),
-                  textScaleFactor: 1.25,)
-              ),
+                  child: Text(
+                '22 Dec, 2019 - Sunday',
+                textScaleFactor: 1.3,
+              )),
             ),
             ReceiveListTile(
               amount: '0.02163382',

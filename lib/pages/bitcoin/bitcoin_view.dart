@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
+import 'package:provider/provider.dart';
+import 'package:paymint/services/services.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'package:paymint/pages/bitcoin/activity_view.dart';
 
@@ -19,7 +21,7 @@ class _BitcoinViewState extends State<BitcoinView>
   ScrollController _scrollController;
   PageStorageKey _scrollOffset = new PageStorageKey(0.0);
 
-  ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+  ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
 
   double _fabDimension = 56.0;
 
@@ -32,8 +34,22 @@ class _BitcoinViewState extends State<BitcoinView>
 
   @override
   Widget build(BuildContext context) {
-    return buildMainBitcoinView(
-        context); // Wrap in FutureBuilder, if complete return buildBitcoinMainView() but if it isn't return buildBitcoinMainViewLoading()
+    final wallet = Provider.of<BitcoinService>(context);
+    return FutureBuilder(
+      future: wallet.utxoData,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return FutureBuilder(
+          future: wallet.transactionData,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return buildMainBitcoinView(context);
+            } else {
+              return Text('return loading state');
+            }
+          },
+        );
+      },
+    );
   }
 
   // No need to pass future data as function parameters. Instead create provider reference object and pull directly
@@ -78,7 +94,7 @@ class _BitcoinViewState extends State<BitcoinView>
               forceElevated: boxIsScrolled,
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text("\$793.86", style: GoogleFonts.rubik(),),
+                title: Text("\$793.86", style: GoogleFonts.rubik()),
                 centerTitle: true,
                 titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
                 collapseMode: CollapseMode.pin,
