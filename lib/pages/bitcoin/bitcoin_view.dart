@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:paymint/services/services.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'package:paymint/pages/bitcoin/activity_view.dart';
+import 'package:paymint/components/global_keys.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -17,9 +18,6 @@ class BitcoinView extends StatefulWidget {
 
 class _BitcoinViewState extends State<BitcoinView>
     with TickerProviderStateMixin {
-  TabController _tabController;
-  ScrollController _scrollController;
-  PageStorageKey _scrollOffset = new PageStorageKey(0.0);
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
 
@@ -27,8 +25,8 @@ class _BitcoinViewState extends State<BitcoinView>
 
   @override
   void initState() {
-    this._tabController = TabController(vsync: this, length: 2, initialIndex: _scrollOffset.value.toInt());
-    this._scrollController = ScrollController(keepScrollOffset: true, initialScrollOffset: _scrollOffset.value);
+    bitcoinViewTabController = TabController(vsync: this, length: 2, initialIndex: bitcoinViewScrollOffset.value.toInt());
+    bitcoinViewScrollController = ScrollController(keepScrollOffset: true, initialScrollOffset: bitcoinViewScrollOffset.value);
     super.initState();
   }
 
@@ -74,8 +72,8 @@ class _BitcoinViewState extends State<BitcoinView>
         },
       ),
       body: NestedScrollView(
-        key: _scrollOffset,  // KEY HERE
-        controller: _scrollController,
+        key: bitcoinViewScrollOffset,  // KEY HERE
+        controller: bitcoinViewScrollController,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
           return <Widget>[
             SliverAppBar(
@@ -109,8 +107,8 @@ class _BitcoinViewState extends State<BitcoinView>
                 ),
               ),
               bottom: TabBar(
-                key: _scrollOffset,
-                controller: _tabController,
+                key: bitcoinViewScrollOffset,
+                controller: bitcoinViewTabController,
                 labelStyle: GoogleFonts.rubik(),
                 indicator: UnderlineTabIndicator(
                   insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
@@ -129,8 +127,8 @@ class _BitcoinViewState extends State<BitcoinView>
           ];
         },
         body: TabBarView(
-          key: _scrollOffset,
-          controller: _tabController,
+          key: bitcoinViewScrollOffset,
+          controller: bitcoinViewTabController,
           children: <Widget>[
             ActivityView(),
             Container(

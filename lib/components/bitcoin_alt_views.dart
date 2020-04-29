@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:paymint/components/global_keys.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Widget displayed in place of BitcoinView while fetching data from API
 class BitcoinViewLoading extends StatefulWidget {
@@ -13,7 +15,72 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       
+      backgroundColor: Colors.white,
+      body: NestedScrollView(
+        key: bitcoinViewScrollOffset,
+        headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.black,
+              pinned: true,
+              forceElevated: boxIsScrolled,
+              expandedHeight: MediaQuery.of(context).size.width / 1.75,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Shimmer.fromColors(
+                  baseColor: Colors.black,
+                  highlightColor: Colors.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    child: Container(
+                      height: 22,
+                      width: 80,
+                      color: Colors.black38,
+                    ),
+                  ),
+                ),
+                centerTitle: true,
+                titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
+                collapseMode: CollapseMode.pin,
+                background: Padding(
+                  padding: EdgeInsets.only(bottom: 30),
+                  child: Center(
+                    child: Shimmer.fromColors(
+                  baseColor: Colors.black,
+                  highlightColor: Colors.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    child: Container(
+                      height: 20,
+                      width: 200,
+                      color: Colors.black38,
+                    ),
+                  ),
+                ),
+                  ),
+                ),
+              ),
+              bottom: TabBar(
+                key: bitcoinViewScrollOffset,
+                controller: bitcoinViewTabController,
+                labelStyle: GoogleFonts.rubik(),
+                indicator: UnderlineTabIndicator(
+                  insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
+                  borderSide: const BorderSide(width: 3.0, color: Colors.blue),
+                ),
+                tabs: <Widget>[
+                  Tab(
+                    text: 'Activity',
+                  ),
+                  Tab(
+                    text: 'Security',
+                  ),
+                ],
+              ),
+            )
+          ];
+        },
+        body: Container(),
+      ),
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/pages/pages.dart';
 import 'package:animations/animations.dart';
 
+import 'package:paymint/components/bitcoin_alt_views.dart';
+
 /// MainView refers to the main tab bar navigation and view system in place
 class MainView extends StatefulWidget {
   MainView({Key key}) : super(key: key);
@@ -17,9 +19,7 @@ class _MainViewState extends State<MainView> {
   List<Widget> children = [
     BitcoinView(),
     BuyView(),
-    Container(
-      color: Colors.cyan,
-    ),
+    BitcoinViewLoading()
   ];
 
   // Tab icon color based on tab selection
