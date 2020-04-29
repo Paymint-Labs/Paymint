@@ -16,9 +16,7 @@ class _MainViewState extends State<MainView> {
 
   List<Widget> children = [
     BitcoinView(),
-    Container(
-      color: Colors.amber,
-    ),
+    BuyView(),
     Container(
       color: Colors.cyan,
     ),
@@ -55,7 +53,7 @@ class _MainViewState extends State<MainView> {
           currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,
           onTap: _setCurrentIndex,
-      items: [
+          items: [
             BottomNavigationBarItem(
               icon: Image.asset(
                 'assets/images/btc.png',
@@ -91,10 +89,10 @@ class _MainViewState extends State<MainView> {
           ]),
       body: PageTransitionSwitcher(
         transitionBuilder: (
-            Widget child,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation,
-            ) {
+          Widget child,
+          Animation<double> animation,
+          Animation<double> secondaryAnimation,
+        ) {
           return FadeThroughTransition(
             animation: animation,
             secondaryAnimation: secondaryAnimation,

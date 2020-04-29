@@ -13,7 +13,8 @@ class OnboardView extends StatelessWidget {
           child: Text('First launch check'),
           onPressed: () async {
             final mscData = await Hive.openBox('miscellaneous');
-            mscData.put('first_launch', false);
+            await mscData.put('first_launch', false);
+            Navigator.pushNamed(context, 'mainview');
           },
         ),
       ),
