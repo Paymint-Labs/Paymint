@@ -17,7 +17,7 @@ class _BitcoinViewState extends State<BitcoinView>
     with TickerProviderStateMixin {
   TabController _tabController;
   ScrollController _scrollController;
-  PageStorageKey mykey = new PageStorageKey(0.0);
+  PageStorageKey _scrollOffset = new PageStorageKey(0.0);
 
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
@@ -25,8 +25,8 @@ class _BitcoinViewState extends State<BitcoinView>
 
   @override
   void initState() {
-    this._tabController = TabController(vsync: this, length: 2, initialIndex: mykey.value.toInt());
-    this._scrollController = ScrollController(keepScrollOffset: true, initialScrollOffset: mykey.value);
+    this._tabController = TabController(vsync: this, length: 2, initialIndex: _scrollOffset.value.toInt());
+    this._scrollController = ScrollController(keepScrollOffset: true, initialScrollOffset: _scrollOffset.value);
     super.initState();
   }
 
@@ -58,7 +58,7 @@ class _BitcoinViewState extends State<BitcoinView>
         },
       ),
       body: NestedScrollView(
-        key: mykey,  // KEY HERE
+        key: _scrollOffset,  // KEY HERE
         controller: _scrollController,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
           return <Widget>[
@@ -93,7 +93,7 @@ class _BitcoinViewState extends State<BitcoinView>
                 ),
               ),
               bottom: TabBar(
-                key: mykey,
+                key: _scrollOffset,
                 controller: _tabController,
                 labelStyle: GoogleFonts.rubik(),
                 indicator: UnderlineTabIndicator(
@@ -113,7 +113,7 @@ class _BitcoinViewState extends State<BitcoinView>
           ];
         },
         body: TabBarView(
-          key: mykey,
+          key: _scrollOffset,
           controller: _tabController,
           children: <Widget>[
             ActivityView(),
