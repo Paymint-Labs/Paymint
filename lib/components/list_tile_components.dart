@@ -59,18 +59,27 @@ class _SendListTileState extends State<SendListTile> {
   }
 }
 
-class ReceiveListTile extends StatelessWidget {
+class ReceiveListTile extends StatefulWidget {
   const ReceiveListTile(
       {Key key, this.amount, this.currentValue, this.previousValue})
       : super(key: key);
+      
 
   final String amount;
   final String currentValue;
   final String previousValue;
 
   @override
+  _ReceiveListTileState createState() => _ReceiveListTileState();
+}
+
+class _ReceiveListTileState extends State<ReceiveListTile> {
+  ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
+
+  @override
   Widget build(BuildContext context) {
     return OpenContainer(
+      transitionType: this._transitionType,
       openBuilder: (BuildContext _, VoidCallback openContainer) {
         return _DetailsPage();
       },
@@ -85,17 +94,17 @@ class ReceiveListTile extends StatelessWidget {
             'Received',
           ),
           subtitle: Text(
-            amount + ' BTC',
+            widget.amount + ' BTC',
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                '\$' + previousValue + ' when received',
+                '\$' + widget.previousValue + ' when received',
               ),
               Text(
-                '\$' + currentValue + ' now',
+                '\$' + widget.currentValue + ' now',
               ),
             ],
           ),
