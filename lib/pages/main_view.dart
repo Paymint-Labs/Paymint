@@ -19,7 +19,7 @@ class _MainViewState extends State<MainView> {
   List<Widget> children = [
     BitcoinView(),
     BuyView(),
-    BitcoinViewLoading()
+    MoreView()
   ];
 
   // Tab icon color based on tab selection

@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
+import 'package:paymint/components/bitcoin_alt_views.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/services.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'package:paymint/pages/bitcoin/activity_view.dart';
 import 'package:paymint/components/global_keys.dart';
+import 'package:toast/toast.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -42,7 +44,7 @@ class _BitcoinViewState extends State<BitcoinView>
             if (snapshot.connectionState == ConnectionState.done) {
               return buildMainBitcoinView(context);
             } else {
-              return Text('return loading state');
+              return BitcoinViewLoading();
             }
           },
         );
@@ -59,7 +61,7 @@ class _BitcoinViewState extends State<BitcoinView>
         transitionType: _transitionType,
         closedBuilder: (BuildContext _, VoidCallback openContainer) {
           return Container(
-            color: Colors.blue,
+            color: Colors.lightBlue,
             height: this._fabDimension,
             width: this._fabDimension,
             child: Center(
@@ -80,12 +82,16 @@ class _BitcoinViewState extends State<BitcoinView>
               backgroundColor: Colors.black,
               leading: IconButton(
                 icon: Icon(Icons.notifications),
-                onPressed: () {},
+                onPressed: () {
+                  Toast.show('Coming soon', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                },
               ),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.insert_chart),
-                  onPressed: () {},
+                  onPressed: () {
+                    Toast.show('Coming soon', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  },
                 )
               ],
               pinned: true,

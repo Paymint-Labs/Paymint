@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:qr/qr.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:paymint/services/services.dart';
+import 'package:share/share.dart';
+import 'package:toast/toast.dart';
 
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
@@ -123,15 +125,19 @@ class __ReceiveViewState extends State<_ReceiveView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RawMaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Clipboard.setData(new ClipboardData(text: snapshot.data));
+                      Toast.show('Address copied to clipboard', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                    },
                     fillColor: Colors.black,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(15),
-                    child:
-                        Icon(Icons.content_copy, color: Colors.white, size: 20),
+                    child: Icon(Icons.content_copy, color: Colors.white, size: 20),
                   ),
                   RawMaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Share.share(snapshot.data);
+                    },
                     fillColor: Colors.black,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(15),
@@ -139,7 +145,9 @@ class __ReceiveViewState extends State<_ReceiveView> {
                         Icon(Icons.share, color: Colors.white, size: 20),
                   ),
                   RawMaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Toast.show('Feature coming soon', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                    },
                     fillColor: Colors.black,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(15),
@@ -155,5 +163,20 @@ class __ReceiveViewState extends State<_ReceiveView> {
         }
       },
     ));
+  }
+}
+
+class _SendView extends StatefulWidget {
+  _SendView({Key key}) : super(key: key);
+
+  @override
+  __SendViewState createState() => __SendViewState();
+}
+
+class __SendViewState extends State<_SendView> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+    );
   }
 }

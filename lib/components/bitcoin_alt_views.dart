@@ -27,14 +27,15 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
                 title: Shimmer.fromColors(
-                  baseColor: Colors.black,
-                  highlightColor: Colors.white,
+                  period: Duration(milliseconds: 850),
+                  baseColor: Colors.white12,
+                  highlightColor: Colors.white60,
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     child: Container(
-                      height: 22,
-                      width: 80,
-                      color: Colors.black38,
+                      height: 20,
+                      width: 100,
+                      color: Colors.grey,
                     ),
                   ),
                 ),
@@ -45,17 +46,18 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
                   padding: EdgeInsets.only(bottom: 30),
                   child: Center(
                     child: Shimmer.fromColors(
-                  baseColor: Colors.black,
-                  highlightColor: Colors.white,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    child: Container(
-                      height: 20,
-                      width: 200,
-                      color: Colors.black38,
+                      period: Duration(milliseconds: 850),
+                      baseColor: Colors.white12,
+                      highlightColor: Colors.white60,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        child: Container(
+                          height: 20,
+                          width: 200,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
                   ),
                 ),
               ),
@@ -79,7 +81,18 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
             )
           ];
         },
-        body: Container(),
+        body: TabBarView(
+          key: bitcoinViewScrollOffset,
+          controller: bitcoinViewTabController,
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+            ),
+            Container(
+              color: Colors.white,
+            ),
+          ],
+        ),
       ),
     );
   }
