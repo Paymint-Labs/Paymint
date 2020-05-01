@@ -14,7 +14,7 @@ class OnboardView extends StatelessWidget {
           onPressed: () async {
             final mscData = await Hive.openBox('miscellaneous');
             await mscData.put('first_launch', false);
-            Navigator.pushNamed(context, 'mainview');
+            Navigator.pushNamed(context, '/mainview');
           },
         ),
       ),

@@ -60,18 +60,20 @@ class BitcoinService extends ChangeNotifier {
     await wallet.put('receivingIndex', 0);
     await wallet.put('changeIndex', 0);
     await wallet.put('transaction_count', 0);
+    await wallet.put('phys_backup', false);
+    await wallet.put('cloud_backup', false);
     // Generate and add addresses to relevant arrays
-    final initialReceivingAddress = await this._generateAddress(0, 0);
-    final initialChangeAddress = await this._generateAddress(1, 0);
-    await this._addToAddressesArray(initialReceivingAddress, 0);
-    await this._addToAddressesArray(initialChangeAddress, 1);
+    final initialReceivingAddress = await this._generateAddressForChain(0, 0);
+    final initialChangeAddress = await this._generateAddressForChain(1, 0);
+    await this._addToAddressesArrayForChain(initialReceivingAddress, 0);
+    await this._addToAddressesArrayForChain(initialChangeAddress, 1);
     this._currentReceivingAddress = Future(() => initialReceivingAddress);
   }
 
   /// Generates a new internal or external chain address for the wallet using a BIP84 derivation path.
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
   /// [index] - This can be any integer >= 0
-  Future<String> _generateAddress(int chain, int index) async {
+  Future<String> _generateAddressForChain(int chain, int index) async {
     final secureStore = new FlutterSecureStorage();
     final seed = bip39.mnemonicToSeed(await secureStore.read(key: 'mnemonic'));
     final root = bip32.BIP32.fromSeed(seed);
@@ -82,7 +84,7 @@ class BitcoinService extends ChangeNotifier {
 
   /// Increases the index for either the internal or external chain, depending on [chain].
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
-  void _incrementAddressIndex(int chain) async {
+  void _incrementAddressIndexForChain(int chain) async {
     final wallet = await Hive.openBox('wallet');
     if (chain == 0) {
       final newIndex = wallet.get('receivingIndex') + 1;
@@ -96,7 +98,7 @@ class BitcoinService extends ChangeNotifier {
   /// Adds [address] to the relevant chain's address array, which is determined by [chain].
   /// [address] - Expects a standard native segwit address
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
-  Future<void> _addToAddressesArray(String address, int chain) async {
+  Future<void> _addToAddressesArrayForChain(String address, int chain) async {
     final wallet = await Hive.openBox('wallet');
     String chainArray = '';
     if (chain == 0) {
