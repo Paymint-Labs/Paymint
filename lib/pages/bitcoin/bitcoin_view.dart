@@ -11,10 +11,6 @@ import 'package:paymint/pages/bitcoin/activity_view.dart';
 import 'package:paymint/components/global_keys.dart';
 import 'package:toast/toast.dart';
 
-// FIRST REDO KEYS FOR BITCOINVIEW
-// THEN LINK CORRECT KEYS FOR EXTENDEDNESTEDSCROLLVIEW
-//
-
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
   BitcoinView({Key key}) : super(key: key);
