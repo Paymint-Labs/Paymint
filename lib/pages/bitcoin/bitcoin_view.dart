@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' hide NestedScrollView;
+import 'package:flutter/material.dart' hide NestedScrollView;
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 import 'package:paymint/components/bitcoin_alt_views.dart';
@@ -9,6 +10,10 @@ import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'package:paymint/pages/bitcoin/activity_view.dart';
 import 'package:paymint/components/global_keys.dart';
 import 'package:toast/toast.dart';
+
+// FIRST REDO KEYS FOR BITCOINVIEW
+// THEN LINK CORRECT KEYS FOR EXTENDEDNESTEDSCROLLVIEW
+//
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -20,15 +25,16 @@ class BitcoinView extends StatefulWidget {
 
 class _BitcoinViewState extends State<BitcoinView>
     with TickerProviderStateMixin {
-
   ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
-
   double _fabDimension = 56.0;
 
   @override
   void initState() {
-    bitcoinViewTabController = TabController(vsync: this, length: 2, initialIndex: bitcoinViewScrollOffset.value.toInt());
-    bitcoinViewScrollController = ScrollController(keepScrollOffset: true, initialScrollOffset: bitcoinViewScrollOffset.value);
+    bitcoinViewTabController = TabController(
+        vsync: this, length: 2, initialIndex: bitcoinViewScrollOffset.value);
+    bitcoinViewScrollController = ScrollController(
+        keepScrollOffset: true,
+        initialScrollOffset: bitcoinViewScrollOffset.value.toDouble());
     super.initState();
   }
 
@@ -55,6 +61,9 @@ class _BitcoinViewState extends State<BitcoinView>
   // No need to pass future data as function parameters. Instead create provider reference object and pull directly
   // since this needs to wait for the future to finish before rendering anyway
   Scaffold buildMainBitcoinView(BuildContext context) {
+    final _statusBarHeight = MediaQuery.of(context).padding.top;
+    final _pinnedHeaderHeight = _statusBarHeight + kToolbarHeight;
+
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: _OpenContainerWrapper(
@@ -74,7 +83,8 @@ class _BitcoinViewState extends State<BitcoinView>
         },
       ),
       body: NestedScrollView(
-        key: bitcoinViewScrollOffset,  // KEY HERE
+        key: bitcoinViewScrollOffset,
+        pinnedHeaderSliverHeightBuilder: () => _pinnedHeaderHeight + 50,
         controller: bitcoinViewScrollController,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
           return <Widget>[
@@ -83,14 +93,16 @@ class _BitcoinViewState extends State<BitcoinView>
               leading: IconButton(
                 icon: Icon(Icons.notifications),
                 onPressed: () {
-                  Toast.show('Coming soon', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  Toast.show('Coming soon', context,
+                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                 },
               ),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.insert_chart),
                   onPressed: () {
-                    Toast.show('Coming soon', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                    Toast.show('Coming soon', context,
+                        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                   },
                 )
               ],
@@ -116,8 +128,9 @@ class _BitcoinViewState extends State<BitcoinView>
                 key: bitcoinViewScrollOffset,
                 controller: bitcoinViewTabController,
                 labelStyle: GoogleFonts.rubik(),
+                indicatorSize: TabBarIndicatorSize
+                    .label, // Adjust indicator length to label length
                 indicator: UnderlineTabIndicator(
-                  insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
                   borderSide: const BorderSide(width: 3.0, color: Colors.blue),
                 ),
                 tabs: <Widget>[
@@ -136,10 +149,8 @@ class _BitcoinViewState extends State<BitcoinView>
           key: bitcoinViewScrollOffset,
           controller: bitcoinViewTabController,
           children: <Widget>[
-            ActivityView(),
-            Container(
-              color: Colors.white,
-            ),
+            NestedScrollViewInnerScrollPositionKeyWidget(Key('ActivityKey'), ActivityView()),
+            NestedScrollViewInnerScrollPositionKeyWidget(Key('SecurityKey'), Container(color: Colors.white)),
           ],
         ),
       ),
