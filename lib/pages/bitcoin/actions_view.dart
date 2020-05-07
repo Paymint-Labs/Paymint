@@ -129,7 +129,7 @@ class __ReceiveViewState extends State<_ReceiveView> {
                       Clipboard.setData(new ClipboardData(text: snapshot.data));
                       Toast.show('Address copied to clipboard', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                     },
-                    fillColor: Colors.lightBlue,
+                    fillColor: Colors.black,
                     elevation: 0,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(15),
@@ -139,7 +139,7 @@ class __ReceiveViewState extends State<_ReceiveView> {
                     onPressed: () {
                       Share.share(snapshot.data);
                     },
-                    fillColor: Colors.lightBlue,
+                    fillColor: Colors.black,
                     elevation: 0,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(15),
@@ -150,7 +150,7 @@ class __ReceiveViewState extends State<_ReceiveView> {
                     onPressed: () {
                       Toast.show('Feature coming soon', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                     },
-                    fillColor: Colors.lightBlue,
+                    fillColor: Colors.grey,
                     elevation: 0,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(15),

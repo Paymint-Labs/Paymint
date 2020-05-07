@@ -6,6 +6,63 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:paymint/components/animated_gradient.dart';
+
+class ActiveOutputTile extends StatefulWidget {
+  final String name;
+  final String currentValue;
+  final String blockHeight;
+
+  ActiveOutputTile({Key key, @required this.name, @required this.currentValue, @required this.blockHeight})
+      : super(key: key);
+
+  @override
+  _ActiveOutputTileState createState() =>
+      _ActiveOutputTileState(name, currentValue, blockHeight);
+}
+
+class _ActiveOutputTileState extends State<ActiveOutputTile> {
+  final String _name;
+  final String _currentValue;
+  final String _blockHeight;
+
+  final List<Gradient> _sweepGradients = [
+    SweepGradient(colors: [
+      Colors.blueAccent,
+      Colors.lightBlueAccent,
+      Colors.blueAccent
+    ]),
+    SweepGradient(colors: [
+      Colors.lightBlueAccent,
+      Colors.blue,
+      Colors.lightBlueAccent
+    ]),
+    SweepGradient(colors: [
+      Colors.cyan,
+      Colors.lightBlueAccent,
+      Colors.cyan
+    ]),
+    
+  ];
+
+  _ActiveOutputTileState(this._name, this._currentValue, this._blockHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(_name),
+      subtitle: Text(_blockHeight),
+      trailing: Text(_currentValue),
+      leading: CircleAvatar(
+        child: ClipRRect(
+          child: AnimatedGradientBox(_sweepGradients),
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      onTap: () {},
+    );
+  }
+}
 
 class SendListTile extends StatefulWidget {
   SendListTile({Key key, this.amount, this.currentValue, this.previousValue})
@@ -63,7 +120,6 @@ class ReceiveListTile extends StatefulWidget {
   const ReceiveListTile(
       {Key key, this.amount, this.currentValue, this.previousValue})
       : super(key: key);
-      
 
   final String amount;
   final String currentValue;

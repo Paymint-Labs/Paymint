@@ -146,7 +146,7 @@ class _BitcoinViewState extends State<BitcoinView>
           controller: bitcoinViewTabController,
           children: <Widget>[
             NestedScrollViewInnerScrollPositionKeyWidget(Key('ActivityKey'), ActivityView()),
-            NestedScrollViewInnerScrollPositionKeyWidget(Key('SecurityKey'), Container(color: Colors.white)),
+            NestedScrollViewInnerScrollPositionKeyWidget(Key('SecurityKey'), Container()),
           ],
         ),
       ),
