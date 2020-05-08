@@ -38,18 +38,13 @@ class _BitcoinViewState extends State<BitcoinView>
   Widget build(BuildContext context) {
     final wallet = Provider.of<BitcoinService>(context);
     return FutureBuilder(
-      future: wallet.utxoData,
+      future: wallet.initializationStatus,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return FutureBuilder(
-          future: wallet.transactionData,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return buildMainBitcoinView(context);
-            } else {
-              return BitcoinViewLoading();
-            }
-          },
-        );
+        if (snapshot.connectionState == ConnectionState.done) {
+          return buildMainBitcoinView(context);
+        } else {
+          return BitcoinViewLoading();
+        }
       },
     );
   }
@@ -64,7 +59,7 @@ class _BitcoinViewState extends State<BitcoinView>
       backgroundColor: Colors.white,
       floatingActionButton: _OpenContainerWrapper(
         transitionType: _transitionType,
-        closedBuilder: (BuildContext _, VoidCallback openContainer) {
+        closedBuilder: (BuildContext context, VoidCallback openContainer) {
           return Container(
             color: Colors.lightBlue,
             height: this._fabDimension,

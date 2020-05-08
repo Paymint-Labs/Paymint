@@ -53,7 +53,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  hive_generator: ^0.7.0+2
   build_runner: ^1.9.0
   flutter_launcher_icons: ^0.7.3
 

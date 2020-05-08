@@ -16,8 +16,8 @@ flutter run --release
 ```
 
 ## Features
-- HD Native Segwit Addresses (BIP 84, 173)
-- Advanced UTXO selection/filtering
+- HD Native Segwit Addresses (BIP 84)
+- Coin control
 - Payment Batching
 - Cloud wallet backups
 

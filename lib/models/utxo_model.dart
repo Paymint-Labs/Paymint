@@ -3,7 +3,7 @@
 /// provides the wallet with a UTXO list and corresponding balances
 
 class UtxoData {
-  final dynamic totalUserCurrency;
+  final String totalUserCurrency;
   final int satoshiBalance;
   final dynamic bitcoinBalance;
   List<UtxoObject> unspentOutputArray;
@@ -13,7 +13,7 @@ class UtxoData {
   factory UtxoData.fromJson(Map<String, dynamic> json) {
     var outputList = json['outputArray'] as List;
     List<UtxoObject> utxoList = outputList.map((output) => UtxoObject.fromJson(output)).toList(); 
-    final double totalUserCurr = json['total_user_currency'].toDouble(); 
+    final String totalUserCurr = json['total_user_currency']; 
     final double totalBtc = json['total_btc'].toDouble(); 
     
     return UtxoData(
@@ -29,7 +29,7 @@ class UtxoObject {
   final String txid;
   final int vout;
   final Status status;
-  final int value;
+  final String value;
 
   UtxoObject({this.txid, this.vout, this.status, this.value});
 

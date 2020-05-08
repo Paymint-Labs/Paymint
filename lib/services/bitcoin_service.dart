@@ -12,8 +12,8 @@ import 'package:paymint/services/utils/dev_utils.dart';
 
 class BitcoinService extends ChangeNotifier {
   /// Returns boolean indicating whether or not constructor has completed wallet initialization method
-  bool _initializationStatus = false;
-  bool get initializationStatus => _initializationStatus;
+  Future<bool> _initializationStatus;
+  Future<bool> get initializationStatus => _initializationStatus;
 
   /// Holds final balances, all utxos under control 
   Future<UtxoData> _utxoData;
@@ -36,7 +36,7 @@ class BitcoinService extends ChangeNotifier {
     this._initializeBitcoinWallet().whenComplete(() {
       _utxoData = _fetchUtxoData(); 
       _transactionData = _fetchTransactionData();
-    });
+    }).whenComplete(() => this._initializationStatus = Future(() => true));
   }
   
   /// Initializes the user's wallet and sets class getters. Will create a wallet if one does not
@@ -46,7 +46,7 @@ class BitcoinService extends ChangeNotifier {
     if (wallet.isEmpty) {  // Triggers for new users automatically. Generates wallet and defaults currency to 'USD'
       await this._generateNewWallet(wallet);
       await DevUtilities.debugPrintWalletState();
-    } else {  // Wallet already exists, returning user
+    } else {  // Wallet alreiady exists, returning user
       _currentReceivingAddress = this._getCurrentAddressForChain(0);
       DevUtilities.debugPrintWalletState();
     }
