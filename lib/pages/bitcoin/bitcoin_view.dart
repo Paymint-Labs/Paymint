@@ -4,11 +4,13 @@ import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 import 'package:paymint/components/bitcoin_alt_views.dart';
+import 'package:paymint/components/list_tile_components.dart';
+import 'package:paymint/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/services.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
-import 'package:paymint/pages/bitcoin/activity_view.dart';
 import 'package:paymint/components/global_keys.dart';
+import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
@@ -38,10 +40,21 @@ class _BitcoinViewState extends State<BitcoinView>
   Widget build(BuildContext context) {
     final wallet = Provider.of<BitcoinService>(context);
     return FutureBuilder(
-      future: wallet.initializationStatus,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return buildMainBitcoinView(context);
+      future: wallet.transactionData,
+      builder: (BuildContext context,
+          AsyncSnapshot<TransactionData> transactionData) {
+        if (transactionData.connectionState == ConnectionState.done) {
+          return FutureBuilder(
+              future: wallet.utxoData,
+              builder:
+                  (BuildContext context, AsyncSnapshot<UtxoData> utxoData) {
+                if (utxoData.connectionState == ConnectionState.done) {
+                  return _buildMainBitcoinView(
+                      context, utxoData, transactionData);
+                } else {
+                  return BitcoinViewLoading();
+                }
+              });
         } else {
           return BitcoinViewLoading();
         }
@@ -49,9 +62,8 @@ class _BitcoinViewState extends State<BitcoinView>
     );
   }
 
-  // No need to pass future data as function parameters. Instead create provider reference object and pull directly
-  // since this needs to wait for the future to finish before rendering anyway
-  Scaffold buildMainBitcoinView(BuildContext context) {
+  Scaffold _buildMainBitcoinView(BuildContext context,
+      AsyncSnapshot<UtxoData> utxoData, AsyncSnapshot<TransactionData> txData) {
     final _statusBarHeight = MediaQuery.of(context).padding.top;
     final _pinnedHeaderHeight = _statusBarHeight + kToolbarHeight;
 
@@ -101,7 +113,8 @@ class _BitcoinViewState extends State<BitcoinView>
               forceElevated: boxIsScrolled,
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text("\$793.86", style: GoogleFonts.rubik()),
+                title: Text(utxoData.data.totalUserCurrency,
+                    style: GoogleFonts.rubik()),
                 centerTitle: true,
                 titlePadding: EdgeInsets.fromLTRB(0, 0, 0, 60),
                 collapseMode: CollapseMode.pin,
@@ -109,7 +122,7 @@ class _BitcoinViewState extends State<BitcoinView>
                   padding: EdgeInsets.only(bottom: 30),
                   child: Center(
                     child: Text(
-                      '0.11372974 BTC',
+                      utxoData.data.bitcoinBalance.toString() + ' BTC',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
@@ -140,12 +153,76 @@ class _BitcoinViewState extends State<BitcoinView>
           key: bitcoinViewScrollOffset,
           controller: bitcoinViewTabController,
           children: <Widget>[
-            NestedScrollViewInnerScrollPositionKeyWidget(Key('ActivityKey'), ActivityView()),
-            NestedScrollViewInnerScrollPositionKeyWidget(Key('SecurityKey'), Container()),
+            NestedScrollViewInnerScrollPositionKeyWidget(
+                Key('ActivityKey'), _buildActivityView(txData)),
+            NestedScrollViewInnerScrollPositionKeyWidget(
+                Key('SecurityKey'), _buildSecurityView(utxoData)),
           ],
         ),
       ),
     );
+  }
+
+  /// Nested listViewBuilder
+  Widget _buildActivityView(AsyncSnapshot<TransactionData> txData) {
+    if (txData.data.txChunks.length == 0) {
+      return Center(child: Text('No transactions found :('));
+    } else {  // Assuming here that #transactions >= 1
+      return Container(
+        child: ListView.builder(
+          itemCount: txData.data.txChunks.length,
+          itemBuilder: (BuildContext context, int index) {
+            return StickyHeader(
+              header: Container(
+                  child: Text(extractDateFromTimestamp(
+                      txData.data.txChunks[index].timestamp))),
+              content: ListView(
+                children: _buildTransactionChildLists(
+                    txData.data.txChunks[index].transactions),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+              ),
+            );
+          },
+        ),
+      );
+    }
+  }
+
+  String extractDateFromTimestamp(int timestamp) {
+    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000)
+        .toLocal()
+        .toString();
+  }
+
+  List<Widget> _buildTransactionChildLists(List<Transaction> txChildren) {
+    final List<Widget> finalListView = [];
+
+    final satoshisToBtc =
+        (int satoshiAmount) => (satoshiAmount / 100000000).toString();
+
+    for (var txIndex = 0; txIndex < txChildren.length; txIndex++) {
+      final tx = txChildren[txIndex];
+      if (txChildren[txIndex].txType == 'Sent') {
+        finalListView.add(SendListTile(
+          amount: satoshisToBtc(tx.amount),
+          currentValue: tx.worthNow,
+          previousValue: tx.worthAtBlockTimestamp,
+        ));
+      } else if (txChildren[txIndex].txType == 'Received') {
+        // Here, we assume the transaction is a Receive type transaction
+        finalListView.add(ReceiveListTile(
+          amount: satoshisToBtc(tx.amount),
+          currentValue: tx.worthNow,
+          previousValue: tx.worthAtBlockTimestamp,
+        ));
+      }
+    }
+    return finalListView;
+  }
+
+  Widget _buildSecurityView(AsyncSnapshot<UtxoData> utxoData) {
+    return Container();
   }
 }
 

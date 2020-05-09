@@ -1,6 +1,4 @@
-/**
- * ListTile Widgets for the Activity and Security View.
- */
+/// ListTile components for the Activity and Security Views inside the BitcoinView widget
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,10 +101,10 @@ class _SendListTileState extends State<SendListTile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                '\$' + widget.previousValue + ' when sent',
+                widget.previousValue + ' when sent',
               ),
               Text(
-                '\$' + widget.currentValue + ' now',
+                widget.currentValue + ' now',
               ),
             ],
           ),
@@ -157,10 +155,10 @@ class _ReceiveListTileState extends State<ReceiveListTile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                '\$' + widget.previousValue + ' when received',
+                widget.previousValue + ' when received',
               ),
               Text(
-                '\$' + widget.currentValue + ' now',
+                widget.currentValue + ' now',
               ),
             ],
           ),

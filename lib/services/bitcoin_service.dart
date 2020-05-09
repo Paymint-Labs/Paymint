@@ -34,9 +34,9 @@ class BitcoinService extends ChangeNotifier {
   BitcoinService() {
     _currency = CurrencyUtilities.fetchPreferredCurrency();
     this._initializeBitcoinWallet().whenComplete(() {
-      _utxoData = _fetchUtxoData(); 
       _transactionData = _fetchTransactionData();
-    }).whenComplete(() => this._initializationStatus = Future(() => true));
+      _utxoData = _fetchUtxoData(); 
+    });
   }
   
   /// Initializes the user's wallet and sets class getters. Will create a wallet if one does not
@@ -138,8 +138,8 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": await wallet.get('receivingAddresses'),
-      "internalAndChangeAddressArray": ["1PUhivT8B4scmLauhEikMDustjmTACFAtb"]
+      "receivingAddresses": ["18cBEMRxXHqzWWCxZNtU91F5sbUNKhL5PX"],
+      "internalAndChangeAddressArray": ["18cBEMRxXHqzWWCxZNtU91F5sbUNKhL5PX"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
@@ -158,7 +158,7 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": await wallet.get('receivingAddresses'),
+      "receivingAddresses": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"],
       "internalAndChangeAddressArray": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"]
     };
 
