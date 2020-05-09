@@ -101,10 +101,10 @@ class _SendListTileState extends State<SendListTile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                widget.previousValue + ' when sent',
+                widget.currentValue + ' now',
               ),
               Text(
-                widget.currentValue + ' now',
+                widget.previousValue + ' when sent',
               ),
             ],
           ),
@@ -155,10 +155,10 @@ class _ReceiveListTileState extends State<ReceiveListTile> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                widget.previousValue + ' when received',
+                widget.currentValue + ' now',
               ),
               Text(
-                widget.currentValue + ' now',
+                widget.previousValue + ' when received',
               ),
             ],
           ),

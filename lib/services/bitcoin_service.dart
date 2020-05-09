@@ -158,8 +158,8 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"],
-      "internalAndChangeAddressArray": ["bc1q5jf6r77vhdd4t54xmzgls823g80pz9d9k73d2r"]
+      "receivingAddresses": ["18Jxn1KuQRUXZJbpUkuCDJih8YL7i9Jnft"],
+      "internalAndChangeAddressArray": ["18Jxn1KuQRUXZJbpUkuCDJih8YL7i9Jnft"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
