@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:paymint/components/animated_gradient.dart';
+import 'package:paymint/models/models.dart';
 
 class ActiveOutputTile extends StatefulWidget {
   final String name;
@@ -62,13 +63,36 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
   }
 }
 
+class IncomingTransactionListTile extends StatefulWidget {
+  IncomingTransactionListTile(this.satoshiAmt, this.currentValue);
+  final int satoshiAmt;
+  final String currentValue;
+
+  @override
+  _IncomingTransactionListTileState createState() => _IncomingTransactionListTileState();
+}
+
+class _IncomingTransactionListTileState extends State<IncomingTransactionListTile> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: CircularProgressIndicator(),
+      title: Text('Incoming Transaction...'),
+      subtitle: Text(widget.satoshiAmt.toString()),
+      trailing: Text(widget.currentValue),
+    );
+  }
+}
+
 class SendListTile extends StatefulWidget {
-  SendListTile({Key key, this.amount, this.currentValue, this.previousValue})
+  SendListTile({Key key, this.amount, this.currentValue, this.previousValue, this.tx})
       : super(key: key);
 
   final String amount;
   final String currentValue;
   final String previousValue;
+
+  final Transaction tx;
 
   @override
   _SendListTileState createState() => _SendListTileState();
@@ -82,7 +106,7 @@ class _SendListTileState extends State<SendListTile> {
     return OpenContainer(
       transitionType: this._transitionType,
       openBuilder: (BuildContext _, VoidCallback openContainer) {
-        return _DetailsPage();
+        return _DetailsPage(widget.tx);
       },
       tappable: true,
       closedShape: const RoundedRectangleBorder(),
@@ -116,12 +140,14 @@ class _SendListTileState extends State<SendListTile> {
 
 class ReceiveListTile extends StatefulWidget {
   const ReceiveListTile(
-      {Key key, this.amount, this.currentValue, this.previousValue})
+      {Key key, this.amount, this.currentValue, this.previousValue, this.tx})
       : super(key: key);
 
   final String amount;
   final String currentValue;
   final String previousValue;
+
+  final Transaction tx;
 
   @override
   _ReceiveListTileState createState() => _ReceiveListTileState();
@@ -135,7 +161,7 @@ class _ReceiveListTileState extends State<ReceiveListTile> {
     return OpenContainer(
       transitionType: this._transitionType,
       openBuilder: (BuildContext _, VoidCallback openContainer) {
-        return _DetailsPage();
+        return _DetailsPage(widget.tx);
       },
       tappable: true,
       closedShape: const RoundedRectangleBorder(),
@@ -199,30 +225,12 @@ class PurchaseListTile extends StatelessWidget {
   }
 }
 
-class _OpenContainerWrapper extends StatelessWidget {
-  const _OpenContainerWrapper({
-    this.closedBuilder,
-    this.transitionType,
-  });
-
-  final OpenContainerBuilder closedBuilder;
-  final ContainerTransitionType transitionType;
-
-  @override
-  Widget build(BuildContext context) {
-    return OpenContainer(
-      transitionType: transitionType,
-      openBuilder: (BuildContext context, VoidCallback _) {
-        return _DetailsPage();
-      },
-      tappable: false,
-      closedBuilder: closedBuilder,
-    );
-  }
-}
 
 /// Widget for the default view for transaction details
 class _DetailsPage extends StatefulWidget {
+  final Transaction _tx;
+  
+  _DetailsPage(this._tx);
   @override
   __DetailsPageState createState() => __DetailsPageState();
 }
@@ -251,35 +259,39 @@ class __DetailsPageState extends State<_DetailsPage> {
                         animation: 'Untitled'))),
             ListTile(
               title: Text('Date/Time:'),
-              trailing: Text('23 Oct, 2019 - 5:05 PM'),
+              trailing: Text(_buildDateTimeForTx(widget._tx.timestamp)),
               onTap: () {},
             ),
             ListTile(
               title: Text('Action:'),
-              trailing: Text('Sent'),
+              trailing: Text(widget._tx.txType),
               onTap: () {},
             ),
             ListTile(
               title: Text('Amount:'),
-              trailing: Text('0.1839573 BTC'),
+              trailing: Text(_extractBtcFromSatoshis(widget._tx.amount)),
               onTap: () {},
             ),
             ListTile(
               title: Text('Worth now:'),
-              trailing: Text('\$294.83'),
+              trailing: Text(widget._tx.worthNow),
               onTap: () {},
             ),
             ListTile(
               title: Text('Worth when sent:'),
-              trailing: Text('\$292.21'),
+              trailing: Text(widget._tx.worthAtBlockTimestamp),
               onTap: () {},
             ),
-            ListTile(
-              title: Text('Balance delta:'),
-              trailing: Text('Lost \$2.75 in transaction'),
-              onTap: () {},
-            )
           ],
         ));
+  }
+
+  String _buildDateTimeForTx(int timestamp) {
+    final DateTime time = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return time.toLocal().toString().substring(0, 16);
+  }
+
+  String _extractBtcFromSatoshis(int satoshis) {
+    return (satoshis / 100000000).toString() + ' BTC';
   }
 }

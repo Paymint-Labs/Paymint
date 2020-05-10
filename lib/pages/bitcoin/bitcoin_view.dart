@@ -9,7 +9,7 @@ import 'package:paymint/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/services.dart';
 import 'package:paymint/pages/bitcoin/actions_view.dart';
-import 'package:paymint/components/global_keys.dart';
+import 'package:paymint/components/globals.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 
@@ -170,13 +170,18 @@ class _BitcoinViewState extends State<BitcoinView>
     } else {  // Assuming here that #transactions >= 1
       return Container(
         child: ListView.builder(
+          key: bitcoinViewScrollOffset,
           itemCount: txData.data.txChunks.length,
           itemBuilder: (BuildContext context, int index) {
             return StickyHeader(
+              key: bitcoinViewScrollOffset,
               header: Container(
+                color: Colors.white,
+                padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
                   child: Text(extractDateFromTimestamp(
-                      txData.data.txChunks[index].timestamp))),
+                      txData.data.txChunks[index].timestamp ?? '0'), style: TextStyle(fontSize: 16),)),
               content: ListView(
+                physics: NeverScrollableScrollPhysics(),
                 children: _buildTransactionChildLists(
                     txData.data.txChunks[index].transactions),
                 shrinkWrap: true,
@@ -190,9 +195,12 @@ class _BitcoinViewState extends State<BitcoinView>
   }
 
   String extractDateFromTimestamp(int timestamp) {
-    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000)
-        .toLocal()
-        .toString();
+    final int weekday = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).weekday;
+    final int day = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).day;
+    final int month = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).month;
+    final int year = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).year;
+
+    return monthMap[month] + ' $day, $year - ' + weekDayMap[weekday];
   }
 
   List<Widget> _buildTransactionChildLists(List<Transaction> txChildren) {
@@ -208,6 +216,7 @@ class _BitcoinViewState extends State<BitcoinView>
           amount: satoshisToBtc(tx.amount),
           currentValue: tx.worthNow,
           previousValue: tx.worthAtBlockTimestamp,
+          tx: txChildren[txIndex],
         ));
       } else if (txChildren[txIndex].txType == 'Received') {
         // Here, we assume the transaction is a Receive type transaction
@@ -215,14 +224,18 @@ class _BitcoinViewState extends State<BitcoinView>
           amount: satoshisToBtc(tx.amount),
           currentValue: tx.worthNow,
           previousValue: tx.worthAtBlockTimestamp,
+          tx: txChildren[txIndex],
         ));
       }
     }
+    finalListView.add(SizedBox(height: 13));
     return finalListView;
   }
 
   Widget _buildSecurityView(AsyncSnapshot<UtxoData> utxoData) {
-    return Container();
+    return Container(
+      child: Center(child: Text('Why does god hate me?')),
+    );
   }
 }
 

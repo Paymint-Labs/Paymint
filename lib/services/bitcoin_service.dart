@@ -138,8 +138,8 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": ["18cBEMRxXHqzWWCxZNtU91F5sbUNKhL5PX"],
-      "internalAndChangeAddressArray": ["18cBEMRxXHqzWWCxZNtU91F5sbUNKhL5PX"]
+      "receivingAddresses": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"],
+      "internalAndChangeAddressArray": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
@@ -158,8 +158,8 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": ["18Jxn1KuQRUXZJbpUkuCDJih8YL7i9Jnft"],
-      "internalAndChangeAddressArray": ["18Jxn1KuQRUXZJbpUkuCDJih8YL7i9Jnft"]
+      "receivingAddresses": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"],
+      "internalAndChangeAddressArray": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
