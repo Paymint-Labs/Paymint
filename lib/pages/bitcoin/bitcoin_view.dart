@@ -12,6 +12,7 @@ import 'package:paymint/pages/bitcoin/actions_view.dart';
 import 'package:paymint/components/globals.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -129,7 +130,6 @@ class _BitcoinViewState extends State<BitcoinView>
                 ),
               ),
               bottom: TabBar(
-                key: bitcoinViewScrollOffset,
                 controller: bitcoinViewTabController,
                 labelStyle: GoogleFonts.rubik(),
                 indicatorSize: TabBarIndicatorSize
@@ -156,7 +156,7 @@ class _BitcoinViewState extends State<BitcoinView>
             NestedScrollViewInnerScrollPositionKeyWidget(
                 Key('ActivityKey'), _buildActivityView(txData)),
             NestedScrollViewInnerScrollPositionKeyWidget(
-                Key('SecurityKey'), _buildSecurityView(utxoData)),
+                Key('SecurityKey'), _buildSecurityView(utxoData, context)),
           ],
         ),
       ),
@@ -167,19 +167,21 @@ class _BitcoinViewState extends State<BitcoinView>
   Widget _buildActivityView(AsyncSnapshot<TransactionData> txData) {
     if (txData.data.txChunks.length == 0) {
       return Center(child: Text('No transactions found :('));
-    } else {  // Assuming here that #transactions >= 1
+    } else {
+      // Assuming here that #transactions >= 1
       return Container(
         child: ListView.builder(
-          key: bitcoinViewScrollOffset,
           itemCount: txData.data.txChunks.length,
           itemBuilder: (BuildContext context, int index) {
             return StickyHeader(
-              key: bitcoinViewScrollOffset,
               header: Container(
-                color: Colors.white,
-                padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
-                  child: Text(extractDateFromTimestamp(
-                      txData.data.txChunks[index].timestamp ?? '0'), style: TextStyle(fontSize: 16),)),
+                  color: Colors.white,
+                  padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
+                  child: Text(
+                    extractDateFromTimestamp(
+                        txData.data.txChunks[index].timestamp ?? 0),
+                    textScaleFactor: 1.25,
+                  )),
               content: ListView(
                 physics: NeverScrollableScrollPhysics(),
                 children: _buildTransactionChildLists(
@@ -195,9 +197,15 @@ class _BitcoinViewState extends State<BitcoinView>
   }
 
   String extractDateFromTimestamp(int timestamp) {
-    final int weekday = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).weekday;
+    if (timestamp == 0) {
+      return 'In transit...';
+    }
+
+    final int weekday =
+        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).weekday;
     final int day = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).day;
-    final int month = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).month;
+    final int month =
+        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).month;
     final int year = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).year;
 
     return monthMap[month] + ' $day, $year - ' + weekDayMap[weekday];
@@ -232,11 +240,23 @@ class _BitcoinViewState extends State<BitcoinView>
     return finalListView;
   }
 
-  Widget _buildSecurityView(AsyncSnapshot<UtxoData> utxoData) {
+  Widget _buildSecurityView(
+      AsyncSnapshot<UtxoData> utxoData, BuildContext context) {
     return Container(
-      child: Center(child: Text('Why does god hate me?')),
+      child: ListView(
+        children: _buildActiveOutputsView(context),
+      ),
     );
   }
+}
+
+List<Widget> _buildActiveOutputsView(BuildContext context) {
+  return [];
+}
+
+String timestampToDateString(int timestamp) {
+  final dt = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  return timeago.format(dt);
 }
 
 class _OpenContainerWrapper extends StatelessWidget {

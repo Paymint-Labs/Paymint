@@ -29,16 +29,22 @@ class UtxoObject {
   final String txid;
   final int vout;
   final Status status;
-  final String value;
+  final int value;
+  final String fiatWorth;
+  String txName;
+  bool blocked;
 
-  UtxoObject({this.txid, this.vout, this.status, this.value});
+  UtxoObject({this.txid, this.vout, this.status, this.value, this.fiatWorth, this.txName, this.blocked});
 
   factory UtxoObject.fromJson(Map<String, dynamic> json) {
     return UtxoObject(
       txid: json['txid'],
       vout: json['vout'],
       status: Status.fromJson(json['status']),
-      value: json['value']
+      value: json['value'],
+      fiatWorth: json['fiatWorth'],
+      txName: '----',
+      blocked: false
     );
   }
 }

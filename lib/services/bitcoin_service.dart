@@ -31,6 +31,10 @@ class BitcoinService extends ChangeNotifier {
   Future<String> _currentReceivingAddress;
   Future<String> get currentReceivingAddress => _currentReceivingAddress;
 
+  /// Holds all active outputs for wallet
+  List<UtxoObject> _outputsList = [];
+  List<UtxoObject> get activeOutputs => _outputsList;
+
   BitcoinService() {
     _currency = CurrencyUtilities.fetchPreferredCurrency();
     this._initializeBitcoinWallet().whenComplete(() {
@@ -62,6 +66,7 @@ class BitcoinService extends ChangeNotifier {
     await wallet.put('transaction_count', 0);
     await wallet.put('phys_backup', false);
     await wallet.put('cloud_backup', false);
+    await wallet.put('blocked_tx_hashes', []); // A list of transaction hashes to represent frozen utxos in wallet
     // Generate and add addresses to relevant arrays
     final initialReceivingAddress = await this._generateAddressForChain(0, 0);
     final initialChangeAddress = await this._generateAddressForChain(1, 0);
@@ -114,7 +119,7 @@ class BitcoinService extends ChangeNotifier {
     } else {
       // Make a deep copy of the exisiting list 
       final newArray = new List<String>();
-      receivingAddressArray.forEach((_address) => {newArray.add(_address)});
+      receivingAddressArray.forEach((_address) => newArray.add(_address));
       newArray.add(address);  // Add the address passed into the method
       await wallet.put(chainArray, newArray);
     }
@@ -133,19 +138,43 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
+  _sortOutputs(List<UtxoObject> utxos) async {
+    final wallet = await Hive.openBox('wallet');
+    final List<String> blockedHashArray = wallet.get('blocked_tx_hashes');
+    final lst = new List();
+    blockedHashArray.forEach((hash) => lst.add(hash));
+
+
+    this._outputsList = [];
+
+    for (var i = 0; i < utxos.length; i++) {
+      if (lst.contains(utxos[i].txid)) {
+        utxos[i].blocked = true;
+        utxos[i].txName = 'Output #$i';
+        this._outputsList.add(utxos[i]);
+      } else if (!lst.contains(utxos[i].txid)){
+        utxos[i].txName = 'Output #$i';
+        this._outputsList.add(utxos[i]);
+      }
+    }
+    notifyListeners();
+  }
+
   Future<UtxoData> _fetchUtxoData() async {
     final wallet = await Hive.openBox('wallet');
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"],
-      "internalAndChangeAddressArray": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"]
+      "receivingAddresses": ["1Hsvhj1RRS8akGWyb4u3kMDT646DNuQU5F"],
+      "internalAndChangeAddressArray": ["1Hsvhj1RRS8akGWyb4u3kMDT646DNuQU5F"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('utxo call done');
+      // final List<UtxoObject> allOutputs = UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
+      // await _sortOutputs(allOutputs);
       notifyListeners();
       return UtxoData.fromJson(json.decode(response.body));
     } else {
@@ -158,8 +187,8 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"],
-      "internalAndChangeAddressArray": ["123kp88gZ24HsrXNGd16f91KLaosXccy8g"]
+      "receivingAddresses": ["1Hsvhj1RRS8akGWyb4u3kMDT646DNuQU5F"],
+      "internalAndChangeAddressArray": ["1Hsvhj1RRS8akGWyb4u3kMDT646DNuQU5F"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
