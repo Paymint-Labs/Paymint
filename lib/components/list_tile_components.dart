@@ -26,11 +26,11 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
   final String _blockHeight;
 
   final List<Gradient> _sweepGradients = [
-    SweepGradient(colors: [
-      Colors.blueAccent,
-      Colors.lightBlueAccent,
-      Colors.blueAccent
-    ]),
+    // SweepGradient(colors: [
+    //   Colors.blueAccent,
+    //   Colors.lightBlueAccent,
+    //   Colors.blueAccent
+    // ]),
     SweepGradient(colors: [
       Colors.lightBlueAccent,
       Colors.blue,
@@ -39,7 +39,6 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
     SweepGradient(colors: [
       Colors.cyan,
       Colors.lightBlueAccent,
-      Colors.cyan
     ]),
     
   ];
@@ -54,7 +53,7 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
       trailing: Text(_currentValue),
       leading: CircleAvatar(
         child: ClipRRect(
-          child: AnimatedGradientBox(_sweepGradients),
+          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
           borderRadius: BorderRadius.circular(30),
         ),
       ),
