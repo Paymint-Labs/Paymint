@@ -198,7 +198,7 @@ class _BitcoinViewState extends State<BitcoinView>
 
   String extractDateFromTimestamp(int timestamp) {
     if (timestamp == 0) {
-      return 'In transit...';
+      return 'Transactions in-transit...';
     }
 
     final int weekday =
@@ -219,6 +219,8 @@ class _BitcoinViewState extends State<BitcoinView>
 
     for (var txIndex = 0; txIndex < txChildren.length; txIndex++) {
       final tx = txChildren[txIndex];
+      // INSERT CHECK FOR UNCONFIRMED TRANSACTION HERE FIRST
+
       if (txChildren[txIndex].txType == 'Sent') {
         finalListView.add(SendListTile(
           amount: satoshisToBtc(tx.amount),
@@ -244,13 +246,13 @@ class _BitcoinViewState extends State<BitcoinView>
       AsyncSnapshot<UtxoData> utxoData, BuildContext context) {
     return Container(
       child: ListView(
-        children: _buildActiveOutputsView(context),
+        children: _buildUtxoList(context),
       ),
     );
   }
 }
 
-List<Widget> _buildActiveOutputsView(BuildContext context) {
+List<Widget> _buildUtxoList(BuildContext context) {
   return [];
 }
 

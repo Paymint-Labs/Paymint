@@ -50,7 +50,7 @@ class BitcoinService extends ChangeNotifier {
     if (wallet.isEmpty) {  // Triggers for new users automatically. Generates wallet and defaults currency to 'USD'
       await this._generateNewWallet(wallet);
       await DevUtilities.debugPrintWalletState();
-    } else {  // Wallet alreiady exists, returning user
+    } else {  // Wallet alreiady exists, triggers for a returning user
       _currentReceivingAddress = this._getCurrentAddressForChain(0);
       DevUtilities.debugPrintWalletState();
     }
@@ -187,8 +187,8 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "receivingAddresses": ["1Hsvhj1RRS8akGWyb4u3kMDT646DNuQU5F"],
-      "internalAndChangeAddressArray": ["1Hsvhj1RRS8akGWyb4u3kMDT646DNuQU5F"]
+      "receivingAddresses": ["1GXKGSpppmWXxfkxqb1BPteieczch4PQYn"],
+      "internalAndChangeAddressArray": ["1GXKGSpppmWXxfkxqb1BPteieczch4PQYn"]
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
