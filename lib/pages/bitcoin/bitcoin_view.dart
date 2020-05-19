@@ -198,7 +198,7 @@ class _BitcoinViewState extends State<BitcoinView>
 
   String extractDateFromTimestamp(int timestamp) {
     if (timestamp == 0) {
-      return 'Transactions in-transit...';
+      return 'Now...';
     }
 
     final int weekday =
@@ -219,23 +219,36 @@ class _BitcoinViewState extends State<BitcoinView>
 
     for (var txIndex = 0; txIndex < txChildren.length; txIndex++) {
       final tx = txChildren[txIndex];
-      // INSERT CHECK FOR UNCONFIRMED TRANSACTION HERE FIRST
 
-      if (txChildren[txIndex].txType == 'Sent') {
-        finalListView.add(SendListTile(
-          amount: satoshisToBtc(tx.amount),
-          currentValue: tx.worthNow,
-          previousValue: tx.worthAtBlockTimestamp,
-          tx: txChildren[txIndex],
-        ));
-      } else if (txChildren[txIndex].txType == 'Received') {
-        // Here, we assume the transaction is a Receive type transaction
-        finalListView.add(ReceiveListTile(
-          amount: satoshisToBtc(tx.amount),
-          currentValue: tx.worthNow,
-          previousValue: tx.worthAtBlockTimestamp,
-          tx: txChildren[txIndex],
-        ));
+      // Check if transaction is unconfirmed first
+      if (tx.confirmedStatus == false) {
+        if (tx.txType == 'Sent') {
+          finalListView.add(
+            OutgoingTransactionListTile(satoshisToBtc(tx.amount), tx.worthNow),
+          );
+        } else if (tx.txType == 'Received') {
+          finalListView.add(
+            IncomingTransactionListTile(satoshisToBtc(tx.amount), tx.worthNow),
+          );
+        }
+      } else {
+        // Triggers if the transaction has at least 1 confirmation on mainnet
+        if (txChildren[txIndex].txType == 'Sent') {
+          finalListView.add(SendListTile(
+            amount: satoshisToBtc(tx.amount),
+            currentValue: tx.worthNow,
+            previousValue: tx.worthAtBlockTimestamp,
+            tx: txChildren[txIndex],
+          ));
+        } else if (txChildren[txIndex].txType == 'Received') {
+          // Here, we assume the transaction is a Receive type transaction
+          finalListView.add(ReceiveListTile(
+            amount: satoshisToBtc(tx.amount),
+            currentValue: tx.worthNow,
+            previousValue: tx.worthAtBlockTimestamp,
+            tx: txChildren[txIndex],
+          ));
+        }
       }
     }
     finalListView.add(SizedBox(height: 13));
@@ -253,7 +266,10 @@ class _BitcoinViewState extends State<BitcoinView>
 }
 
 List<Widget> _buildUtxoList(BuildContext context) {
-  return [];
+  return [
+    ActiveOutputTile(name: 'Output #1', currentValue: '\$56.43', blockHeight: 2342342342.toString()),
+    InactiveOutputTile(name: 'Output #1', currentValue: '\$56.43', blockHeight: 2342342342.toString())
+  ];
 }
 
 String timestampToDateString(int timestamp) {

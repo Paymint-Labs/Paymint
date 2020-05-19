@@ -62,9 +62,60 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
   }
 }
 
+
+class InactiveOutputTile extends StatefulWidget {
+  final String name;
+  final String currentValue;
+  final String blockHeight;
+
+  InactiveOutputTile({Key key, @required this.name, @required this.currentValue, @required this.blockHeight})
+      : super(key: key);
+
+  @override
+  _InactiveOutputTileState createState() =>
+      _InactiveOutputTileState(name, currentValue, blockHeight);
+}
+
+class _InactiveOutputTileState extends State<InactiveOutputTile> {
+  final String _name;
+  final String _currentValue;
+  final String _blockHeight;
+
+  final List<Gradient> _sweepGradients = [
+    SweepGradient(colors: [
+      Colors.pink,
+      Colors.pinkAccent,
+      Colors.pink
+    ]),
+    SweepGradient(colors: [
+      Colors.red,
+      Colors.redAccent,
+    ]),
+    
+  ];
+
+  _InactiveOutputTileState(this._name, this._currentValue, this._blockHeight);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(_name),
+      subtitle: Text(_blockHeight),
+      trailing: Text(_currentValue),
+      leading: CircleAvatar(
+        child: ClipRRect(
+          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      onTap: () {},
+    );
+  }
+}
+
 class IncomingTransactionListTile extends StatefulWidget {
   IncomingTransactionListTile(this.satoshiAmt, this.currentValue);
-  final int satoshiAmt;
+  final String satoshiAmt;
   final String currentValue;
 
   @override
@@ -77,8 +128,31 @@ class _IncomingTransactionListTileState extends State<IncomingTransactionListTil
     return ListTile(
       leading: CircularProgressIndicator(),
       title: Text('Incoming Transaction...'),
-      subtitle: Text(widget.satoshiAmt.toString()),
+      subtitle: Text(widget.satoshiAmt),
       trailing: Text(widget.currentValue),
+      onTap: () {},
+    );
+  }
+}
+
+class OutgoingTransactionListTile extends StatefulWidget {
+  OutgoingTransactionListTile(this.satoshiAmt, this.currentValue);
+  final String satoshiAmt;
+  final String currentValue;
+
+  @override
+  _OutgoingTransactionListTileState createState() => _OutgoingTransactionListTileState();
+}
+
+class _OutgoingTransactionListTileState extends State<OutgoingTransactionListTile> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: CircularProgressIndicator(),
+      title: Text('Outgoing Transaction...'),
+      subtitle: Text(widget.satoshiAmt),
+      trailing: Text(widget.currentValue),
+      onTap: () {},
     );
   }
 }
@@ -279,6 +353,11 @@ class __DetailsPageState extends State<_DetailsPage> {
             ListTile(
               title: Text('Worth when sent:'),
               trailing: Text(widget._tx.worthAtBlockTimestamp),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('txid'),
+              trailing: Text(widget._tx.txid),
               onTap: () {},
             ),
           ],
