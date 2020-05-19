@@ -165,7 +165,7 @@ class BitcoinService extends ChangeNotifier {
     
     final requestBody = {
       "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "allAddresses": ["1LFsQGyCCeZNpYWVZpomfY5qb3BqwHbPW3"],
+      "allAddresses": ["3CKm3sk7j1huiBi1tiLKr5CPj4LmHwemLg"],
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
@@ -185,8 +185,8 @@ class BitcoinService extends ChangeNotifier {
     final wallet = await Hive.openBox('wallet');
     
     final requestBody = {
-      "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "allAddresses": ["1LFsQGyCCeZNpYWVZpomfY5qb3BqwHbPW3"],
+      "currency": 'USD',
+      "allAddresses": ["3CKm3sk7j1huiBi1tiLKr5CPj4LmHwemLg"],
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
