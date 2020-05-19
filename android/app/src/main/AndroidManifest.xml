@@ -9,7 +9,9 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Paymint"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
