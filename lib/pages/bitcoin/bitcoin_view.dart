@@ -268,7 +268,8 @@ class _BitcoinViewState extends State<BitcoinView>
 List<Widget> _buildUtxoList(BuildContext context) {
   return [
     ActiveOutputTile(name: 'Output #1', currentValue: '\$56.43', blockHeight: 2342342342.toString()),
-    InactiveOutputTile(name: 'Output #1', currentValue: '\$56.43', blockHeight: 2342342342.toString())
+    InactiveOutputTile(name: 'Output #2', currentValue: '\$56.43', blockHeight: 2342342342.toString()),
+    LoadingOutputTile(currentValue: '\$56.43', blockTime: 2342342342.toString()),
   ];
 }
 
