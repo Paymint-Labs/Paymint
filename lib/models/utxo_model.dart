@@ -38,12 +38,12 @@ class UtxoObject {
 
   factory UtxoObject.fromJson(Map<String, dynamic> json) {
     return UtxoObject(
+      txName: '----',
       txid: json['txid'],
       vout: json['vout'],
       status: Status.fromJson(json['status']),
       value: json['value'],
       fiatWorth: json['fiatWorth'],
-      txName: '----',
       blocked: false
     );
   }
