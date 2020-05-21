@@ -57,6 +57,61 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
   }
 }
 
+class PendingOutputTile extends StatefulWidget {
+  final String currentValue;
+  final String blockTime;
+
+  PendingOutputTile(
+      {Key key,
+      @required this.currentValue,
+      @required this.blockTime})
+      : super(key: key);
+  
+  @override
+  _PendingOutputTileState createState() => _PendingOutputTileState(blockTime);
+}
+
+class _PendingOutputTileState extends State<PendingOutputTile> {
+  final String _currentValue;
+
+  final List<Gradient> _sweepGradients = [
+    SweepGradient(colors: [Colors.purple, Colors.purpleAccent, Colors.purple]),
+    SweepGradient(colors: [
+      Colors.deepPurple,
+      Colors.deepPurpleAccent,
+      Colors.deepPurple
+    ]),
+  ];
+
+  _PendingOutputTileState(this._currentValue);
+  
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text('Pending output...'),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            _currentValue + ' now',
+          ),
+          Text(
+            'Pending', style: TextStyle(color: Colors.green),
+          )
+        ],
+      ),
+      leading: CircleAvatar(
+        child: ClipRRect(
+          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      onTap: () {},
+    );
+  }
+  }
+
 class InactiveOutputTile extends StatefulWidget {
   final String name;
   final String currentValue;
@@ -80,8 +135,12 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
   final String _blockHeight;
 
   final List<Gradient> _sweepGradients = [
-    SweepGradient(colors: [Colors.pink, Colors.pinkAccent, Colors.pink]),
-    SweepGradient(colors: [Colors.red, Colors.redAccent, Colors.red]),
+    SweepGradient(colors: [Colors.purple, Colors.purpleAccent, Colors.purple]),
+    SweepGradient(colors: [
+      Colors.deepPurple,
+      Colors.deepPurpleAccent,
+      Colors.deepPurple
+    ]),
   ];
 
   _InactiveOutputTileState(this._name, this._currentValue, this._blockHeight);
@@ -91,52 +150,18 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
     return ListTile(
       title: Text(_name),
       subtitle: Text(_blockHeight),
-      trailing: Text(_currentValue),
-      leading: CircleAvatar(
-        child: ClipRRect(
-          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
-          borderRadius: BorderRadius.circular(15),
-        ),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            _currentValue,
+          ),
+          Text(
+            'BLOCKED', style: TextStyle(color: Colors.red),
+          )
+        ],
       ),
-      onTap: () {},
-    );
-  }
-}
-
-class LoadingOutputTile extends StatefulWidget {
-  final String currentValue;
-  final String blockTime;
-
-  LoadingOutputTile(
-      {Key key, @required this.currentValue, @required this.blockTime})
-      : super(key: key);
-
-  @override
-  _LoadingOutputTileState createState() =>
-      _LoadingOutputTileState(currentValue, blockTime);
-}
-
-class _LoadingOutputTileState extends State<LoadingOutputTile> {
-  final String _currentValue;
-  final String _blocktime;
-
-  final List<Gradient> _sweepGradients = [
-    SweepGradient(colors: [Colors.purple, Colors.purpleAccent, Colors.purple]),
-    SweepGradient(colors: [
-      Colors.deepPurple,
-      Colors.deepPurpleAccent,
-      Colors.deepPurple
-    ]),
-  ];
-
-  _LoadingOutputTileState(this._currentValue, this._blocktime);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text('Pending output'),
-      subtitle: Text(_blocktime),
-      trailing: Text(_currentValue),
       leading: CircleAvatar(
         child: ClipRRect(
           child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
@@ -403,7 +428,8 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
                     style: TextStyle(color: Colors.blue)),
                 onTap: () {
                   Clipboard.setData(new ClipboardData(text: widget._tx.txid));
-                  Toast.show('ID copied to clipboard', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  Toast.show('ID copied to clipboard', context,
+                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                 }),
             ListTile(
               title: Text('Verify on blockchain',
@@ -482,7 +508,8 @@ class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
                     style: TextStyle(color: Colors.blue)),
                 onTap: () {
                   Clipboard.setData(new ClipboardData(text: widget._tx.txid));
-                  Toast.show('ID copied to clipboard', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  Toast.show('ID copied to clipboard', context,
+                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                 }),
             ListTile(
               title: Text('Verify on blockchain',
@@ -510,6 +537,7 @@ void _launchTransactionUrl(BuildContext context, String txid) async {
   if (await canLaunch(url)) {
     await launch(url);
   } else {
-    Toast.show('Cannot launch url', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+    Toast.show('Cannot launch url', context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
   }
 }
