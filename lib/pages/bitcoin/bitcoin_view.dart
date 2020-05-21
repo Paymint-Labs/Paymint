@@ -166,7 +166,11 @@ class _BitcoinViewState extends State<BitcoinView>
   /// Nested listViewBuilder
   Widget _buildActivityView(AsyncSnapshot<TransactionData> txData) {
     if (txData.data.txChunks.length == 0) {
-      return Center(child: Text('No transactions found :('));
+      return Center(
+          child: Text(
+        'No transactions found :(',
+        textScaleFactor: 1.1,
+      ));
     } else {
       // Assuming here that #transactions >= 1
       return Container(
@@ -258,19 +262,49 @@ class _BitcoinViewState extends State<BitcoinView>
   Widget _buildSecurityView(
       AsyncSnapshot<UtxoData> utxoData, BuildContext context) {
     return Container(
-      child: ListView(
-        children: _buildUtxoList(context),
+      child: Column(
+        children: _buildSecurityListView(context),
+        crossAxisAlignment: CrossAxisAlignment.start,
       ),
     );
   }
 }
 
-List<Widget> _buildUtxoList(BuildContext context) {
-  return [
-    ActiveOutputTile(name: 'Output #1', currentValue: '\$56.43', blockHeight: 2342342342.toString()),
-    InactiveOutputTile(name: 'Output #2', currentValue: '\$56.43', blockHeight: 2342342342.toString()),
-    LoadingOutputTile(currentValue: '\$56.43', blockTime: 2342342342.toString()),
+List<Widget> _buildSecurityListView(BuildContext context) {
+  List<UtxoObject> _utxoList = Provider.of<BitcoinService>(context).allOutputs;
+
+  List<Widget> _finalList = [
+    Container(
+      height: 100,
+      child: Center(
+        child: CupertinoButton.filled(
+          child: Text('Manage wallet backup'),
+          onPressed: () {},
+        ),
+      ),
+    ),
+    Container(
+        padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              'Wallet outputs',
+              textScaleFactor: 1.25,
+            ),
+            IconButton(
+                icon: Icon(Icons.settings_input_composite), onPressed: () {})
+          ],
+        ))
   ];
+
+  if (_utxoList.length == 0) {
+    _finalList.add(Expanded(
+        child:
+            Center(child: Text('No outputs found :(', textScaleFactor: 1.1))));
+  } else {}
+
+  return _finalList;
 }
 
 String timestampToDateString(int timestamp) {
