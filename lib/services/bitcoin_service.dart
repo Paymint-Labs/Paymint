@@ -33,7 +33,7 @@ class BitcoinService extends ChangeNotifier {
 
   /// Holds all active outputs for wallet
   List<UtxoObject> _outputsList = [];
-  List<UtxoObject> get activeOutputs => _outputsList;
+  List<UtxoObject> get allOutputs => _outputsList;
 
   BitcoinService() {
     _currency = CurrencyUtilities.fetchPreferredCurrency();
@@ -66,7 +66,7 @@ class BitcoinService extends ChangeNotifier {
     await wallet.put('transaction_count', 0);
     await wallet.put('phys_backup', false);
     await wallet.put('cloud_backup', false);
-    await wallet.put('blocked_tx_hashes', []); // A list of transaction hashes to represent frozen utxos in wallet
+    await wallet.put('blocked_tx_hashes', ["0xdefault"]); // A list of transaction hashes to represent frozen utxos in wallet
     // Generate and add addresses to relevant arrays
     final initialReceivingAddress = await this._generateAddressForChain(0, 0);
     final initialChangeAddress = await this._generateAddressForChain(1, 0);
@@ -158,22 +158,23 @@ class BitcoinService extends ChangeNotifier {
       }
     }
     notifyListeners();
+    print(this._outputsList.toString());
   }
 
   Future<UtxoData> _fetchUtxoData() async {
     final wallet = await Hive.openBox('wallet');
     
     final requestBody = {
-      "currency": await CurrencyUtilities.fetchPreferredCurrency(),
-      "allAddresses": ["157GYR9dYmo43iZD8Bs28svzuRoh1QJpJ1"],
+      "currency": "HKD",
+      "allAddresses": ["1CvQo3Xtu9pGkDgg3LFbs7BAsP3ZW5nknR"],
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/outputs', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('utxo call done');
-      // final List<UtxoObject> allOutputs = UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
-      // await _sortOutputs(allOutputs);
+      final List<UtxoObject> allOutputs = UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
+      await _sortOutputs(allOutputs);
       notifyListeners();
       return UtxoData.fromJson(json.decode(response.body));
     } else {
@@ -185,8 +186,8 @@ class BitcoinService extends ChangeNotifier {
     final wallet = await Hive.openBox('wallet');
     
     final requestBody = {
-      "currency": 'USD',
-      "allAddresses": ["157GYR9dYmo43iZD8Bs28svzuRoh1QJpJ1"],
+      "currency": 'HKD',
+      "allAddresses": ["1CvQo3Xtu9pGkDgg3LFbs7BAsP3ZW5nknR"],
     };
 
     final response = await http.post('https://www.api.paymintapp.com/btc/transactions', body: jsonEncode(requestBody), headers: {'Content-Type': 'application/json'} );
