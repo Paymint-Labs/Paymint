@@ -290,19 +290,46 @@ List<Widget> _buildSecurityListView(BuildContext context) {
           children: <Widget>[
             Text(
               'Wallet outputs',
-              textScaleFactor: 1.25,
+              textScaleFactor: 1.3,
             ),
             IconButton(
-                icon: Icon(Icons.settings_input_composite), onPressed: () {})
+                icon: Icon(Icons.info),
+                onPressed: () {
+                  print(_utxoList);
+                })
           ],
         ))
   ];
 
   if (_utxoList.length == 0) {
-    _finalList.add(Expanded(
-        child:
-            Center(child: Text('No outputs found :(', textScaleFactor: 1.1))));
-  } else {}
+    _finalList.add(
+      Expanded(
+        child: Center(
+          child: Text('No outputs found :(', textScaleFactor: 1.1),
+        ),
+      ),
+    );
+  } else {
+    for (var i = 0; i < _utxoList.length; i++) {
+      if (_utxoList[i].status.confirmed == false) {
+        _finalList.add(PendingOutputTile(currentValue: _utxoList[i].fiatWorth));
+      } else {
+        if (_utxoList[i].blocked == true) {
+          _finalList.add(InactiveOutputTile(
+              name: _utxoList[i].txName,
+              currentValue: _utxoList[i].fiatWorth,
+              blockHeight:
+                  timestampToDateString(_utxoList[i].status.blockTime)));
+        } else {
+          _finalList.add(ActiveOutputTile(
+              name: _utxoList[i].txName,
+              currentValue: _utxoList[i].fiatWorth,
+              blockHeight:
+                  timestampToDateString(_utxoList[i].status.blockTime)));
+        }
+      }
+    }
+  }
 
   return _finalList;
 }
