@@ -212,7 +212,7 @@ class _OutgoingTransactionListTileState
     return ListTile(
       leading: CircularProgressIndicator(),
       title: Text('Outgoing Transaction...'),
-      subtitle: Text(widget.satoshiAmt),
+      subtitle: Text(widget.satoshiAmt + ' BTC'),
       trailing: Text(widget.currentValue),
       onTap: () {},
     );
