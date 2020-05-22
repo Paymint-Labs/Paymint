@@ -59,16 +59,14 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
 
 class PendingOutputTile extends StatefulWidget {
   final String currentValue;
-  final String blockTime;
 
   PendingOutputTile(
       {Key key,
-      @required this.currentValue,
-      @required this.blockTime})
+      @required this.currentValue})
       : super(key: key);
   
   @override
-  _PendingOutputTileState createState() => _PendingOutputTileState(blockTime);
+  _PendingOutputTileState createState() => _PendingOutputTileState(currentValue);
 }
 
 class _PendingOutputTileState extends State<PendingOutputTile> {
@@ -94,10 +92,10 @@ class _PendingOutputTileState extends State<PendingOutputTile> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
           Text(
-            _currentValue + ' now',
+            _currentValue,
           ),
           Text(
-            'Pending', style: TextStyle(color: Colors.green),
+            'Pending', style: TextStyle(color: Colors.purple),
           )
         ],
       ),
