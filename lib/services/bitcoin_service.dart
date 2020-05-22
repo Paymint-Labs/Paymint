@@ -178,8 +178,8 @@ class BitcoinService extends ChangeNotifier {
     final wallet = await Hive.openBox('wallet');
 
     final requestBody = {
-      "currency": "HKD",
-      "allAddresses": ["1EcGuNSrrxzn6TPEmaPGn4wYdWR7m9wRfT"],
+      "currency": "USD",
+      "allAddresses": ["17i83CiKgjkfqVmNWKazcRsXAWfbbGtteh"],
     };
 
     final response = await http.post(
@@ -205,8 +205,8 @@ class BitcoinService extends ChangeNotifier {
     final wallet = await Hive.openBox('wallet');
 
     final requestBody = {
-      "currency": 'HKD',
-      "allAddresses": ["1EcGuNSrrxzn6TPEmaPGn4wYdWR7m9wRfT"],
+      "currency": 'USD',
+      "allAddresses": ["17i83CiKgjkfqVmNWKazcRsXAWfbbGtteh"],
     };
 
     final response = await http.post(
