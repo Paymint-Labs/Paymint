@@ -7,30 +7,36 @@ import 'package:animations/animations.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:paymint/components/animated_gradient.dart';
 import 'package:paymint/models/models.dart';
+import 'package:paymint/services/bitcoin_service.dart';
 import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
 
 class ActiveOutputTile extends StatefulWidget {
   final String name;
   final String currentValue;
   final String blockHeight;
+  final UtxoObject fullOutput;
 
   ActiveOutputTile(
       {Key key,
       @required this.name,
       @required this.currentValue,
-      @required this.blockHeight})
+      @required this.blockHeight,
+      @required this.fullOutput})
       : super(key: key);
 
   @override
   _ActiveOutputTileState createState() =>
-      _ActiveOutputTileState(name, currentValue, blockHeight);
+      _ActiveOutputTileState(name, currentValue, blockHeight, fullOutput);
 }
 
 class _ActiveOutputTileState extends State<ActiveOutputTile> {
   final String _name;
   final String _currentValue;
   final String _blockHeight;
+  final UtxoObject _fullOutput;
 
   final List<Gradient> _sweepGradients = [
     SweepGradient(colors: [Colors.blueAccent, Colors.blue, Colors.blueAccent]),
@@ -38,7 +44,7 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
         colors: [Colors.cyanAccent, Colors.lightBlueAccent, Colors.cyanAccent]),
   ];
 
-  _ActiveOutputTileState(this._name, this._currentValue, this._blockHeight);
+  _ActiveOutputTileState(this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +58,20 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
           borderRadius: BorderRadius.circular(15),
         ),
       ),
-      onTap: () {},
+      onTap: () async {
+        print('Blocking output...');
+        final service = Provider.of<BitcoinService>(context);
+        service.blockOutput(_fullOutput.txid);
+        final wallet = await Hive.openBox('wallet');
+        final blockedList = await wallet.get('blocked_tx_hashes');
+        final blockedCopy = new List();
+        for (var i = 0; i < blockedList.length; i++) {
+          blockedCopy.add(blockedList[i]);
+        }
+        blockedCopy.add(_fullOutput.txid);
+        await wallet.put('blocked_tx_hashes', blockedCopy);
+        print(blockedCopy);
+      },
     );
   }
 }
@@ -114,23 +133,26 @@ class InactiveOutputTile extends StatefulWidget {
   final String name;
   final String currentValue;
   final String blockHeight;
+  final UtxoObject fullOutput;
 
   InactiveOutputTile(
       {Key key,
       @required this.name,
       @required this.currentValue,
-      @required this.blockHeight})
+      @required this.blockHeight,
+      @required this.fullOutput})
       : super(key: key);
 
   @override
   _InactiveOutputTileState createState() =>
-      _InactiveOutputTileState(name, currentValue, blockHeight);
+      _InactiveOutputTileState(name, currentValue, blockHeight, fullOutput);
 }
 
 class _InactiveOutputTileState extends State<InactiveOutputTile> {
   final String _name;
   final String _currentValue;
   final String _blockHeight;
+  final UtxoObject _fullOutput;
 
   final List<Gradient> _sweepGradients = [
     SweepGradient(colors: [Colors.purple, Colors.purpleAccent, Colors.purple]),
@@ -141,7 +163,7 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
     ]),
   ];
 
-  _InactiveOutputTileState(this._name, this._currentValue, this._blockHeight);
+  _InactiveOutputTileState(this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +178,7 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
             _currentValue,
           ),
           Text(
-            'BLOCKED', style: TextStyle(color: Colors.red),
+            'Blocked', style: TextStyle(color: Colors.purple),
           )
         ],
       ),
@@ -166,7 +188,20 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
           borderRadius: BorderRadius.circular(15),
         ),
       ),
-      onTap: () {},
+      onTap: () async {
+        print('Unblocking Output...');
+        final service = Provider.of<BitcoinService>(context);
+        service.unblockOutput(_fullOutput.txid);
+        final wallet = await Hive.openBox('wallet');
+        final blockedList = await wallet.get('blocked_tx_hashes');
+        final List blockedCopyWithoutTxid = new List();
+        for (var i = 0; i < blockedList.length; i++) {
+          if (blockedList[i] != _fullOutput.txid) {
+            blockedCopyWithoutTxid.add(blockedList[i]);
+          }
+        }
+        await wallet.put('blocked_tx_hashes', blockedCopyWithoutTxid);
+      },
     );
   }
 }
@@ -188,7 +223,7 @@ class _IncomingTransactionListTileState
     return ListTile(
       leading: CircularProgressIndicator(),
       title: Text('Incoming Transaction...'),
-      subtitle: Text(widget.satoshiAmt),
+      subtitle: Text(widget.satoshiAmt + ' BTC'),
       trailing: Text(widget.currentValue),
       onTap: () {},
     );

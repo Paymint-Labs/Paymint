@@ -279,7 +279,9 @@ List<Widget> _buildSecurityListView(BuildContext context) {
       child: Center(
         child: CupertinoButton.filled(
           child: Text('Manage wallet backup'),
-          onPressed: () {},
+          onPressed: () {
+
+          },
         ),
       ),
     ),
@@ -289,13 +291,13 @@ List<Widget> _buildSecurityListView(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'Wallet outputs',
+              'Wallet Outputs',
               textScaleFactor: 1.3,
             ),
             IconButton(
                 icon: Icon(Icons.info),
                 onPressed: () {
-                  print(_utxoList);
+                  print("Output block status: " + _utxoList[0].blocked.toString());
                 })
           ],
         ))
@@ -318,12 +320,14 @@ List<Widget> _buildSecurityListView(BuildContext context) {
           _finalList.add(InactiveOutputTile(
               name: _utxoList[i].txName,
               currentValue: _utxoList[i].fiatWorth,
+              fullOutput: _utxoList[i],
               blockHeight:
                   timestampToDateString(_utxoList[i].status.blockTime)));
         } else {
           _finalList.add(ActiveOutputTile(
               name: _utxoList[i].txName,
               currentValue: _utxoList[i].fiatWorth,
+              fullOutput: _utxoList[i],
               blockHeight:
                   timestampToDateString(_utxoList[i].status.blockTime)));
         }

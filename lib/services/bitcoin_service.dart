@@ -147,9 +147,27 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
+  void blockOutput(String txid) {
+    for (var i = 0; i < allOutputs.length; i++) {
+      if (allOutputs[i].txid == txid) {
+        allOutputs[i].blocked = true;
+        notifyListeners();
+      }
+    }
+  }
+
+  void unblockOutput(String txid) {
+    for (var i = 0; i < allOutputs.length; i++) {
+      if (allOutputs[i].txid == txid) {
+        allOutputs[i].blocked = false;
+        notifyListeners();
+      }
+    }
+  }
+
   _sortOutputs(List<UtxoObject> utxos) async {
     final wallet = await Hive.openBox('wallet');
-    final List<String> blockedHashArray = wallet.get('blocked_tx_hashes');
+    final blockedHashArray = wallet.get('blocked_tx_hashes');
     final lst = new List();
     blockedHashArray.forEach((hash) => lst.add(hash));
 
@@ -171,7 +189,6 @@ class BitcoinService extends ChangeNotifier {
       }
     }
     notifyListeners();
-    print(this._outputsList.toString());
   }
 
   Future<UtxoData> _fetchUtxoData() async {
@@ -179,7 +196,7 @@ class BitcoinService extends ChangeNotifier {
 
     final requestBody = {
       "currency": "USD",
-      "allAddresses": ["17i83CiKgjkfqVmNWKazcRsXAWfbbGtteh"],
+      "allAddresses": ["36cuiNgX8oqBsGqMWLNZkTkHEDZx5kf1VN"],
     };
 
     final response = await http.post(
@@ -206,7 +223,7 @@ class BitcoinService extends ChangeNotifier {
 
     final requestBody = {
       "currency": 'USD',
-      "allAddresses": ["17i83CiKgjkfqVmNWKazcRsXAWfbbGtteh"],
+      "allAddresses": ["36cuiNgX8oqBsGqMWLNZkTkHEDZx5kf1VN"],
     };
 
     final response = await http.post(
