@@ -261,7 +261,7 @@ class _BitcoinViewState extends State<BitcoinView>
 
   Widget _buildSecurityView(
       AsyncSnapshot<UtxoData> utxoData, BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
       child: Column(
         children: _buildSecurityListView(context),
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,9 +279,7 @@ List<Widget> _buildSecurityListView(BuildContext context) {
       child: Center(
         child: CupertinoButton.filled(
           child: Text('Manage wallet backup'),
-          onPressed: () {
-
-          },
+          onPressed: () {},
         ),
       ),
     ),
@@ -297,7 +295,8 @@ List<Widget> _buildSecurityListView(BuildContext context) {
             IconButton(
                 icon: Icon(Icons.info),
                 onPressed: () {
-                  print("Output block status: " + _utxoList[0].blocked.toString());
+                  print("Output block status: " +
+                      _utxoList[0].blocked.toString());
                 })
           ],
         ))
