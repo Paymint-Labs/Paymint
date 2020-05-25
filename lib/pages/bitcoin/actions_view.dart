@@ -45,8 +45,8 @@ class _ActionsViewState extends State<ActionsView>
         bottom: TabBar(
           controller: _controller,
           labelStyle: GoogleFonts.rubik(),
+          indicatorSize: TabBarIndicatorSize.label,
           indicator: UnderlineTabIndicator(
-            insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
             borderSide: const BorderSide(width: 3.0, color: Colors.blue),
           ),
           tabs: <Widget>[
