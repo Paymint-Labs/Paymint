@@ -165,6 +165,15 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
+  refreshWalletData() async {
+    final UtxoData newUtxoData = await _fetchUtxoData();
+    final TransactionData newTxData = await _fetchTransactionData();
+
+    this._utxoData = Future(() => newUtxoData);
+    this._transactionData = Future(() => newTxData);
+    notifyListeners();
+  }
+
   _sortOutputs(List<UtxoObject> utxos) async {
     final wallet = await Hive.openBox('wallet');
     final blockedHashArray = wallet.get('blocked_tx_hashes');
