@@ -30,3 +30,21 @@ final Map<int, String> monthMap = {
   11: 'November',
   12: 'December',
 };
+
+final Map<String, String> currencyMap = {
+  'AUD': 'A\$',
+  'CAD': 'CAD\$', 
+  'CHF': 'CHF ',
+  'CNY': 'CN¥',
+  'EUR': '€',
+  'GBP': '£',
+  'HKD': 'HK\$',
+  'INR': '₹',
+  'JPY': '¥',
+  'KRW': '₩',
+  'PHP': 'PHP ',
+  'SGD': 'SGD ',
+  'TRY': 'TRY ',
+  'USD': '\$',
+  'XAU': 'GOLD '
+};
