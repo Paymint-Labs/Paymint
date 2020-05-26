@@ -24,6 +24,10 @@ class BitcoinService extends ChangeNotifier {
   Future<TransactionData> get transactionData =>
       _transactionData ??= _fetchTransactionData();
 
+  // Hold the current price of Bitcoin in the currency specified in parameter below
+  Future<double> _bitcoinPrice;
+  Future<double> get bitcoinPrice => _bitcoinPrice ??= getBitcoinPrice();
+
   /// Holds preferred fiat currency
   Future<String> _currency;
   Future<String> get currency =>
@@ -42,6 +46,7 @@ class BitcoinService extends ChangeNotifier {
     this._initializeBitcoinWallet().whenComplete(() {
       _transactionData = _fetchTransactionData();
       _utxoData = _fetchUtxoData();
+      _bitcoinPrice = getBitcoinPrice();
     });
   }
 
@@ -168,9 +173,11 @@ class BitcoinService extends ChangeNotifier {
   refreshWalletData() async {
     final UtxoData newUtxoData = await _fetchUtxoData();
     final TransactionData newTxData = await _fetchTransactionData();
+    final double newBtcPrice = await getBitcoinPrice();
 
     this._utxoData = Future(() => newUtxoData);
     this._transactionData = Future(() => newTxData);
+    this._bitcoinPrice = Future(() => newBtcPrice);
     notifyListeners();
   }
 
@@ -205,7 +212,7 @@ class BitcoinService extends ChangeNotifier {
 
     final requestBody = {
       "currency": "USD",
-      "allAddresses": ["36cuiNgX8oqBsGqMWLNZkTkHEDZx5kf1VN"],
+      "allAddresses": ["3Frp5ZNFq8Vmw6tDLdgHMpixdYbiKEjSF4"],
     };
 
     final response = await http.post(
@@ -232,7 +239,7 @@ class BitcoinService extends ChangeNotifier {
 
     final requestBody = {
       "currency": 'USD',
-      "allAddresses": ["36cuiNgX8oqBsGqMWLNZkTkHEDZx5kf1VN"],
+      "allAddresses": ["3Frp5ZNFq8Vmw6tDLdgHMpixdYbiKEjSF4"],
     };
 
     final response = await http.post(
@@ -244,6 +251,27 @@ class BitcoinService extends ChangeNotifier {
       print('tx call done');
       notifyListeners();
       return TransactionData.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Something happened: ' +
+          response.statusCode.toString() +
+          response.body);
+    }
+  }
+
+  Future<double> getBitcoinPrice() async {
+    final String currency = await CurrencyUtilities.fetchPreferredCurrency();
+
+    final Map<String, String> requestBody = {"currency": currency};
+
+    final response = await http.post(
+      'https://www.api.paymintapp.com/btc/price',
+      body: jsonEncode(requestBody),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      notifyListeners();
+      return json.decode(response.body);
     } else {
       throw Exception('Something happened: ' +
           response.statusCode.toString() +
