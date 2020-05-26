@@ -13,7 +13,6 @@ import 'package:paymint/components/globals.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:frefresh/frefresh.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -135,7 +134,8 @@ class _BitcoinViewState extends State<BitcoinView>
               bottom: TabBar(
                 controller: bitcoinViewTabController,
                 labelStyle: GoogleFonts.rubik(),
-                indicatorSize: TabBarIndicatorSize.label, // Adjust indicator length to label length
+                indicatorSize: TabBarIndicatorSize
+                    .label, // Adjust indicator length to label length
                 indicator: UnderlineTabIndicator(
                   borderSide: const BorderSide(width: 3.0, color: Colors.blue),
                 ),
@@ -158,7 +158,7 @@ class _BitcoinViewState extends State<BitcoinView>
             NestedScrollViewInnerScrollPositionKeyWidget(
                 Key('ActivityKey'),
                 NestedScrollViewRefreshIndicator(
-                  child: _buildActivityView(txData),
+                  child: _buildActivityView(context, txData),
                   onRefresh: () async {
                     final btcService = Provider.of<BitcoinService>(context);
                     await btcService.refreshWalletData();
@@ -180,12 +180,24 @@ class _BitcoinViewState extends State<BitcoinView>
   }
 
   /// Nested listViewBuilder
-  Widget _buildActivityView(AsyncSnapshot<TransactionData> txData) {
+  Widget _buildActivityView(
+      BuildContext context, AsyncSnapshot<TransactionData> txData) {
     if (txData.data.txChunks.length == 0) {
       return Center(
-          child: Text(
-        'No transactions found :(',
-        textScaleFactor: 1.1,
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'No transactions found :(',
+            textScaleFactor: 1.1,
+          ),
+          IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () async {
+                final btcService = Provider.of<BitcoinService>(context);
+                await btcService.refreshWalletData();
+              })
+        ],
       ));
     } else {
       // Assuming here that #transactions >= 1
@@ -280,7 +292,7 @@ class _BitcoinViewState extends State<BitcoinView>
     return SingleChildScrollView(
       child: Column(
         children: _buildSecurityListView(context),
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
       ),
     );
   }
@@ -300,31 +312,28 @@ List<Widget> _buildSecurityListView(BuildContext context) {
       ),
     ),
     Container(
-        padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              'Wallet Outputs',
-              textScaleFactor: 1.3,
-            ),
-            IconButton(
-                icon: Icon(Icons.info),
-                onPressed: () {
-                  print("Output block status: " +
-                      _utxoList[0].blocked.toString());
-                })
-          ],
-        ))
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'Wallet Outputs',
+            textScaleFactor: 1.3,
+          ),
+          IconButton(
+              icon: Icon(Icons.info),
+              onPressed: () async {
+                final btcService = Provider.of<BitcoinService>(context);
+                print(await btcService.bitcoinPrice);
+              })
+        ],
+      ),
+    )
   ];
 
   if (_utxoList.length == 0) {
     _finalList.add(
-      Expanded(
-        child: Center(
-          child: Text('No outputs found :(', textScaleFactor: 1.1),
-        ),
-      ),
+      Container(child: Center(child: Text('No outputs found :(')), height: 50),
     );
   } else {
     for (var i = 0; i < _utxoList.length; i++) {
