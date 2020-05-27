@@ -212,7 +212,7 @@ class BitcoinService extends ChangeNotifier {
 
     final requestBody = {
       "currency": "USD",
-      "allAddresses": ["3Frp5ZNFq8Vmw6tDLdgHMpixdYbiKEjSF4"],
+      "allAddresses": ["18SYGM2qzCyrvP3MpEV3in5hTYko87MTbK"],
     };
 
     final response = await http.post(
@@ -239,7 +239,7 @@ class BitcoinService extends ChangeNotifier {
 
     final requestBody = {
       "currency": 'USD',
-      "allAddresses": ["3Frp5ZNFq8Vmw6tDLdgHMpixdYbiKEjSF4"],
+      "allAddresses": ["18SYGM2qzCyrvP3MpEV3in5hTYko87MTbK"],
     };
 
     final response = await http.post(

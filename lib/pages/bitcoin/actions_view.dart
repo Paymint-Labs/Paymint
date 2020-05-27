@@ -91,14 +91,9 @@ class __ReceiveViewState extends State<_ReceiveView> {
 
     return Scaffold(
         bottomNavigationBar: Container(
-          height: 125,
+          height: 70,
           child: ListView(
             children: <Widget>[
-              ListTile(
-                onTap: () {},
-                title: Text('Reveal address text'),
-                trailing: Icon(Icons.chevron_right),
-              ),
               ListTile(
                 onTap: () {},
                 title: Text('Show previous addresses'),
@@ -191,8 +186,6 @@ class __SendViewState extends State<_SendView> {
   TextEditingController _btcAmountInput =
       new TextEditingController(text: '0.0' ?? '0');
   TextEditingController _recipientAddressInput = new TextEditingController();
-  final RoundedLoadingButtonController _buttonController =
-      new RoundedLoadingButtonController();
 
   String _btcAmountInFiat = '0.0';
 
@@ -203,10 +196,16 @@ class __SendViewState extends State<_SendView> {
   }
 
   void _doSomething() async {
+    showModal<void>(
+      context: context,
+      configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
+      builder: (BuildContext context) {
+        return _PushTxDialog();
+      },
+    );
     await Future.delayed(Duration(milliseconds: 3000));
-    _buttonController.success();
-    await Future.delayed(Duration(milliseconds: 2000));
-    _buttonController.reset();
+    buttonController.success();
+    Navigator.pop(context);
   }
 
   void updatePrice(double currentPrice) {
@@ -238,9 +237,9 @@ class __SendViewState extends State<_SendView> {
                       height: 100,
                       child: Center(
                         child: RoundedLoadingButton(
-                          child: Text('Authenticate transaction',
+                          child: Text('Send transaction',
                               style: TextStyle(color: Colors.white)),
-                          controller: _buttonController,
+                          controller: buttonController,
                           onPressed: _doSomething,
                           color: Colors.black,
                         ),
@@ -258,10 +257,10 @@ class __SendViewState extends State<_SendView> {
                                   child: TextField(
                                     keyboardType:
                                         TextInputType.numberWithOptions(
-                                            decimal: true),
+                                            decimal: false),
                                     controller: _btcAmountInput,
                                     style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: true),
+                                    decoration: InputDecoration(filled: false),
                                     onChanged: (amount) {
                                       updatePrice(_bitcoinPrice.data);
                                     },
@@ -299,7 +298,10 @@ class __SendViewState extends State<_SendView> {
                                     keyboardType: TextInputType.text,
                                     controller: _recipientAddressInput,
                                     style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: true, helperText: 'Remember to delete any spaces'),
+                                    decoration: InputDecoration(
+                                        filled: false,
+                                        helperText:
+                                            'Remember to delete any spaces'),
                                   ),
                                 ),
                                 IconButton(
@@ -463,6 +465,16 @@ class _ZeroInputDialog extends StatelessWidget {
           child: const Text('OK'),
         ),
       ],
+    );
+  }
+}
+
+class _PushTxDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Please do not exit...'),
+      content: Container(child: Center(child: CircularProgressIndicator()), height: 100)
     );
   }
 }
