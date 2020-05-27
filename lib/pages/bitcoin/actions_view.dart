@@ -11,6 +11,8 @@ import 'package:toast/toast.dart';
 import 'package:paymint/components/globals.dart';
 import 'dart:math' as math;
 import 'package:majascan/majascan.dart';
+import 'package:animations/animations.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
@@ -189,6 +191,8 @@ class __SendViewState extends State<_SendView> {
   TextEditingController _btcAmountInput =
       new TextEditingController(text: '0.0' ?? '0');
   TextEditingController _recipientAddressInput = new TextEditingController();
+  final RoundedLoadingButtonController _buttonController =
+      new RoundedLoadingButtonController();
 
   String _btcAmountInFiat = '0.0';
 
@@ -196,6 +200,13 @@ class __SendViewState extends State<_SendView> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  void _doSomething() async {
+    await Future.delayed(Duration(milliseconds: 3000));
+    _buttonController.success();
+    await Future.delayed(Duration(milliseconds: 2000));
+    _buttonController.reset();
   }
 
   void updatePrice(double currentPrice) {
@@ -223,6 +234,18 @@ class __SendViewState extends State<_SendView> {
                   final String currencySymbol = currencyMap[userCurrency];
 
                   return Scaffold(
+                    bottomNavigationBar: Container(
+                      height: 100,
+                      child: Center(
+                        child: RoundedLoadingButton(
+                          child: Text('Authenticate transaction',
+                              style: TextStyle(color: Colors.white)),
+                          controller: _buttonController,
+                          onPressed: _doSomething,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                     body: SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +261,7 @@ class __SendViewState extends State<_SendView> {
                                             decimal: true),
                                     controller: _btcAmountInput,
                                     style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: false),
+                                    decoration: InputDecoration(filled: true),
                                     onChanged: (amount) {
                                       updatePrice(_bitcoinPrice.data);
                                     },
@@ -269,25 +292,25 @@ class __SendViewState extends State<_SendView> {
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Expanded(
                                   child: TextField(
                                     keyboardType: TextInputType.text,
                                     controller: _recipientAddressInput,
                                     style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: false),
+                                    decoration: InputDecoration(filled: true, helperText: 'Remember to delete any spaces'),
                                   ),
                                 ),
                                 IconButton(
-                                    icon: Icon(Icons.select_all),
+                                    icon: Icon(Icons.camera_alt),
                                     onPressed: () async {
                                       String qrString =
                                           await MajaScan.startScan(
                                               title: 'Scan QR Code',
                                               titleColor: Colors.white,
-                                              qRCornerColor:
-                                                  Colors.purpleAccent,
-                                              qRScannerColor: Colors.purple,
+                                              qRCornerColor: Colors.white,
+                                              qRScannerColor: Colors.red,
                                               scanAreaScale: 0.7);
                                       this._recipientAddressInput.text =
                                           qrString;
@@ -295,6 +318,38 @@ class __SendViewState extends State<_SendView> {
                               ],
                             ),
                           ),
+                          // Center(
+                          //     child: CupertinoButton.filled(
+                          //         child: Text('Authenticate transaction'),
+                          //         onPressed: () {
+                          //           if (this._btcAmountInput.text == '0' ||
+                          //               this._btcAmountInput.text == '0.0' ||
+                          //               this._btcAmountInput.text == '0.00') {
+                          //             showModal<void>(
+                          //               context: context,
+                          //               configuration:
+                          //                   FadeScaleTransitionConfiguration(),
+                          //               builder: (BuildContext context) {
+                          //                 return _ZeroInputDialog();
+                          //               },
+                          //             );
+                          //           } else if (double.parse(
+                          //                   this._btcAmountInput.text) >=
+                          //               returnMaxSpendableBitcoin(
+                          //                   _allOutputs)) {
+                          //             showModal<void>(
+                          //               context: context,
+                          //               configuration:
+                          //                   FadeScaleTransitionConfiguration(),
+                          //               builder: (BuildContext context) {
+                          //                 return _InputAmountToMuchDialog();
+                          //               },
+                          //             );
+                          //           } else {
+                          //             Navigator.popAndPushNamed(
+                          //                 context, 'pushtx');
+                          //           }
+                          //         }))
                         ],
                       ),
                     ),
@@ -372,5 +427,42 @@ class DecimalTextInputFormatter extends TextInputFormatter {
       );
     }
     return newValue;
+  }
+}
+
+class _InputAmountToMuchDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Amount too high'),
+      content: Text(
+          "You either don't have that much Bitcoin or you're not leaving enough in your wallet to pay for the fees for this transaction.\n\nPlease edit amount before continuing."),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}
+
+class _ZeroInputDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Amount too low'),
+      content: Text("You need to send an amount greater than 0.0 BTC"),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
   }
 }

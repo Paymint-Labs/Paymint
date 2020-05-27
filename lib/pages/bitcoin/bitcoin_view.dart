@@ -322,9 +322,14 @@ List<Widget> _buildSecurityListView(BuildContext context) {
           ),
           IconButton(
               icon: Icon(Icons.info),
-              onPressed: () async {
-                final btcService = Provider.of<BitcoinService>(context);
-                print(await btcService.bitcoinPrice);
+              onPressed: () {
+                showModal<void>(
+                  context: context,
+                  configuration: FadeScaleTransitionConfiguration(),
+                  builder: (BuildContext context) {
+                    return _UtxoExplanationDialog();
+                  },
+                );
               })
         ],
       ),
@@ -391,6 +396,31 @@ class _OpenContainerWrapper extends StatelessWidget {
       },
       tappable: true,
       closedBuilder: closedBuilder,
+    );
+  }
+}
+
+class _UtxoExplanationDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('What are wallet outputs?'),
+      content: Text(
+          "Think of the outputs in your bitcoin wallet like the cash and change in your physical wallet.\n\nWe allow users who believe that they are being tracked via these outputs to conceal their identity by blocking suspicious outputs sent to their wallet.\n\nIf you believe you are not being tracked, you have no reason to worry about blocking outputs."),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Learn more'),
+        ),
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        ),
+      ],
     );
   }
 }

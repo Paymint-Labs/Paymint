@@ -15,8 +15,6 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => MainView());
       case '/onboard':
         return CupertinoPageRoute(builder: (_) => OnboardView());
-      case '/actions':
-        return CupertinoPageRoute(builder: (_) => ActionsView());
       default:
         return _routeError();
     }
@@ -26,8 +24,12 @@ class RouteGenerator {
 Route<dynamic> _routeError() {
   // Replace with robust ErrorView page
   Widget errorView = Scaffold(
+    appBar: AppBar(
+      backgroundColor: Colors.black,
+      title: Text('Navigation error'),
+    ),
     body: Center(
-      child: Text('Error handling route', style: GoogleFonts.rubik()),
+      child: Text('Error handling route, this is not supposed to happen. Try restarting the app.'),
     ),
   );
 
