@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 // BitcoinView Keys
 PageStorageKey bitcoinViewScrollOffset = new PageStorageKey(0);
 TabController bitcoinViewTabController;
 ScrollController bitcoinViewScrollController;
+
+final RoundedLoadingButtonController buttonController = new RoundedLoadingButtonController();
 
 // Globally used Maps
 final Map<int, String> weekDayMap = {
