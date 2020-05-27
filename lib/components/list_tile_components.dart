@@ -418,7 +418,7 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
           backgroundColor: Colors.black,
           elevation: 10,
         ),
-        body: Column(
+        body: ListView(
           children: <Widget>[
             Container(
                 height: MediaQuery.of(context).size.width / 2,

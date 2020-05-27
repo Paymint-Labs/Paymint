@@ -238,7 +238,7 @@ class __SendViewState extends State<_SendView> {
                                             decimal: true),
                                     controller: _btcAmountInput,
                                     style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: true),
+                                    decoration: InputDecoration(filled: false),
                                     onChanged: (amount) {
                                       updatePrice(_bitcoinPrice.data);
                                     },
@@ -275,20 +275,22 @@ class __SendViewState extends State<_SendView> {
                                     keyboardType: TextInputType.text,
                                     controller: _recipientAddressInput,
                                     style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: true),
+                                    decoration: InputDecoration(filled: false),
                                   ),
                                 ),
                                 IconButton(
                                     icon: Icon(Icons.select_all),
                                     onPressed: () async {
-                                      String qrString = await MajaScan.startScan(
-                                        title: 'Scan QR Code',
-                                        titleColor: Colors.white,
-                                        qRCornerColor: Colors.purpleAccent,
-                                        qRScannerColor: Colors.purple,
-                                        scanAreaScale: 0.7
-                                      );
-                                      this._recipientAddressInput.text = qrString;
+                                      String qrString =
+                                          await MajaScan.startScan(
+                                              title: 'Scan QR Code',
+                                              titleColor: Colors.white,
+                                              qRCornerColor:
+                                                  Colors.purpleAccent,
+                                              qRScannerColor: Colors.purple,
+                                              scanAreaScale: 0.7);
+                                      this._recipientAddressInput.text =
+                                          qrString;
                                     })
                               ],
                             ),
@@ -327,6 +329,10 @@ double returnMaxSpendableBitcoin(List<UtxoObject> allOutputs) {
     }
   }
   return totalSatoshiAmt / 100000000;
+}
+
+double _bitcoinToSatoshis(double btcAmount) {
+  return btcAmount * 100000000;
 }
 
 class DecimalTextInputFormatter extends TextInputFormatter {
