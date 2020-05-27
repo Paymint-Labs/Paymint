@@ -43,11 +43,11 @@ class BitcoinService extends ChangeNotifier {
 
   BitcoinService() {
     _currency = CurrencyUtilities.fetchPreferredCurrency();
-    this._initializeBitcoinWallet().whenComplete(() {
+    _initializeBitcoinWallet().whenComplete(() {
       _transactionData = _fetchTransactionData();
       _utxoData = _fetchUtxoData();
       _bitcoinPrice = getBitcoinPrice();
-    });
+    }).whenComplete(() => checkReceivingAddressForTransactions());
   }
 
   /// Initializes the user's wallet and sets class getters. Will create a wallet if one does not
@@ -56,7 +56,7 @@ class BitcoinService extends ChangeNotifier {
     final wallet = await Hive.openBox('wallet');
     if (wallet.isEmpty) {
       // Triggers for new users automatically. Generates wallet and defaults currency to 'USD'
-      await this._generateNewWallet(wallet);
+      await _generateNewWallet(wallet);
       await DevUtilities.debugPrintWalletState();
     } else {
       // Wallet alreiady exists, triggers for a returning user
@@ -72,17 +72,16 @@ class BitcoinService extends ChangeNotifier {
     // Set relevant indexes
     await wallet.put('receivingIndex', 0);
     await wallet.put('changeIndex', 0);
-    await wallet.put('transaction_count', 0);
     await wallet.put('phys_backup', false);
     await wallet.put('cloud_backup', false);
     await wallet.put('blocked_tx_hashes', [
       "0xdefault"
     ]); // A list of transaction hashes to represent frozen utxos in wallet
     // Generate and add addresses to relevant arrays
-    final initialReceivingAddress = await this._generateAddressForChain(0, 0);
-    final initialChangeAddress = await this._generateAddressForChain(1, 0);
-    await this._addToAddressesArrayForChain(initialReceivingAddress, 0);
-    await this._addToAddressesArrayForChain(initialChangeAddress, 1);
+    final initialReceivingAddress = await _generateAddressForChain(0, 0);
+    final initialChangeAddress = await _generateAddressForChain(1, 0);
+    await _addToAddressesArrayForChain(initialReceivingAddress, 0);
+    await _addToAddressesArrayForChain(initialChangeAddress, 1);
     this._currentReceivingAddress = Future(() => initialReceivingAddress);
   }
 
@@ -100,7 +99,7 @@ class BitcoinService extends ChangeNotifier {
 
   /// Increases the index for either the internal or external chain, depending on [chain].
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
-  void _incrementAddressIndexForChain(int chain) async {
+  Future<void> _incrementAddressIndexForChain(int chain) async {
     final wallet = await Hive.openBox('wallet');
     if (chain == 0) {
       final newIndex = wallet.get('receivingIndex') + 1;
@@ -174,6 +173,7 @@ class BitcoinService extends ChangeNotifier {
     final UtxoData newUtxoData = await _fetchUtxoData();
     final TransactionData newTxData = await _fetchTransactionData();
     final double newBtcPrice = await getBitcoinPrice();
+    await checkReceivingAddressForTransactions();
 
     this._utxoData = Future(() => newUtxoData);
     this._transactionData = Future(() => newTxData);
@@ -271,11 +271,39 @@ class BitcoinService extends ChangeNotifier {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       notifyListeners();
+      print('Current BTC Price: ' + response.body.toString());
       return json.decode(response.body);
     } else {
       throw Exception('Something happened: ' +
           response.statusCode.toString() +
           response.body);
+    }
+  }
+
+  Future<void> checkReceivingAddressForTransactions() async {
+    final String currentExternalAddr = await this._getCurrentAddressForChain(0);
+    final Map<String, String> requestBody = {"address": currentExternalAddr};
+
+    final response = await http.post(
+      'https://www.api.paymintapp.com/btc/numtxs',
+      body: json.encode(requestBody),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final int numtxs = json.decode(response.body);
+      print('Number of txs for current receiving addr: ' + numtxs.toString());
+
+      if (numtxs >= 1) {
+        final wallet = await Hive.openBox('wallet');
+
+        await _incrementAddressIndexForChain(0);
+        final newReceivingIndex = await wallet.get('receivingIndex');
+        final newReceivingAddress = await _generateAddressForChain(0, newReceivingIndex);
+        await _addToAddressesArrayForChain(newReceivingAddress, 0);
+        this._currentReceivingAddress = Future(() => newReceivingAddress);
+        notifyListeners();
+      }
     }
   }
 }
