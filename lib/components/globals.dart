@@ -3,8 +3,8 @@ import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 // BitcoinView Keys
 PageStorageKey bitcoinViewScrollOffset = new PageStorageKey(0);
-TabController bitcoinViewTabController;
 ScrollController bitcoinViewScrollController;
+TabController bitcoinViewTabController;
 
 final RoundedLoadingButtonController buttonController = new RoundedLoadingButtonController();
 
