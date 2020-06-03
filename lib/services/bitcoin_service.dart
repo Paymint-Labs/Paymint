@@ -28,6 +28,9 @@ class BitcoinService extends ChangeNotifier {
   Future<double> _bitcoinPrice;
   Future<double> get bitcoinPrice => _bitcoinPrice ??= getBitcoinPrice();
 
+  Future<FeeObject> _feeObject;
+  Future<FeeObject> get fees => _feeObject ??= getFees();
+
   /// Holds preferred fiat currency
   Future<String> _currency;
   Future<String> get currency =>
@@ -47,6 +50,7 @@ class BitcoinService extends ChangeNotifier {
       _transactionData = _fetchTransactionData();
       _utxoData = _fetchUtxoData();
       _bitcoinPrice = getBitcoinPrice();
+      _feeObject = getFees();
     }).whenComplete(() => checkReceivingAddressForTransactions());
   }
 
@@ -173,11 +177,13 @@ class BitcoinService extends ChangeNotifier {
     final UtxoData newUtxoData = await _fetchUtxoData();
     final TransactionData newTxData = await _fetchTransactionData();
     final double newBtcPrice = await getBitcoinPrice();
+    final FeeObject feeObj = await getFees();
     await checkReceivingAddressForTransactions();
 
     this._utxoData = Future(() => newUtxoData);
     this._transactionData = Future(() => newTxData);
     this._bitcoinPrice = Future(() => newBtcPrice);
+    this._feeObject = Future(() => feeObj);
     notifyListeners();
   }
 
@@ -205,6 +211,45 @@ class BitcoinService extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  Future<dynamic> buildTransaction(
+      double btcAmount, String address, double fee) async {
+    final int satoshiAmountToSend = (btcAmount * 100000000).toInt();
+    final String recipientAddress = address;
+
+    final List<UtxoObject> spendableOutputs = new List();
+    final List<UtxoObject> outputsToSpendOnTransaction = new List();
+
+    // Populating spendableOutputs with UTXOs that are confirmed onchain but also unblocked locally
+    for (var i = 0; i < allOutputs.length; i++) {
+      if (allOutputs[i].blocked == false &&
+          allOutputs[i].status.confirmed == true) {
+        spendableOutputs.add(allOutputs[i]);
+      }
+    }
+
+    int satoshisBeingSpentOnTransaction = 0;
+
+    while (satoshisBeingSpentOnTransaction < satoshiAmountToSend) {
+      for (var i = 0; i < spendableOutputs.length; i++) {
+        satoshisBeingSpentOnTransaction += spendableOutputs[i].value;
+        outputsToSpendOnTransaction.add(spendableOutputs[i]);
+      }
+    }
+
+    /// Represents the difference between the total satoshi amounts of the tx inputs and the
+    /// amount the user intends to send. The remainder will be assigned to tx fees and change
+    int difference = satoshisBeingSpentOnTransaction - satoshiAmountToSend;
+
+    // At this point, we assume that outputsToSpendOnTransaction is an array with
+    // UtxoObjects that will be spent on the transaction while satoshisBeingSpentOnTransaction
+    // is the integer representing the sum of the satoshi values of those UTXO objects.
+
+    // We also assume that satoshisBeingSpentOnTransaction > satoshiAmountToSend. But we
+    // need to make sure the difference covers tx fees. And if there remains more even still,
+    // then we need to take that remainder amount and send it back to a change address. If the
+    // difference DOES NOT cover the tx fees, then the transaction needs to be modified.
   }
 
   Future<UtxoData> _fetchUtxoData() async {
@@ -299,11 +344,29 @@ class BitcoinService extends ChangeNotifier {
 
         await _incrementAddressIndexForChain(0);
         final newReceivingIndex = await wallet.get('receivingIndex');
-        final newReceivingAddress = await _generateAddressForChain(0, newReceivingIndex);
+        final newReceivingAddress =
+            await _generateAddressForChain(0, newReceivingIndex);
         await _addToAddressesArrayForChain(newReceivingAddress, 0);
         this._currentReceivingAddress = Future(() => newReceivingAddress);
         notifyListeners();
       }
+    } else {
+      throw Exception('Something happened: ' +
+          response.statusCode.toString() +
+          response.body);
+    }
+  }
+
+  Future<FeeObject> getFees() async {
+    final response = await http.get('https://www.api.paymintapp.com/btc/fees');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final FeeObject feeObj = FeeObject.fromJson(json.decode(response.body));
+      return feeObj;
+    } else {
+      throw Exception('Something happened: ' +
+          response.statusCode.toString() +
+          response.body);
     }
   }
 }
