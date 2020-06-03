@@ -12,7 +12,20 @@ class MoreView extends StatefulWidget {
 class _MoreViewState extends State<MoreView> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
+      body: ListView(
+        children: <Widget>[
+          Container(
+            height: 200,
+            color: Colors.redAccent
+          ),
+          ListTile(
+            title: Text('Security', textScaleFactor: 1.1),
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () {},
+          ),
+        ],
+      ),
     );
   }
 }

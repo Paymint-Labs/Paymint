@@ -13,6 +13,8 @@ import 'dart:math' as math;
 import 'package:majascan/majascan.dart';
 import 'package:animations/animations.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
@@ -183,187 +185,143 @@ class _SendView extends StatefulWidget {
 }
 
 class __SendViewState extends State<_SendView> {
-  TextEditingController _btcAmountInput =
-      new TextEditingController(text: '0.0' ?? '0');
-  TextEditingController _recipientAddressInput = new TextEditingController();
+  TextEditingController _inputAmount = TextEditingController(text: '0.0');
+  TextEditingController _recipientAddress = TextEditingController();
+  var rawFiatPrice = '0.0' ?? '0.0';
 
-  String _btcAmountInFiat = '0.0';
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  void _doSomething() async {
-    showModal<void>(
-      context: context,
-      configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
-      builder: (BuildContext context) {
-        return _PushTxDialog();
-      },
-    );
-    await Future.delayed(Duration(milliseconds: 3000));
-    buttonController.success();
-    Navigator.pop(context);
-  }
-
-  void updatePrice(double currentPrice) {
-    setState(() {
-      var newData = currentPrice * double.parse(_btcAmountInput.text);
-      this._btcAmountInFiat = newData.toStringAsFixed(2);
-    });
+  recalculateDisplayPriceFromInput(amount, rawPriceInFiat) {
+    final rawFiatPriceFromInput = rawPriceInFiat * double.parse(amount);
+    final fmf = FlutterMoneyFormatter(amount: rawFiatPriceFromInput);
+    rawFiatPrice = fmf.output.nonSymbol.toString();
+    print(rawFiatPrice);
   }
 
   @override
   Widget build(BuildContext context) {
     final btcService = Provider.of<BitcoinService>(context);
-    final List<UtxoObject> _allOutputs = btcService.allOutputs;
 
     return FutureBuilder(
       future: btcService.currency,
-      builder: (BuildContext context, AsyncSnapshot _currencyData) {
-        if (_currencyData.connectionState == ConnectionState.done) {
+      builder: (BuildContext context, AsyncSnapshot<String> userCurrency) {
+        if (userCurrency.connectionState == ConnectionState.done) {
           return FutureBuilder(
-              future: btcService.bitcoinPrice,
-              builder: (BuildContext context, AsyncSnapshot _bitcoinPrice) {
-                if (_bitcoinPrice.connectionState == ConnectionState.done) {
-                  final String displayBtcPrice = _bitcoinPrice.data.toString();
-                  final String userCurrency = _currencyData.data;
-                  final String currencySymbol = currencyMap[userCurrency];
-
-                  return Scaffold(
-                    bottomNavigationBar: Container(
-                      height: 100,
-                      child: Center(
-                        child: RoundedLoadingButton(
-                          child: Text('Send transaction',
-                              style: TextStyle(color: Colors.white)),
-                          controller: buttonController,
-                          onPressed: _doSomething,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    body: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextField(
-                                    keyboardType:
-                                        TextInputType.numberWithOptions(
-                                            decimal: false),
-                                    controller: _btcAmountInput,
-                                    style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(filled: false),
-                                    onChanged: (amount) {
-                                      updatePrice(_bitcoinPrice.data);
-                                    },
-                                    inputFormatters: [
-                                      DecimalTextInputFormatter(decimalRange: 8)
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text('BTC', textScaleFactor: 1.5),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                                '~ Sending $currencySymbol$_btcAmountInFiat \n~ @ $currencySymbol$displayBtcPrice per Bitcoin',
-                                textScaleFactor: 1.2,
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                            child: Text("Recipient's address:",
-                                textScaleFactor: 1.3),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: TextField(
-                                    keyboardType: TextInputType.text,
-                                    controller: _recipientAddressInput,
-                                    style: TextStyle(fontSize: 20),
-                                    decoration: InputDecoration(
-                                        filled: false,
-                                        helperText:
-                                            'Remember to delete any spaces'),
-                                  ),
-                                ),
-                                IconButton(
-                                    icon: Icon(Icons.camera_alt),
-                                    onPressed: () async {
-                                      String qrString =
-                                          await MajaScan.startScan(
-                                              title: 'Scan QR Code',
-                                              titleColor: Colors.white,
-                                              qRCornerColor: Colors.white,
-                                              qRScannerColor: Colors.red,
-                                              scanAreaScale: 0.7);
-                                      this._recipientAddressInput.text =
-                                          qrString;
-                                    })
-                              ],
-                            ),
-                          ),
-                          // Center(
-                          //     child: CupertinoButton.filled(
-                          //         child: Text('Authenticate transaction'),
-                          //         onPressed: () {
-                          //           if (this._btcAmountInput.text == '0' ||
-                          //               this._btcAmountInput.text == '0.0' ||
-                          //               this._btcAmountInput.text == '0.00') {
-                          //             showModal<void>(
-                          //               context: context,
-                          //               configuration:
-                          //                   FadeScaleTransitionConfiguration(),
-                          //               builder: (BuildContext context) {
-                          //                 return _ZeroInputDialog();
-                          //               },
-                          //             );
-                          //           } else if (double.parse(
-                          //                   this._btcAmountInput.text) >=
-                          //               returnMaxSpendableBitcoin(
-                          //                   _allOutputs)) {
-                          //             showModal<void>(
-                          //               context: context,
-                          //               configuration:
-                          //                   FadeScaleTransitionConfiguration(),
-                          //               builder: (BuildContext context) {
-                          //                 return _InputAmountToMuchDialog();
-                          //               },
-                          //             );
-                          //           } else {
-                          //             Navigator.popAndPushNamed(
-                          //                 context, 'pushtx');
-                          //           }
-                          //         }))
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  return _SendViewLoading();
-                }
-              });
+            future: btcService.fees,
+            builder:
+                (BuildContext context, AsyncSnapshot<FeeObject> feeObject) {
+              if (feeObject.connectionState == ConnectionState.done) {
+                return FutureBuilder(
+                  future: btcService.bitcoinPrice,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<double> bitcoinPrice) {
+                    if (bitcoinPrice.connectionState == ConnectionState.done) {
+                      return _buildMainSendView(
+                          context, feeObject, userCurrency, bitcoinPrice);
+                    } else {
+                      return _SendViewLoading();
+                    }
+                  },
+                );
+              } else {
+                return _SendViewLoading();
+              }
+            },
+          );
         } else {
           return _SendViewLoading();
         }
       },
+    );
+  }
+
+  _buildMainSendView(BuildContext context, AsyncSnapshot<FeeObject> feeObj,
+      AsyncSnapshot<String> currency, AsyncSnapshot<double> bitcoinPrice) {
+    final String _currency = currency.data;
+    final FeeObject _feeObj = feeObj.data;
+    final BitcoinService btcService = Provider.of<BitcoinService>(context);
+    final double rawBitcoinPrice = bitcoinPrice.data;
+
+    var displayCurrency = currencyMap[_currency];
+    var displayBitcoinPrice = FlutterMoneyFormatter(amount: rawBitcoinPrice)
+        .output
+        .nonSymbol
+        .toString();
+
+    return Scaffold(
+      bottomNavigationBar: Container(
+        height: 100,
+        child: Center(
+          child: RoundedLoadingButton(
+              child: Text('Send transaction',
+                  style: TextStyle(color: Colors.white)),
+              controller: buttonController,
+              onPressed: () {},
+              color: Colors.black),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('Amount in bitcoin:'),
+              // Bitcoin amount input text field
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller: _inputAmount,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      style: TextStyle(fontSize: 20),
+                      inputFormatters: [
+                        DecimalTextInputFormatter(decimalRange: 8)
+                      ],
+                      onChanged: (amt) {
+                        setState(() {
+                          recalculateDisplayPriceFromInput(
+                              amt, rawBitcoinPrice);
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Text('BTC', textScaleFactor: 1.5)
+                ],
+              ),
+              SizedBox(height: 32),
+              Text('~ Sending $displayCurrency$rawFiatPrice in Bitcoin',
+                  textScaleFactor: 1.3, style: TextStyle(color: Colors.grey)),
+              Text('~ @ $displayCurrency$displayBitcoinPrice per Bitcoin',
+                  textScaleFactor: 1.3, style: TextStyle(color: Colors.grey)),
+              SizedBox(height: 32),
+              Text('Recipient\'s Address:'),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextFormField(controller: _recipientAddress),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.camera),
+                    onPressed: () async {
+                      String qrString = await MajaScan.startScan(
+                          title: 'Scan QR Code',
+                          titleColor: Colors.white,
+                          qRCornerColor: Colors.white,
+                          qRScannerColor: Colors.red,
+                          scanAreaScale: 0.7);
+                      this._recipientAddress.text = qrString;
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 60),
+              Text('Fee selection:')
+
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -372,7 +330,7 @@ class _SendViewLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(child: Text('Loading send view...')),
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }
@@ -386,10 +344,6 @@ double returnMaxSpendableBitcoin(List<UtxoObject> allOutputs) {
     }
   }
   return totalSatoshiAmt / 100000000;
-}
-
-double _bitcoinToSatoshis(double btcAmount) {
-  return btcAmount * 100000000;
 }
 
 class DecimalTextInputFormatter extends TextInputFormatter {
@@ -473,8 +427,8 @@ class _PushTxDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Please do not exit...'),
-      content: Container(child: Center(child: CircularProgressIndicator()), height: 100)
-    );
+        title: Text('Please do not exit...'),
+        content: Container(
+            child: Center(child: CircularProgressIndicator()), height: 100));
   }
 }
