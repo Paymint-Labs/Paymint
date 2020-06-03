@@ -27,14 +27,11 @@ class _BitcoinViewState extends State<BitcoinView>
   ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
   double _fabDimension = 56.0;
 
+
   @override
   void initState() {
-    bitcoinViewTabController = TabController(
-        vsync: this, length: 2, initialIndex: bitcoinViewScrollOffset.value);
-    bitcoinViewScrollController = ScrollController(
-        keepScrollOffset: true,
-        initialScrollOffset: bitcoinViewScrollOffset.value.toDouble());
     super.initState();
+    bitcoinViewTabController = TabController(length: 2, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -87,17 +84,15 @@ class _BitcoinViewState extends State<BitcoinView>
         },
       ),
       body: NestedScrollView(
-        key: bitcoinViewScrollOffset,
         pinnedHeaderSliverHeightBuilder: () =>
             _pinnedHeaderHeight +
-            50, // Arbitrary height that seems to work at the moment
-        controller: bitcoinViewScrollController,
+            50,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
           return <Widget>[
             SliverAppBar(
               backgroundColor: Colors.black,
               leading: IconButton(
-                icon: Icon(Icons.notifications),
+                icon: Icon(Icons.notifications_none),
                 onPressed: () {
                   Toast.show('Coming soon', context,
                       duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
@@ -105,7 +100,7 @@ class _BitcoinViewState extends State<BitcoinView>
               ),
               actions: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.insert_chart),
+                  icon: Icon(Icons.chat_bubble_outline),
                   onPressed: () {
                     Toast.show('Coming soon', context,
                         duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
@@ -152,7 +147,6 @@ class _BitcoinViewState extends State<BitcoinView>
           ];
         },
         body: TabBarView(
-          key: bitcoinViewScrollOffset,
           controller: bitcoinViewTabController,
           children: <Widget>[
             NestedScrollViewInnerScrollPositionKeyWidget(
