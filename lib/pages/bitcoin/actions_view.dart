@@ -13,8 +13,8 @@ import 'dart:math' as math;
 import 'package:majascan/majascan.dart';
 import 'package:animations/animations.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+import 'package:hive/hive.dart';
 
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
@@ -189,11 +189,12 @@ class __SendViewState extends State<_SendView> {
   TextEditingController _recipientAddress = TextEditingController();
   var rawFiatPrice = '0.0' ?? '0.0';
 
+  double selectedFee = 1.0;
+
   recalculateDisplayPriceFromInput(amount, rawPriceInFiat) {
     final rawFiatPriceFromInput = rawPriceInFiat * double.parse(amount);
     final fmf = FlutterMoneyFormatter(amount: rawFiatPriceFromInput);
     rawFiatPrice = fmf.output.nonSymbol.toString();
-    print(rawFiatPrice);
   }
 
   @override
@@ -233,6 +234,172 @@ class __SendViewState extends State<_SendView> {
     );
   }
 
+  void _checkAndBuild() async {
+    final BitcoinService btcService = Provider.of<BitcoinService>(context);
+    final List<UtxoObject> allOutputs = btcService.allOutputs;
+    int spendableSatoshiAmt = 0;
+    for (var i = 0; i < allOutputs.length; i++) {
+      if (allOutputs[i].blocked == false &&
+          allOutputs[i].status.confirmed == true) {
+        spendableSatoshiAmt += allOutputs[i].value;
+      }
+    }
+
+    var checkAddress = (String address) {
+      return address.startsWith('1') ||
+          address.startsWith('3') ||
+          address.startsWith('bc1');
+    };
+
+    // Show initial loading dialog
+    showModal(
+      context: context,
+      configuration:
+          FadeScaleTransitionConfiguration(barrierDismissible: false),
+      builder: (BuildContext context) {
+        return _WaitDialog();
+      },
+    );
+
+    // Hard checks for inputAmount
+    // If input == 0, then show ZeroInputDialog
+    if (double.parse(_inputAmount.text ??= '0.0') == 0.0) {
+      Navigator.pop(context);
+      showModal(
+        context: context,
+        configuration: FadeScaleTransitionConfiguration(),
+        builder: (BuildContext context) {
+          return _ZeroInputDialog();
+        },
+      );
+    } else if (double.parse(_inputAmount.text) > (spendableSatoshiAmt / 100000000)) {
+      print(_inputAmount.text);
+      print(spendableSatoshiAmt / 100000000);
+      Navigator.pop(context);
+      showModal(
+        context: context,
+        configuration: FadeScaleTransitionConfiguration(),
+        builder: (BuildContext context) {
+          return _InputAmountToMuchDialog();
+        },
+      );
+    }
+
+    // Check recipient address
+    if (checkAddress(_recipientAddress.text) == false) {
+      print('Invalid address');
+      Navigator.pop(context);
+      showModal(
+        context: context,
+        configuration: FadeScaleTransitionConfiguration(),
+        builder: (BuildContext context) {
+          return _InvalidAddressDialog();
+        },
+      );
+    }
+  }
+
+  Future<dynamic> _checkTransactionEligibilityAndBuild(BuildContext context,
+      int satoshiAmountToSend, double selectedTxFee) async {
+    final BitcoinService btcService = Provider.of<BitcoinService>(context);
+    final List<UtxoObject> availableOutputs = btcService.allOutputs;
+    final List<UtxoObject> spendableOutputs = new List();
+    int spendableSatoshiValue = 0;
+
+    // Build list of spendable outputs and totaling their satoshi amount
+    for (var i = 0; i < availableOutputs.length; i++) {
+      if (availableOutputs[i].blocked == false &&
+          availableOutputs[i].status.confirmed == true) {
+        spendableOutputs.add(availableOutputs[i]);
+        spendableSatoshiValue += availableOutputs[i].value;
+      }
+    }
+
+    // If the amount the user is trying to send is smaller than the amount that they have spendable,
+    // then return 1, which indicates that they have an insufficient balance.
+    if (spendableSatoshiValue < satoshiAmountToSend) {
+      return 1;
+      // If the amount the user wants to send is exactly equal to the amount they can spend, then return
+      // 2, which indicates that they are not leaving enough over to pay the transaction fee
+    } else if (spendableSatoshiValue == satoshiAmountToSend) {
+      return 2;
+    }
+    // If neither of these statements pass, we assume that the user has a spendable balance greater
+    // than the amount they're attempting to send. Note that this value still does not account for
+    // the added transaction fee, which may require an extra input and will need to be checked for
+    // later on.
+
+    int satoshisBeingUsed = 0;
+    int inputsBeingConsumed = 0;
+    List<UtxoObject> utxoObjectsToUse = new List();
+
+    while (satoshisBeingUsed < satoshiAmountToSend) {
+      for (var i = 0; i < spendableOutputs.length; i++) {
+        utxoObjectsToUse.add(spendableOutputs[i]);
+        inputsBeingConsumed += spendableOutputs[i].value;
+        inputsBeingConsumed += 1;
+      }
+    }
+
+    // numberOfOutputs' length must always be equal to that of recipientsArray and recipientsAmtArray
+    int numberOfOutputs = 1;
+    List<String> recipientsArray = [_recipientAddress.text];
+    List<int> recipientsAmtArray = [satoshiAmountToSend];
+
+    // Assume 1 output, only for recipient and no change
+    final feeForOneOutput =
+        ((42 + 272 * inputsBeingConsumed + 128) / 4).ceil() *
+            selectedTxFee.ceil();
+    // Assume 2 outputs, one for recipient and one for change
+    final feeForTwoOutputs =
+        ((42 + 272 * inputsBeingConsumed + 128 * 2) / 4).ceil() *
+            selectedTxFee.ceil();
+
+    if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput) {
+      if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput + 293) {
+        // Here, we know that theoretically, we may be able to include another output(change) but we first need to
+        // factor in the value of this output in satoshis
+        int changeOutputSize =
+            satoshisBeingUsed - satoshiAmountToSend - feeForTwoOutputs;
+        if (changeOutputSize > 293 &&
+            satoshisBeingUsed - satoshiAmountToSend - changeOutputSize ==
+                feeForTwoOutputs) {
+          await btcService.incrementAddressIndexForChain(1);
+          final wallet = await Hive.openBox('wallet');
+          final int changeIndex = await wallet.get('changeIndex');
+          final String newChangeAddress =
+              await btcService.generateAddressForChain(1, changeIndex);
+          await btcService.addToAddressesArrayForChain(newChangeAddress, 1);
+          recipientsArray.add(newChangeAddress);
+          recipientsAmtArray.add(changeOutputSize);
+          numberOfOutputs += 1;
+
+          // At this point, we have the outputs we're going to use, the amounts to send along with which addresses
+          // we intend to send these amounts to. We have enough to send instructions to build the transaction.
+
+          final String hex = await btcService.buildTransaction(
+              utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+        } else {
+          // Something went wrong here. It either overshot or undershot the estimated fee amount or the changeOutputSize
+          // is smaller than or equal to 293. Revert to single output transaction.
+        }
+      } else {
+        // No additional outputs needed since adding one would mean that it'd be smaller than 293 sats
+        // which makes it uneconomical to add to the transaction. Here, we pass data directly to instruct
+        // the wallet to begin crafting the transaction that the user requested.
+      }
+    } else if (satoshisBeingUsed - satoshiAmountToSend == feeForOneOutput) {
+      // In this scenario, no additional change output is needed since inputs - outputs equal exactly
+      // what we need to pay for fees. Here, we pass data directly to instruct the wallet to begin
+      // crafting the transaction that the user requested.
+    } else {
+      // Remember that returning 2 indicates that the user does not have a sufficient balance to
+      // pay for the transaction fee. Ideally, at this stage, we should check if the user has any
+      // additional outputs they're able to spend and then recalculate fees.
+      return 2;
+    }
+  }
+
   _buildMainSendView(BuildContext context, AsyncSnapshot<FeeObject> feeObj,
       AsyncSnapshot<String> currency, AsyncSnapshot<double> bitcoinPrice) {
     final String _currency = currency.data;
@@ -240,23 +407,23 @@ class __SendViewState extends State<_SendView> {
     final BitcoinService btcService = Provider.of<BitcoinService>(context);
     final double rawBitcoinPrice = bitcoinPrice.data;
 
-    var displayCurrency = currencyMap[_currency];
-    var displayBitcoinPrice = FlutterMoneyFormatter(amount: rawBitcoinPrice)
-        .output
-        .nonSymbol
-        .toString();
+    final String displayCurrency = currencyMap[_currency];
+    final String displayBitcoinPrice =
+        FlutterMoneyFormatter(amount: rawBitcoinPrice)
+            .output
+            .nonSymbol
+            .toString();
 
     return Scaffold(
       bottomNavigationBar: Container(
         height: 100,
         child: Center(
-          child: RoundedLoadingButton(
-              child: Text('Send transaction',
-                  style: TextStyle(color: Colors.white)),
-              controller: buttonController,
-              onPressed: () {},
-              color: Colors.black),
-        ),
+            child: CupertinoButton.filled(
+          child: Text('Preview transaction'),
+          onPressed: () async {
+            _checkAndBuild();
+          },
+        )),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -315,9 +482,7 @@ class __SendViewState extends State<_SendView> {
                   ),
                 ],
               ),
-              SizedBox(height: 60),
-              Text('Fee selection:')
-
+              SizedBox(height: 60)
             ],
           ),
         ),
@@ -333,17 +498,6 @@ class _SendViewLoading extends StatelessWidget {
       child: Center(child: CircularProgressIndicator()),
     );
   }
-}
-
-double returnMaxSpendableBitcoin(List<UtxoObject> allOutputs) {
-  int totalSatoshiAmt = 0;
-  for (var i = 0; i < allOutputs.length; i++) {
-    if (allOutputs[i].blocked == false &&
-        allOutputs[i].status.confirmed == true) {
-      totalSatoshiAmt = totalSatoshiAmt + allOutputs[i].value;
-    }
-  }
-  return totalSatoshiAmt / 100000000;
 }
 
 class DecimalTextInputFormatter extends TextInputFormatter {
@@ -392,7 +546,7 @@ class _InputAmountToMuchDialog extends StatelessWidget {
     return AlertDialog(
       title: Text('Amount too high'),
       content: Text(
-          "You either don't have that much Bitcoin or you're not leaving enough in your wallet to pay for the fees for this transaction.\n\nPlease edit amount before continuing."),
+          "You do not have that much Bitcoin to spend. Please try a smaller amount."),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
@@ -410,7 +564,7 @@ class _ZeroInputDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Amount too low'),
-      content: Text("You need to send an amount greater than 0.0 BTC"),
+      content: Text("You need to send more than 0 BTC"),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
@@ -423,7 +577,45 @@ class _ZeroInputDialog extends StatelessWidget {
   }
 }
 
-class _PushTxDialog extends StatelessWidget {
+class _InvalidAddressDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Invalid address'),
+      content: Text(
+          "You're trying to send bitcoin to an invalid address. Please edit the recipient field and try again."),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}
+
+class _NoInputDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('No amount selected'),
+      content: Text(
+          "The BTC amount input field is empty. Please enter a valid amount and retry."),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}
+
+class _WaitDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
