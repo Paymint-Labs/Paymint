@@ -1,7 +1,7 @@
 class FeeObject {
-  final double fast;
-  final double medium;
-  final double slow;
+  final dynamic fast;
+  final dynamic medium;
+  final dynamic slow;
 
   FeeObject({this.fast, this.medium, this.slow});
 
