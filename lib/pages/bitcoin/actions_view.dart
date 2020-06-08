@@ -272,7 +272,8 @@ class __SendViewState extends State<_SendView> {
           return _ZeroInputDialog();
         },
       );
-    } else if (double.parse(_inputAmount.text) > (spendableSatoshiAmt / 100000000)) {
+    } else if (double.parse(_inputAmount.text) >
+        (spendableSatoshiAmt / 100000000)) {
       print(_inputAmount.text);
       print(spendableSatoshiAmt / 100000000);
       Navigator.pop(context);
@@ -358,9 +359,12 @@ class __SendViewState extends State<_SendView> {
     if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput) {
       if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput + 293) {
         // Here, we know that theoretically, we may be able to include another output(change) but we first need to
-        // factor in the value of this output in satoshis
+        // factor in the value of this output in satoshis.
         int changeOutputSize =
             satoshisBeingUsed - satoshiAmountToSend - feeForTwoOutputs;
+        // We check to see if the user can pay for the new transaction with 2 outputs instead of one. Iff they can and
+        // the second output's size > 293 satoshis, we perform the mechanics required to properly generate and use a new
+        // change address. 
         if (changeOutputSize > 293 &&
             satoshisBeingUsed - satoshiAmountToSend - changeOutputSize ==
                 feeForTwoOutputs) {
@@ -373,25 +377,29 @@ class __SendViewState extends State<_SendView> {
           recipientsArray.add(newChangeAddress);
           recipientsAmtArray.add(changeOutputSize);
           numberOfOutputs += 1;
-
           // At this point, we have the outputs we're going to use, the amounts to send along with which addresses
           // we intend to send these amounts to. We have enough to send instructions to build the transaction.
-
           final String hex = await btcService.buildTransaction(
               utxoObjectsToUse, recipientsArray, recipientsAmtArray);
         } else {
           // Something went wrong here. It either overshot or undershot the estimated fee amount or the changeOutputSize
           // is smaller than or equal to 293. Revert to single output transaction.
+          final String hex = await btcService.buildTransaction(
+              utxoObjectsToUse, recipientsArray, recipientsAmtArray);
         }
       } else {
         // No additional outputs needed since adding one would mean that it'd be smaller than 293 sats
         // which makes it uneconomical to add to the transaction. Here, we pass data directly to instruct
         // the wallet to begin crafting the transaction that the user requested.
+        final String hex = await btcService.buildTransaction(
+            utxoObjectsToUse, recipientsArray, recipientsAmtArray);
       }
     } else if (satoshisBeingUsed - satoshiAmountToSend == feeForOneOutput) {
       // In this scenario, no additional change output is needed since inputs - outputs equal exactly
       // what we need to pay for fees. Here, we pass data directly to instruct the wallet to begin
       // crafting the transaction that the user requested.
+      final String hex = await btcService.buildTransaction(
+          utxoObjectsToUse, recipientsArray, recipientsAmtArray);
     } else {
       // Remember that returning 2 indicates that the user does not have a sufficient balance to
       // pay for the transaction fee. Ideally, at this stage, we should check if the user has any

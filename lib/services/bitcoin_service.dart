@@ -269,6 +269,22 @@ class BitcoinService extends ChangeNotifier {
 
     final txb = new TransactionBuilder();
     txb.setVersion(1);
+
+    // Add transaction inputs
+    for (var i = 0; i < utxosToUse.length; i++) {
+      txb.addInput(utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
+    }
+
+    // Add transaction outputs
+    for (var i = 0; i < recipients.length; i++) {
+      txb.addOutput(recipients[i], satoshisPerRecipient[i]);
+    }
+
+    // Sign the transaction accordingly
+    for (var i = 0; i < utxosToUse.length; i++) {
+      txb.sign(vin: 0, keyPair: elipticCurvePairArray[i], witnessValue: utxosToUse[i].value);
+    }
+    txb.build().toHex();
   }
 
   Future<UtxoData> _fetchUtxoData() async {
