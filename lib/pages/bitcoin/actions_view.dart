@@ -15,7 +15,6 @@ import 'package:animations/animations.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
-
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
 
@@ -301,6 +300,8 @@ class __SendViewState extends State<_SendView> {
 
     // If none of the above cases get triggered, attempt to build transaction
     int satoshiAmount = (double.parse(_inputAmount.text) * 100000000).toInt();
+    print(satoshiAmount);
+    print(spendableSatoshiAmt);
     dynamic transactionHexOrError = await btcService.coinSelection(
       satoshiAmount,
       _feeObject.fast,
@@ -319,15 +320,16 @@ class __SendViewState extends State<_SendView> {
             return _InputAmountToMuchDialog();
           },
         );
-      } else if (transactionHexOrError == 2) {}
-      Navigator.pop(context);
-      showModal(
-        context: context,
-        configuration: FadeScaleTransitionConfiguration(),
-        builder: (BuildContext context) {
-          return _InsufficentLeftverForFeesDialog();
-        },
-      );
+      } else if (transactionHexOrError == 2 && spendableSatoshiAmt.toDouble() != 0.0) {
+        Navigator.pop(context);
+        showModal(
+          context: context,
+          configuration: FadeScaleTransitionConfiguration(),
+          builder: (BuildContext context) {
+            return _InsufficentLeftverForFeesDialog();
+          },
+        );
+      }
     } else {
       // In this case, we receive a Map<String, dynamic> with keys: hex, recipient, recipientAmt, and fee
       // We show this in an alert dialog so that the user can approve their transaction before sending it
@@ -568,13 +570,13 @@ class _PreviewTransactionDialog extends StatelessWidget {
   final int fees;
 
   String _displauAddr(String address) {
-    return address.substring(0, 5) + '...' + address.substring(address.length - 5);
+    return address.substring(0, 5) +
+        '...' +
+        address.substring(address.length - 5);
   }
 
   // Parameters optional for now
-  Future<String> _sendHexToService([BuildContext context, String hex]) {
-
-  }
+  Future<String> _sendHexToService([BuildContext context, String hex]) {}
 
   _PreviewTransactionDialog(
       this.hex, this.recipient, this.recipientAmt, this.fees);
@@ -588,25 +590,31 @@ class _PreviewTransactionDialog extends StatelessWidget {
           child: Column(
             children: <Widget>[
               SizedBox(height: 16),
-              Center(child: Text('Confirm transaction details', textScaleFactor: 1.5)),
+              Center(
+                  child: Text('Confirm transaction details',
+                      textScaleFactor: 1.5)),
               SizedBox(height: 32),
               ListTile(
                 title: Text('Recipient:'),
-                trailing: Text(_displauAddr(recipient), style: TextStyle(color: Colors.grey)),
+                trailing: Text(_displauAddr(recipient),
+                    style: TextStyle(color: Colors.grey)),
                 onTap: () {},
               ),
               ListTile(
                 title: Text('Amount (in BTC):'),
-                trailing: Text((recipientAmt/100000000).toString(), style: TextStyle(color: Colors.grey)),
+                trailing: Text((recipientAmt / 100000000).toString(),
+                    style: TextStyle(color: Colors.grey)),
                 onTap: () {},
               ),
               ListTile(
                 title: Text('Fees (in sats):'),
-                trailing: Text(fees.toString(), style: TextStyle(color: Colors.grey)),
+                trailing:
+                    Text(fees.toString(), style: TextStyle(color: Colors.grey)),
                 onTap: () {},
               ),
               ListTile(
-                title: Text('Copy transaction hex', style: TextStyle(color: Colors.blue)),
+                title: Text('Copy transaction hex',
+                    style: TextStyle(color: Colors.blue)),
                 onTap: () {
                   Clipboard.setData(new ClipboardData(text: hex));
                   Toast.show('Transaction hex copied to clipboard', context,
