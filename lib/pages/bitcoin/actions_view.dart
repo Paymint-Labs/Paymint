@@ -14,7 +14,7 @@ import 'package:majascan/majascan.dart';
 import 'package:animations/animations.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
-import 'package:hive/hive.dart';
+
 
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
@@ -189,7 +189,7 @@ class __SendViewState extends State<_SendView> {
   TextEditingController _recipientAddress = TextEditingController();
   var rawFiatPrice = '0.0' ?? '0.0';
 
-  double selectedFee = 1.0;
+  dynamic selectedFee;
 
   recalculateDisplayPriceFromInput(amount, rawPriceInFiat) {
     final rawFiatPriceFromInput = rawPriceInFiat * double.parse(amount);
@@ -238,6 +238,7 @@ class __SendViewState extends State<_SendView> {
     final BitcoinService btcService = Provider.of<BitcoinService>(context);
     final List<UtxoObject> allOutputs = btcService.allOutputs;
     int spendableSatoshiAmt = 0;
+
     for (var i = 0; i < allOutputs.length; i++) {
       if (allOutputs[i].blocked == false &&
           allOutputs[i].status.confirmed == true) {
@@ -288,7 +289,6 @@ class __SendViewState extends State<_SendView> {
 
     // Check recipient address
     if (checkAddress(_recipientAddress.text) == false) {
-      print('Invalid address');
       Navigator.pop(context);
       showModal(
         context: context,
@@ -298,12 +298,52 @@ class __SendViewState extends State<_SendView> {
         },
       );
     }
-    int inp = (double.parse(_inputAmount.text) * 100000000).toInt();
 
-    dynamic transactionHexOrError =
-        await btcService.checkTransactionEligibilityAndBuild(
-            inp, _feeObject.fast, _recipientAddress.text);
-    // check if error, if not then ask to confirm before sending eventually
+    // If none of the above cases get triggered, attempt to build transaction
+    int satoshiAmount = (double.parse(_inputAmount.text) * 100000000).toInt();
+    dynamic transactionHexOrError = await btcService.coinSelection(
+      satoshiAmount,
+      _feeObject.fast,
+      _recipientAddress.text,
+    );
+
+    if (transactionHexOrError is int) {
+      // transactionHexOrError == 1 indicates an insufficient balance whereas 2 would indicate
+      // an adequate balance but an inability to pay for tx fees with leftover balance
+      if (transactionHexOrError == 1) {
+        Navigator.pop(context);
+        showModal(
+          context: context,
+          configuration: FadeScaleTransitionConfiguration(),
+          builder: (BuildContext context) {
+            return _InputAmountToMuchDialog();
+          },
+        );
+      } else if (transactionHexOrError == 2) {}
+      Navigator.pop(context);
+      showModal(
+        context: context,
+        configuration: FadeScaleTransitionConfiguration(),
+        builder: (BuildContext context) {
+          return _InsufficentLeftverForFeesDialog();
+        },
+      );
+    } else {
+      // In this case, we receive a Map<String, dynamic> with keys: hex, recipient, recipientAmt, and fee
+      // We show this in an alert dialog so that the user can approve their transaction before sending it
+      Navigator.pop(context);
+      showModal(
+          context: context,
+          configuration: FadeScaleTransitionConfiguration(),
+          builder: (BuildContext context) {
+            return _PreviewTransactionDialog(
+              transactionHexOrError['hex'],
+              transactionHexOrError['recipient'],
+              transactionHexOrError['recipientAmt'],
+              transactionHexOrError['fee'],
+            );
+          });
+    }
   }
 
   _buildMainSendView(BuildContext context, AsyncSnapshot<FeeObject> feeObj,
@@ -502,13 +542,13 @@ class _InvalidAddressDialog extends StatelessWidget {
   }
 }
 
-class _NoInputDialog extends StatelessWidget {
+class _InsufficentLeftverForFeesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('No amount selected'),
+      title: Text('Insufficient leftover'),
       content: Text(
-          "The BTC amount input field is empty. Please enter a valid amount and retry."),
+          "You have the amount you're trying to send but aren't leaving enough leftover to pay for the fees of this transaction. Modify amount and try again."),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
@@ -517,6 +557,66 @@ class _NoInputDialog extends StatelessWidget {
           child: const Text('OK'),
         ),
       ],
+    );
+  }
+}
+
+class _PreviewTransactionDialog extends StatelessWidget {
+  final String hex;
+  final String recipient;
+  final int recipientAmt;
+  final int fees;
+
+  String _displauAddr(String address) {
+    return address.substring(0, 5) + '...' + address.substring(address.length - 5);
+  }
+
+  // Parameters optional for now
+  Future<String> _sendHexToService([BuildContext context, String hex]) {
+
+  }
+
+  _PreviewTransactionDialog(
+      this.hex, this.recipient, this.recipientAmt, this.fees);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 16),
+              Center(child: Text('Confirm transaction details', textScaleFactor: 1.5)),
+              SizedBox(height: 32),
+              ListTile(
+                title: Text('Recipient:'),
+                trailing: Text(_displauAddr(recipient), style: TextStyle(color: Colors.grey)),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Text('Amount (in BTC):'),
+                trailing: Text((recipientAmt/100000000).toString(), style: TextStyle(color: Colors.grey)),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Text('Fees (in sats):'),
+                trailing: Text(fees.toString(), style: TextStyle(color: Colors.grey)),
+                onTap: () {},
+              ),
+              ListTile(
+                title: Text('Copy transaction hex', style: TextStyle(color: Colors.blue)),
+                onTap: () {
+                  Clipboard.setData(new ClipboardData(text: hex));
+                  Toast.show('Transaction hex copied to clipboard', context,
+                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                },
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
