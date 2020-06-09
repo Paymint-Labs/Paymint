@@ -310,8 +310,8 @@ class __SendViewState extends State<_SendView> {
 
     if (transactionHexOrError is int) {
       // transactionHexOrError == 1 indicates an insufficient balance whereas 2 would indicate
-      // an adequate balance but an inability to pay for tx fees with leftover balance
-      if (transactionHexOrError == 1) {
+      // an adequate balance but an inability to pay for tx fees with leftover balance, same ui for both for now
+      if (transactionHexOrError == 1 || transactionHexOrError == 2) {
         Navigator.pop(context);
         showModal(
           context: context,
@@ -320,20 +320,12 @@ class __SendViewState extends State<_SendView> {
             return _InputAmountToMuchDialog();
           },
         );
-      } else if (transactionHexOrError == 2 && spendableSatoshiAmt.toDouble() != 0.0) {
-        Navigator.pop(context);
-        showModal(
-          context: context,
-          configuration: FadeScaleTransitionConfiguration(),
-          builder: (BuildContext context) {
-            return _InsufficentLeftverForFeesDialog();
-          },
-        );
       }
     } else {
       // In this case, we receive a Map<String, dynamic> with keys: hex, recipient, recipientAmt, and fee
       // We show this in an alert dialog so that the user can approve their transaction before sending it
       Navigator.pop(context);
+      print(transactionHexOrError);
       showModal(
           context: context,
           configuration: FadeScaleTransitionConfiguration(),
@@ -544,25 +536,6 @@ class _InvalidAddressDialog extends StatelessWidget {
   }
 }
 
-class _InsufficentLeftverForFeesDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Insufficient leftover'),
-      content: Text(
-          "You have the amount you're trying to send but aren't leaving enough leftover to pay for the fees of this transaction. Modify amount and try again."),
-      actions: <Widget>[
-        FlatButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('OK'),
-        ),
-      ],
-    );
-  }
-}
-
 class _PreviewTransactionDialog extends StatelessWidget {
   final String hex;
   final String recipient;
@@ -576,8 +549,6 @@ class _PreviewTransactionDialog extends StatelessWidget {
   }
 
   // Parameters optional for now
-  Future<String> _sendHexToService([BuildContext context, String hex]) {}
-
   _PreviewTransactionDialog(
       this.hex, this.recipient, this.recipientAmt, this.fees);
 
@@ -585,43 +556,61 @@ class _PreviewTransactionDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 16),
-              Center(
-                  child: Text('Confirm transaction details',
-                      textScaleFactor: 1.5)),
-              SizedBox(height: 32),
-              ListTile(
-                title: Text('Recipient:'),
-                trailing: Text(_displauAddr(recipient),
-                    style: TextStyle(color: Colors.grey)),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text('Amount (in BTC):'),
-                trailing: Text((recipientAmt / 100000000).toString(),
-                    style: TextStyle(color: Colors.grey)),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text('Fees (in sats):'),
-                trailing:
-                    Text(fees.toString(), style: TextStyle(color: Colors.grey)),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text('Copy transaction hex',
-                    style: TextStyle(color: Colors.blue)),
-                onTap: () {
-                  Clipboard.setData(new ClipboardData(text: hex));
-                  Toast.show('Transaction hex copied to clipboard', context,
-                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                },
-              )
-            ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Scaffold(
+          bottomNavigationBar: Container(
+            height: 100,
+            child: Center(
+              child: CupertinoButton.filled(child: Text('Send Transaction'), onPressed: () {}),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 16),
+                Center(
+                    child: Text('Confirm transaction details',
+                        textScaleFactor: 1.5)),
+                SizedBox(height: 32),
+                ListTile(
+                  title: Text('Recipient:'),
+                  trailing: Text(_displauAddr(recipient),
+                      style: TextStyle(color: Colors.grey)),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('Amount (in BTC):'),
+                  trailing: Text((recipientAmt / 100000000).toString(),
+                      style: TextStyle(color: Colors.grey)),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('Fees (in sats):'),
+                  trailing: Text(fees.toString(),
+                      style: TextStyle(color: Colors.grey)),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('Copy transaction hex',
+                      style: TextStyle(color: Colors.blue)),
+                  onTap: () {
+                    Clipboard.setData(new ClipboardData(text: hex));
+                    Toast.show('Transaction hex copied to clipboard', context,
+                        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  },
+                ),
+                ListTile(
+                  title: Text('Save hex to local database',
+                      style: TextStyle(color: Colors.blue)),
+                  onTap: () {
+                    Clipboard.setData(new ClipboardData(text: hex));
+                    Toast.show('Transaction hex stored locally', context,
+                        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
