@@ -215,8 +215,8 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
-  checkTransactionEligibilityAndBuild(
-      int satoshiAmountToSend, double selectedTxFee, String _recipientAddress) async {
+  coinSelection(int satoshiAmountToSend,
+      double selectedTxFee, String _recipientAddress) async {
     final List<UtxoObject> availableOutputs = this.allOutputs;
     final List<UtxoObject> spendableOutputs = new List();
     int spendableSatoshiValue = 0;
@@ -248,10 +248,6 @@ class BitcoinService extends ChangeNotifier {
     int inputsBeingConsumed = 0;
     List<UtxoObject> utxoObjectsToUse = new List();
 
-    // THIS IS WHERE THE ISSUE IS - CHANGE INPUTSBEINGCONSUMED += SPENDABLEOUTPUTS[I].VALUE TO
-    // SATOSHISBEINGUSED += SPENDABLEOUTPUTS.VALUE[I].VALUE 
-
-    // THE SATOSHISBEINGUSED VALUE NEVER UPDATES AND SO
     while (satoshisBeingUsed < satoshiAmountToSend) {
       for (var i = 0; i < spendableOutputs.length; i++) {
         utxoObjectsToUse.add(spendableOutputs[i]);
@@ -280,11 +276,14 @@ class BitcoinService extends ChangeNotifier {
       if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput + 293) {
         // Here, we know that theoretically, we may be able to include another output(change) but we first need to
         // factor in the value of this output in satoshis.
-        int changeOutputSize = satoshisBeingUsed - satoshiAmountToSend - feeForTwoOutputs;
+        int changeOutputSize =
+            satoshisBeingUsed - satoshiAmountToSend - feeForTwoOutputs;
         // We check to see if the user can pay for the new transaction with 2 outputs instead of one. Iff they can and
         // the second output's size > 293 satoshis, we perform the mechanics required to properly generate and use a new
         // change address.
-        if (changeOutputSize > 293 && satoshisBeingUsed - satoshiAmountToSend - changeOutputSize == feeForTwoOutputs) {
+        if (changeOutputSize > 293 &&
+            satoshisBeingUsed - satoshiAmountToSend - changeOutputSize ==
+                feeForTwoOutputs) {
           await incrementAddressIndexForChain(1);
           final wallet = await Hive.openBox('wallet');
           final int changeIndex = await wallet.get('changeIndex');
@@ -295,35 +294,84 @@ class BitcoinService extends ChangeNotifier {
           recipientsAmtArray.add(changeOutputSize);
           // At this point, we have the outputs we're going to use, the amounts to send along with which addresses
           // we intend to send these amounts to. We have enough to send instructions to build the transaction.
-          print('option1');
+          print('2 outputs in tx');
           print('Input size: $satoshisBeingUsed');
           print('Recipient output size: $satoshiAmountToSend');
           print('Change Output Size: $changeOutputSize');
-          return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+          dynamic hex = await buildTransaction(
+              utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+          Map<String, dynamic> transactionObject = {
+            "hex": hex,
+            "recipient": recipientsArray[0],
+            "recipientAmt": recipientsAmtArray[0],
+            "fee": satoshisBeingUsed - satoshiAmountToSend - changeOutputSize
+          };
+          return transactionObject;
         } else {
           // Something went wrong here. It either overshot or undershot the estimated fee amount or the changeOutputSize
           // is smaller than or equal to 293. Revert to single output transaction.
-          print('option2');
-          return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+          print('1 output in tx');
+          print('Input size: $satoshisBeingUsed');
+          print('Recipient output size: $satoshiAmountToSend');
+          print('Difference (fee being paid): ' +
+              (satoshisBeingUsed - satoshiAmountToSend).toString() +
+              ' sats');
+          print('Actual fee: $feeForOneOutput');
+          dynamic hex = await buildTransaction(
+              utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+          Map<String, dynamic> transactionObject = {
+            "hex": hex,
+            "recipient": recipientsArray[0],
+            "recipientAmt": recipientsAmtArray[0],
+            "fee": satoshisBeingUsed - satoshiAmountToSend
+          };
+          return transactionObject;
         }
       } else {
         // No additional outputs needed since adding one would mean that it'd be smaller than 293 sats
         // which makes it uneconomical to add to the transaction. Here, we pass data directly to instruct
         // the wallet to begin crafting the transaction that the user requested.
-        print('option3');
-        return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+        print('1 output in tx');
+        print('Input size: $satoshisBeingUsed');
+        print('Recipient output size: $satoshiAmountToSend');
+        print('Difference (fee being paid): ' +
+            (satoshisBeingUsed - satoshiAmountToSend).toString() +
+            ' sats');
+        print('Actual fee: $feeForOneOutput');
+        dynamic hex = await buildTransaction(
+            utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+        Map<String, dynamic> transactionObject = {
+          "hex": hex,
+          "recipient": recipientsArray[0],
+          "recipientAmt": recipientsAmtArray[0],
+          "fee": satoshisBeingUsed - satoshiAmountToSend
+        };
+        return transactionObject;
       }
     } else if (satoshisBeingUsed - satoshiAmountToSend == feeForOneOutput) {
       // In this scenario, no additional change output is needed since inputs - outputs equal exactly
       // what we need to pay for fees. Here, we pass data directly to instruct the wallet to begin
       // crafting the transaction that the user requested.
-      print('option4');
-      return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+      print('1 output in tx');
+      print('Input size: $satoshisBeingUsed');
+      print('Recipient output size: $satoshiAmountToSend');
+      print('Fee being paid: ' +
+          (satoshisBeingUsed - satoshiAmountToSend).toString() +
+          ' sats');
+      dynamic hex = await buildTransaction(
+          utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+      Map<String, dynamic> transactionObject = {
+          "hex": hex,
+          "recipient": recipientsArray[0],
+          "recipientAmt": recipientsAmtArray[0],
+          "fee": feeForOneOutput
+        };
+        return transactionObject;
     } else {
       // Remember that returning 2 indicates that the user does not have a sufficient balance to
       // pay for the transaction fee. Ideally, at this stage, we should check if the user has any
       // additional outputs they're able to spend and then recalculate fees.
-      print('option5');
+      print('Cannot pay tx fee - cancelling transaction');
       return 2;
     }
   }
