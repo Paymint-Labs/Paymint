@@ -27,8 +27,8 @@ class BitcoinService extends ChangeNotifier {
       _transactionData ??= _fetchTransactionData();
 
   // Hold the current price of Bitcoin in the currency specified in parameter below
-  Future<double> _bitcoinPrice;
-  Future<double> get bitcoinPrice => _bitcoinPrice ??= getBitcoinPrice();
+  Future<dynamic> _bitcoinPrice;
+  Future<dynamic> get bitcoinPrice => _bitcoinPrice ??= getBitcoinPrice();
 
   Future<FeeObject> _feeObject;
   Future<FeeObject> get fees => _feeObject ??= getFees();
@@ -148,11 +148,11 @@ class BitcoinService extends ChangeNotifier {
   Future<String> _getCurrentAddressForChain(int chain) async {
     final wallet = await Hive.openBox('wallet');
     if (chain == 0) {
-      final externalChainArray = wallet.get('receivingAddresses');
+      final externalChainArray = await wallet.get('receivingAddresses');
       return externalChainArray.last;
     } else {
       // Here, we assume that chain == 1
-      final internalChainArray = wallet.get('changeAddresses');
+      final internalChainArray = await wallet.get('changeAddresses');
       return internalChainArray.last;
     }
   }
@@ -215,9 +215,121 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
+  checkTransactionEligibilityAndBuild(
+      int satoshiAmountToSend, double selectedTxFee, String _recipientAddress) async {
+    final List<UtxoObject> availableOutputs = this.allOutputs;
+    final List<UtxoObject> spendableOutputs = new List();
+    int spendableSatoshiValue = 0;
+
+    // Build list of spendable outputs and totaling their satoshi amount
+    for (var i = 0; i < availableOutputs.length; i++) {
+      if (availableOutputs[i].blocked == false &&
+          availableOutputs[i].status.confirmed == true) {
+        spendableOutputs.add(availableOutputs[i]);
+        spendableSatoshiValue += availableOutputs[i].value;
+      }
+    }
+
+    // If the amount the user is trying to send is smaller than the amount that they have spendable,
+    // then return 1, which indicates that they have an insufficient balance.
+    if (spendableSatoshiValue < satoshiAmountToSend) {
+      return 1;
+      // If the amount the user wants to send is exactly equal to the amount they can spend, then return
+      // 2, which indicates that they are not leaving enough over to pay the transaction fee
+    } else if (spendableSatoshiValue == satoshiAmountToSend) {
+      return 2;
+    }
+    // If neither of these statements pass, we assume that the user has a spendable balance greater
+    // than the amount they're attempting to send. Note that this value still does not account for
+    // the added transaction fee, which may require an extra input and will need to be checked for
+    // later on.
+
+    int satoshisBeingUsed = 0;
+    int inputsBeingConsumed = 0;
+    List<UtxoObject> utxoObjectsToUse = new List();
+
+    // THIS IS WHERE THE ISSUE IS - CHANGE INPUTSBEINGCONSUMED += SPENDABLEOUTPUTS[I].VALUE TO
+    // SATOSHISBEINGUSED += SPENDABLEOUTPUTS.VALUE[I].VALUE 
+
+    // THE SATOSHISBEINGUSED VALUE NEVER UPDATES AND SO
+    while (satoshisBeingUsed < satoshiAmountToSend) {
+      for (var i = 0; i < spendableOutputs.length; i++) {
+        utxoObjectsToUse.add(spendableOutputs[i]);
+        satoshisBeingUsed += spendableOutputs[i].value;
+        inputsBeingConsumed += 1;
+      }
+    }
+
+    // numberOfOutputs' length must always be equal to that of recipientsArray and recipientsAmtArray
+    List<String> recipientsArray = [_recipientAddress];
+    List<int> recipientsAmtArray = [satoshiAmountToSend];
+
+    // Assume 1 output, only for recipient and no change
+    final feeForOneOutput =
+        ((42 + 272 * inputsBeingConsumed + 128) / 4).ceil() *
+            selectedTxFee.ceil();
+    // Assume 2 outputs, one for recipient and one for change
+    final feeForTwoOutputs =
+        ((42 + 272 * inputsBeingConsumed + 128 * 2) / 4).ceil() *
+            selectedTxFee.ceil();
+
+    print('Fee for one output: $feeForOneOutput');
+    print('Fee for two outputs: $feeForTwoOutputs');
+
+    if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput) {
+      if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput + 293) {
+        // Here, we know that theoretically, we may be able to include another output(change) but we first need to
+        // factor in the value of this output in satoshis.
+        int changeOutputSize = satoshisBeingUsed - satoshiAmountToSend - feeForTwoOutputs;
+        // We check to see if the user can pay for the new transaction with 2 outputs instead of one. Iff they can and
+        // the second output's size > 293 satoshis, we perform the mechanics required to properly generate and use a new
+        // change address.
+        if (changeOutputSize > 293 && satoshisBeingUsed - satoshiAmountToSend - changeOutputSize == feeForTwoOutputs) {
+          await incrementAddressIndexForChain(1);
+          final wallet = await Hive.openBox('wallet');
+          final int changeIndex = await wallet.get('changeIndex');
+          final String newChangeAddress =
+              await generateAddressForChain(1, changeIndex);
+          await addToAddressesArrayForChain(newChangeAddress, 1);
+          recipientsArray.add(newChangeAddress);
+          recipientsAmtArray.add(changeOutputSize);
+          // At this point, we have the outputs we're going to use, the amounts to send along with which addresses
+          // we intend to send these amounts to. We have enough to send instructions to build the transaction.
+          print('option1');
+          print('Input size: $satoshisBeingUsed');
+          print('Recipient output size: $satoshiAmountToSend');
+          print('Change Output Size: $changeOutputSize');
+          return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+        } else {
+          // Something went wrong here. It either overshot or undershot the estimated fee amount or the changeOutputSize
+          // is smaller than or equal to 293. Revert to single output transaction.
+          print('option2');
+          return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+        }
+      } else {
+        // No additional outputs needed since adding one would mean that it'd be smaller than 293 sats
+        // which makes it uneconomical to add to the transaction. Here, we pass data directly to instruct
+        // the wallet to begin crafting the transaction that the user requested.
+        print('option3');
+        return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+      }
+    } else if (satoshisBeingUsed - satoshiAmountToSend == feeForOneOutput) {
+      // In this scenario, no additional change output is needed since inputs - outputs equal exactly
+      // what we need to pay for fees. Here, we pass data directly to instruct the wallet to begin
+      // crafting the transaction that the user requested.
+      print('option4');
+      return await buildTransaction(utxoObjectsToUse, recipientsArray, recipientsAmtArray);
+    } else {
+      // Remember that returning 2 indicates that the user does not have a sufficient balance to
+      // pay for the transaction fee. Ideally, at this stage, we should check if the user has any
+      // additional outputs they're able to spend and then recalculate fees.
+      print('option5');
+      return 2;
+    }
+  }
+
   Future<dynamic> buildTransaction(List<UtxoObject> utxosToUse,
       List<String> recipients, List<int> satoshisPerRecipient) async {
-    
     List<String> addressesToDerive = new List();
 
     // Populating the addresses to derive
@@ -249,19 +361,31 @@ class BitcoinService extends ChangeNotifier {
 
     for (var i = 0; i < addressesToDerive.length; i++) {
       final addressToCheckFor = addressesToDerive[i];
-      
-      for (var i = 0; i < 2500; i++) {
+
+      for (var i = 0; i < 2000; i++) {
         final nodeReceiving = root.derivePath("m/84'/0'/0'/0/$i");
         final nodeChange = root.derivePath("m/84'/0'/0'/1/$i");
 
-        if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.address == addressToCheckFor) {
+        if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey))
+                .data
+                .address ==
+            addressToCheckFor) {
           elipticCurvePairArray.add(ECPair.fromWIF(nodeReceiving.toWIF()));
-          outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.output);
+          outputDataArray.add(
+              P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey))
+                  .data
+                  .output);
           break;
         }
-        if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.address == addressToCheckFor) {
+        if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey))
+                .data
+                .address ==
+            addressToCheckFor) {
           elipticCurvePairArray.add(ECPair.fromWIF(nodeChange.toWIF()));
-          outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.output);
+          outputDataArray.add(
+              P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey))
+                  .data
+                  .output);
           break;
         }
       }
@@ -272,7 +396,8 @@ class BitcoinService extends ChangeNotifier {
 
     // Add transaction inputs
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.addInput(utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
+      txb.addInput(
+          utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
     }
 
     // Add transaction outputs
@@ -282,17 +407,31 @@ class BitcoinService extends ChangeNotifier {
 
     // Sign the transaction accordingly
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.sign(vin: 0, keyPair: elipticCurvePairArray[i], witnessValue: utxosToUse[i].value);
+      txb.sign(
+          vin: 0,
+          keyPair: elipticCurvePairArray[i],
+          witnessValue: utxosToUse[i].value);
     }
-    txb.build().toHex();
+    return txb.build().toHex();
   }
 
   Future<UtxoData> _fetchUtxoData() async {
     final wallet = await Hive.openBox('wallet');
+    final List<String> allAddresses = new List();
+    final String currency = await CurrencyUtilities.fetchPreferredCurrency();
+    final List receivingAddresses = await wallet.get('receivingAddresses');
+    final List changeAddresses = await wallet.get('changeAddresses');
+
+    for (var i = 0; i < receivingAddresses.length; i++) {
+      allAddresses.add(receivingAddresses[i]);
+    }
+    for (var i = 0; i < changeAddresses.length; i++) {
+      allAddresses.add(changeAddresses[i]);
+    }
 
     final Map<String, dynamic> requestBody = {
-      "currency": "USD",
-      "allAddresses": ["bc1qrera2kymya0m6psft8vervd2ll7xrgac6j40ew"],
+      "currency": currency,
+      "allAddresses": allAddresses,
     };
 
     final response = await http.post(
@@ -317,10 +456,21 @@ class BitcoinService extends ChangeNotifier {
 
   Future<TransactionData> _fetchTransactionData() async {
     final wallet = await Hive.openBox('wallet');
+    final List<String> allAddresses = new List();
+    final String currency = await CurrencyUtilities.fetchPreferredCurrency();
+    final List receivingAddresses = await wallet.get('receivingAddresses');
+    final List changeAddresses = await wallet.get('changeAddresses');
+
+    for (var i = 0; i < receivingAddresses.length; i++) {
+      allAddresses.add(receivingAddresses[i]);
+    }
+    for (var i = 0; i < changeAddresses.length; i++) {
+      allAddresses.add(changeAddresses[i]);
+    }
 
     final Map<String, dynamic> requestBody = {
-      "currency": 'USD',
-      "allAddresses": ["bc1qrera2kymya0m6psft8vervd2ll7xrgac6j40ew"],
+      "currency": currency,
+      "allAddresses": allAddresses,
     };
 
     final response = await http.post(
@@ -340,7 +490,7 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
-  Future<double> getBitcoinPrice() async {
+  Future<dynamic> getBitcoinPrice() async {
     final String currency = await CurrencyUtilities.fetchPreferredCurrency();
 
     final Map<String, String> requestBody = {"currency": currency};
