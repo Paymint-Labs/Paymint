@@ -15,6 +15,8 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => MainView());
       case '/onboard':
         return CupertinoPageRoute(builder: (_) => OnboardView());
+      case '/changecurency':
+        return CupertinoPageRoute(builder: (_) => CurrencyChangeView());
       default:
         return _routeError();
     }
