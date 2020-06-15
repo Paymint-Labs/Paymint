@@ -178,7 +178,7 @@ class BitcoinService extends ChangeNotifier {
   refreshWalletData() async {
     final UtxoData newUtxoData = await _fetchUtxoData();
     final TransactionData newTxData = await _fetchTransactionData();
-    final double newBtcPrice = await getBitcoinPrice();
+    final dynamic newBtcPrice = await getBitcoinPrice();
     final FeeObject feeObj = await getFees();
     await checkReceivingAddressForTransactions();
 
@@ -187,6 +187,13 @@ class BitcoinService extends ChangeNotifier {
     this._bitcoinPrice = Future(() => newBtcPrice);
     this._feeObject = Future(() => feeObj);
     notifyListeners();
+  }
+
+  changeCurrency(String newCurrency) async {
+   final prefs = await Hive.openBox('prefs');
+   await prefs.put('currency', newCurrency);
+   this._currency = Future(() => newCurrency);
+   notifyListeners();
   }
 
   _sortOutputs(List<UtxoObject> utxos) async {
@@ -216,7 +223,7 @@ class BitcoinService extends ChangeNotifier {
   }
 
   coinSelection(int satoshiAmountToSend,
-      double selectedTxFee, String _recipientAddress) async {
+      dynamic selectedTxFee, String _recipientAddress) async {
     final List<UtxoObject> availableOutputs = this.allOutputs;
     final List<UtxoObject> spendableOutputs = new List();
     int spendableSatoshiValue = 0;

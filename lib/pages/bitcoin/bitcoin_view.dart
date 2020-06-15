@@ -301,7 +301,9 @@ List<Widget> _buildSecurityListView(BuildContext context) {
       child: Center(
         child: CupertinoButton.filled(
           child: Text('Manage wallet backup'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/backupmanager');
+          },
         ),
       ),
     ),

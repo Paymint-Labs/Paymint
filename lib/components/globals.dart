@@ -35,8 +35,9 @@ final Map<int, String> monthMap = {
 };
 
 final Map<String, String> currencyMap = {
+  'AED': 'د.إ',
   'AUD': 'A\$',
-  'CAD': 'CAD\$', 
+  'CAD': 'CA\$', 
   'CHF': 'CHF ',
   'CNY': 'CN¥',
   'EUR': '€',

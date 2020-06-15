@@ -44,7 +44,8 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
         colors: [Colors.cyanAccent, Colors.lightBlueAccent, Colors.cyanAccent]),
   ];
 
-  _ActiveOutputTileState(this._name, this._currentValue, this._blockHeight, this._fullOutput);
+  _ActiveOutputTileState(
+      this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
   @override
   Widget build(BuildContext context) {
@@ -79,13 +80,11 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
 class PendingOutputTile extends StatefulWidget {
   final String currentValue;
 
-  PendingOutputTile(
-      {Key key,
-      @required this.currentValue})
-      : super(key: key);
-  
+  PendingOutputTile({Key key, @required this.currentValue}) : super(key: key);
+
   @override
-  _PendingOutputTileState createState() => _PendingOutputTileState(currentValue);
+  _PendingOutputTileState createState() =>
+      _PendingOutputTileState(currentValue);
 }
 
 class _PendingOutputTileState extends State<PendingOutputTile> {
@@ -101,7 +100,7 @@ class _PendingOutputTileState extends State<PendingOutputTile> {
   ];
 
   _PendingOutputTileState(this._currentValue);
-  
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -114,7 +113,8 @@ class _PendingOutputTileState extends State<PendingOutputTile> {
             _currentValue,
           ),
           Text(
-            'Pending', style: TextStyle(color: Colors.purple),
+            'Pending',
+            style: TextStyle(color: Colors.purple),
           )
         ],
       ),
@@ -127,7 +127,7 @@ class _PendingOutputTileState extends State<PendingOutputTile> {
       onTap: () {},
     );
   }
-  }
+}
 
 class InactiveOutputTile extends StatefulWidget {
   final String name;
@@ -163,7 +163,8 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
     ]),
   ];
 
-  _InactiveOutputTileState(this._name, this._currentValue, this._blockHeight, this._fullOutput);
+  _InactiveOutputTileState(
+      this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +179,8 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
             _currentValue,
           ),
           Text(
-            'Blocked', style: TextStyle(color: Colors.purple),
+            'Blocked',
+            style: TextStyle(color: Colors.purple),
           )
         ],
       ),
@@ -456,6 +458,10 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
               trailing: Text(widget._tx.fees.toString() + ' sats'),
               onTap: () {},
             ),
+            ListTile(
+                title: Text('Reveal recipients',
+                    style: TextStyle(color: Colors.blue)),
+                onTap: () {}),
             ListTile(
                 title: Text('Copy transaction ID',
                     style: TextStyle(color: Colors.blue)),

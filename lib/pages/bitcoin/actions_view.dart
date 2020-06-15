@@ -12,7 +12,6 @@ import 'package:paymint/components/globals.dart';
 import 'dart:math' as math;
 import 'package:majascan/majascan.dart';
 import 'package:animations/animations.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 
 class ActionsView extends StatefulWidget {

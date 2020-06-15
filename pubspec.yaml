@@ -86,6 +86,7 @@ flutter:
     - assets/images/work-in-progress.png
     - assets/images/mirage-payment-processed.png
     - assets/rive/success.flr
+    - assets/icon/icon.png
     - google_fonts/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

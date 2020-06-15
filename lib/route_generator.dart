@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import './pages/pages.dart';
 
 class RouteGenerator {
@@ -17,6 +16,10 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => OnboardView());
       case '/changecurency':
         return CupertinoPageRoute(builder: (_) => CurrencyChangeView());
+      case '/backupmanager':
+        return CupertinoPageRoute(builder: (_) => ManageBackupView());
+      case '/revealmnemonic':
+        return CupertinoPageRoute(builder: (_) => RevealMnemonicView());
       default:
         return _routeError();
     }
