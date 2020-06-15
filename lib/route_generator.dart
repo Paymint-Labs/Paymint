@@ -20,6 +20,8 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => ManageBackupView());
       case '/revealmnemonic':
         return CupertinoPageRoute(builder: (_) => RevealMnemonicView());
+      case '/verifybackup':
+        return CupertinoPageRoute(builder: (_) => VerifyBackupView());
       default:
         return _routeError();
     }

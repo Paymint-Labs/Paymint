@@ -7,3 +7,4 @@ export 'buy/buy_view.dart';
 export 'more/more_view.dart';
 export 'more/change_currency_view.dart';
 export 'bitcoin/manage_backup_subviews/reveal_mnemonic.dart';
+export 'bitcoin/manage_backup_subviews/verify_backup_view.dart';

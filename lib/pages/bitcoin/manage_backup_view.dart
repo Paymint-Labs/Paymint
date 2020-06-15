@@ -22,7 +22,7 @@ class _ManageBackupViewState extends State<ManageBackupView> {
         child: ListView(
           children: <Widget>[
             ClipRRect(
-              borderRadius: BorderRadius.circular(12),  
+              borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: EdgeInsets.all(16),
                 color: Colors.deepPurpleAccent,
@@ -37,25 +37,35 @@ class _ManageBackupViewState extends State<ManageBackupView> {
               child: Center(
                 child: CupertinoButton.filled(
                   child: Text('Reveal wallet mnemonic'),
-                  onPressed: () {Navigator.pushNamed(context, '/revealmnemonic');},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/revealmnemonic');
+                  },
                 ),
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('Verify backup', textScaleFactor: 1.3),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/verifybackup');
+                  },
+                  child: Text('Verify backup',
+                      textScaleFactor: 1.3,
+                      style: TextStyle(color: Colors.blue)),
+                ),
                 IconButton(
                   icon: Icon(Icons.info),
                   onPressed: () {},
                 )
               ],
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('Restore from backup', textScaleFactor: 1.3),
+                Text('Restore from backup',
+                    textScaleFactor: 1.3, style: TextStyle(color: Colors.blue)),
                 IconButton(
                   icon: Icon(Icons.info),
                   onPressed: () {},
