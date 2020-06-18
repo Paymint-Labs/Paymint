@@ -42,6 +42,10 @@ class BitcoinService extends ChangeNotifier {
   Future<String> _currentReceivingAddress;
   Future<String> get currentReceivingAddress => _currentReceivingAddress;
 
+  // Returns a bool indicating whether or not user has secured a physical backup of seed phrase
+  Future<bool> _physicalBackupStatus;
+  Future<bool> get physicalBackupStatus => _physicalBackupStatus;
+
   /// Holds all active outputs for wallet, used for displaying utxos in app security view
   List<UtxoObject> _outputsList = [];
   List<UtxoObject> get allOutputs => _outputsList;
@@ -66,7 +70,8 @@ class BitcoinService extends ChangeNotifier {
       await DevUtilities.debugPrintWalletState();
     } else {
       // Wallet alreiady exists, triggers for a returning user
-      _currentReceivingAddress = this._getCurrentAddressForChain(0);
+      this._currentReceivingAddress = _getCurrentAddressForChain(0);
+      this._physicalBackupStatus = Future(() async => await wallet.get('phys_backup'));
       DevUtilities.debugPrintWalletState();
     }
   }
@@ -101,6 +106,21 @@ class BitcoinService extends ChangeNotifier {
     final node = root.derivePath("m/84'/0'/0'/$chain/$index");
 
     return P2WPKH(data: new PaymentData(pubkey: node.publicKey)).data.address;
+  }
+
+  test() async {
+    final secureStore = new FlutterSecureStorage();
+    final seed = bip39.mnemonicToSeed(await secureStore.read(key: 'mnemonic'));
+    final root = bip32.BIP32.fromSeed(seed);
+    List<String> lol = new List();
+
+    for (var i = 0; i < 500; i++) {
+      final node = root.derivePath("m/84'/0'/0'/0/$i");
+      final addr = P2WPKH(data: new PaymentData(pubkey: node.publicKey)).data.address;
+      lol.add(addr);
+    }
+
+    print(lol);
   }
 
   /// Increases the index for either the internal or external chain, depending on [chain].
@@ -222,8 +242,7 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
-  coinSelection(int satoshiAmountToSend,
-      dynamic selectedTxFee, String _recipientAddress) async {
+  dynamic coinSelection(int satoshiAmountToSend, dynamic selectedTxFee, String _recipientAddress) async {
     final List<UtxoObject> availableOutputs = this.allOutputs;
     final List<UtxoObject> spendableOutputs = new List();
     int spendableSatoshiValue = 0;
@@ -421,26 +440,14 @@ class BitcoinService extends ChangeNotifier {
         final nodeReceiving = root.derivePath("m/84'/0'/0'/0/$i");
         final nodeChange = root.derivePath("m/84'/0'/0'/1/$i");
 
-        if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey))
-                .data
-                .address ==
-            addressToCheckFor) {
+        if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.address == addressToCheckFor) {
           elipticCurvePairArray.add(ECPair.fromWIF(nodeReceiving.toWIF()));
-          outputDataArray.add(
-              P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey))
-                  .data
-                  .output);
+          outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.output);
           break;
         }
-        if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey))
-                .data
-                .address ==
-            addressToCheckFor) {
+        if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.address == addressToCheckFor) { 
           elipticCurvePairArray.add(ECPair.fromWIF(nodeChange.toWIF()));
-          outputDataArray.add(
-              P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey))
-                  .data
-                  .output);
+          outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.output);
           break;
         }
       }
@@ -451,21 +458,15 @@ class BitcoinService extends ChangeNotifier {
 
     // Add transaction inputs
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.addInput(
-          utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
+      txb.addInput(utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
     }
-
     // Add transaction outputs
     for (var i = 0; i < recipients.length; i++) {
       txb.addOutput(recipients[i], satoshisPerRecipient[i]);
     }
-
     // Sign the transaction accordingly
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.sign(
-          vin: 0,
-          keyPair: elipticCurvePairArray[i],
-          witnessValue: utxosToUse[i].value);
+      txb.sign(vin: 0, keyPair: elipticCurvePairArray[i], witnessValue: utxosToUse[i].value);
     }
     return txb.build().toHex();
   }
@@ -615,4 +616,91 @@ class BitcoinService extends ChangeNotifier {
           response.body);
     }
   }
+
+  /// Recovers wallet from [suppliedMnemonic]. Expects a valid mnemonic.
+  dynamic recoverWalletFromBIP32SeedPhrase(String suppliedMnemonic) async {
+    final String mnemonic = suppliedMnemonic;
+    final seed = bip39.mnemonicToSeed(mnemonic);
+    final root = bip32.BIP32.fromSeed(seed);
+
+    List<String> receivingAddressArray = new List();
+    List<String> changeAddressArray = new List();
+
+    int receivingIndex = 0;
+    int changeIndex = 0;
+
+    // The gap limit will be capped at 20
+    int receivingGapCounter = 0;
+    int changeGapCounter = 0;
+
+    // Deriving and checking for receiving addresses
+    for (var i = 0; i < 1000; i++) {
+      // Break out of loop when receivingGapCounter hits 20
+      if (receivingGapCounter == 20) {
+        break;
+      }
+
+      final currentNode = root.derivePath("m/84'/0'/0'/0/$i");
+      final address = P2WPKH(data: new PaymentData(pubkey: currentNode.publicKey)).data.address;
+      final Map<String, String> requestBody = {"address": address};
+
+      final response = await http.post(
+        'https://www.api.paymintapp.com/btc/numtxs',
+        body: json.encode(requestBody),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final int numTxs = json.decode(response.body);
+        if (numTxs >= 1) {
+          receivingAddressArray.add(address);
+          receivingIndex = i;
+        } else if (numTxs == 0) {
+          receivingGapCounter += 1;
+        }
+      } else {
+        throw Exception('Something happened: ' + response.statusCode.toString() + response.body);
+      }
+    }
+
+    // Deriving and checking for change addresses
+    for (var i = 0; i < 1000; i++) {
+      // Same gap limit for change as for receiving, breaks when it hits 20
+      if (changeGapCounter == 20) {
+        break;
+      }
+      
+      final currentNode = root.derivePath("m/84'/0'/0'/1/$i");
+      final address = P2WPKH(data: new PaymentData(pubkey: currentNode.publicKey)).data.address;
+      final Map<String, String> requestBody = {"address": address};
+
+      final response = await http.post(
+        'https://www.api.paymintapp.com/btc/numtxs',
+        body: json.encode(requestBody),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final int numTxs = json.decode(response.body);
+        if (numTxs >= 1) {
+          changeAddressArray.add(address);
+          changeIndex = i;
+        } else if (numTxs == 0) {
+          changeGapCounter += 1;
+        }
+      } else {
+        throw Exception('Something happened: ' + response.statusCode.toString() + response.body);
+      }
+    }
+
+    final wallet = await Hive.openBox('wallet');
+    await wallet.put('receivingAddresses', receivingAddressArray);
+    await wallet.put('changeAddresses', changeAddressArray);
+    await wallet.put('receivingIndex', receivingIndex);
+    await wallet.put('changeIndex', changeIndex);
+
+    final secureStore = new FlutterSecureStorage();
+    await secureStore.write(key: 'mnemonic', value: suppliedMnemonic.trim());
+  }
 }
+

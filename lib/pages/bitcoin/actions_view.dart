@@ -95,7 +95,9 @@ class __ReceiveViewState extends State<_ReceiveView> {
           child: ListView(
             children: <Widget>[
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, '/alladdresses');
+                },
                 title: Text('Show previous addresses'),
                 trailing: Icon(Icons.chevron_right),
               )
@@ -355,7 +357,7 @@ class __SendViewState extends State<_SendView> {
 
     return Scaffold(
       bottomNavigationBar: Container(
-        height: 100,
+        height: 80,
         child: Center(
             child: CupertinoButton.filled(
           child: Text('Preview transaction'),
@@ -377,6 +379,7 @@ class __SendViewState extends State<_SendView> {
                   Expanded(
                     child: TextField(
                       controller: _inputAmount,
+                      autofocus: true,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       style: TextStyle(fontSize: 20),

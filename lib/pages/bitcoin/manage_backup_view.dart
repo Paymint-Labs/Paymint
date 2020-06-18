@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:paymint/services/bitcoin_service.dart';
 
 class ManageBackupView extends StatefulWidget {
   ManageBackupView({Key key}) : super(key: key);
@@ -43,34 +45,12 @@ class _ManageBackupViewState extends State<ManageBackupView> {
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/verifybackup');
-                  },
-                  child: Text('Verify backup',
-                      textScaleFactor: 1.3,
-                      style: TextStyle(color: Colors.blue)),
-                ),
-                IconButton(
-                  icon: Icon(Icons.info),
-                  onPressed: () {},
-                )
-              ],
-            ),
-            SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('Restore from backup',
-                    textScaleFactor: 1.3, style: TextStyle(color: Colors.blue)),
-                IconButton(
-                  icon: Icon(Icons.info),
-                  onPressed: () {},
-                )
-              ],
+            CupertinoButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/restorewallet');
+              },
+              child: Text('Restore wallet from backup',
+                  style: TextStyle(color: Colors.blue)),
             ),
           ],
         ),

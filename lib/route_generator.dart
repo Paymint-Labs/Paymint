@@ -20,8 +20,10 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => ManageBackupView());
       case '/revealmnemonic':
         return CupertinoPageRoute(builder: (_) => RevealMnemonicView());
-      case '/verifybackup':
-        return CupertinoPageRoute(builder: (_) => VerifyBackupView());
+      case '/restorewallet':
+        return CupertinoPageRoute(builder: (_) => RestoreWalletView());
+      case '/alladdresses':
+        return CupertinoPageRoute(builder: (_) => AllAddressesView());
       default:
         return _routeError();
     }

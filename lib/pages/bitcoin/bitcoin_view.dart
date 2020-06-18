@@ -333,9 +333,7 @@ List<Widget> _buildSecurityListView(BuildContext context) {
   ];
 
   if (_utxoList.length == 0) {
-    _finalList.add(
-      Container(child: Center(child: Text('No outputs found :(')), height: 50),
-    );
+    // For modifying no utxos empty state if necessary. Add widget to _finalList
   } else {
     for (var i = 0; i < _utxoList.length; i++) {
       if (_utxoList[i].status.confirmed == false) {

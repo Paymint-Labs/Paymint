@@ -237,13 +237,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_easyrefresh:
-    dependency: "direct main"
-    description:
-      name: flutter_easyrefresh
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.1"
   flutter_hooks:
     dependency: "direct main"
     description:
@@ -289,13 +282,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  frefresh:
-    dependency: "direct main"
-    description:
-      name: frefresh
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   glob:
     dependency: transitive
     description:
@@ -317,6 +303,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
+  grouped_buttons:
+    dependency: "direct main"
+    description:
+      name: grouped_buttons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   hex:
     dependency: transitive
     description:

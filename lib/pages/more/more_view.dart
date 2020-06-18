@@ -53,8 +53,26 @@ class _MoreViewState extends State<MoreView> {
         children: <Widget>[
           Container(
             color: Colors.black,
-            height: 250,
+            height: 150,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  MaterialButton(
+                    color: Colors.white,
+                    child: Text(_displayFormatAddress(currentAddress.data)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.verified_user),
+                    color: Colors.redAccent,
+                  ),
+                ],
+              )
             ),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
             child: Row(
@@ -209,7 +227,7 @@ class _MoreViewLoading extends StatelessWidget {
         body: ListView(
       children: <Widget>[
         Container(
-          height: 250,
+          height: 150,
           color: Colors.black,
         ),
         Center(
