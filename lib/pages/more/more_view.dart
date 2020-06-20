@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:animations/animations.dart';
 import 'package:toast/toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MoreView extends StatefulWidget {
   MoreView({Key key}) : super(key: key);
@@ -109,7 +110,9 @@ class _MoreViewState extends State<MoreView> {
           ListTile(
             title: Text('Follow us on Twitter'),
             trailing: Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () {
+              _launchTwitter(context);
+            },
           ),
           ListTile(
             title: Text('Join us on Discord'),
@@ -218,6 +221,16 @@ class _MoreViewState extends State<MoreView> {
   }
 }
 
+void _launchTwitter(BuildContext context) async {
+  final String url = 'https://twitter.com/paymint_labs';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    Toast.show('Cannot launch url', context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+  }
+}
+
 class _MoreViewLoading extends StatelessWidget {
   const _MoreViewLoading({Key key}) : super(key: key);
 
@@ -237,3 +250,4 @@ class _MoreViewLoading extends StatelessWidget {
     ));
   }
 }
+

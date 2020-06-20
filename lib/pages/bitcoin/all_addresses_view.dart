@@ -34,7 +34,7 @@ class _AllAddressesViewState extends State<AllAddressesView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Previous addresses', style: GoogleFonts.rubik()),
+        title: Text('Address book', style: GoogleFonts.rubik()),
       ),
       body: FutureBuilder(
         future: _populateAddressArray(),
@@ -44,21 +44,37 @@ class _AllAddressesViewState extends State<AllAddressesView> {
               itemCount: previousAddresses.length,
               itemBuilder: (BuildContext context, int index) {
                 int i = index + 1;
-                return ListTile(
-                  title: Text(
-                      '$i) ' + _displayFormatAddress(previousAddresses[index])),
-                  trailing: IconButton(
-                    icon: Icon(Icons.content_copy),
-                    onPressed: () {
-                      Clipboard.setData(
-                          new ClipboardData(text: previousAddresses[index]));
-                      Toast.show('Address copied to clipboard', context,
-                          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                    },
-                    color: Colors.black,
-                  ),
-                  onTap: () {},
-                );
+                if (i == previousAddresses.length) {
+                  return ListTile(
+                    title: Text('Current: ' +
+                        _displayFormatAddress(previousAddresses[index])),
+                    onTap: () {},
+                    trailing: IconButton(
+                        icon: Icon(Icons.content_copy, color: Colors.black),
+                        onPressed: () {
+                          Clipboard.setData(new ClipboardData(
+                              text: previousAddresses[index]));
+                          Toast.show('Address copied to clipboard', context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.BOTTOM);
+                        }),
+                  );
+                } else {
+                  return ListTile(
+                    title: Text('$i) ' +
+                        _displayFormatAddress(previousAddresses[index])),
+                    onTap: () {},
+                    trailing: IconButton(
+                        icon: Icon(Icons.content_copy, color: Colors.black),
+                        onPressed: () {
+                          Clipboard.setData(new ClipboardData(
+                              text: previousAddresses[index]));
+                          Toast.show('Address copied to clipboard', context,
+                              duration: Toast.LENGTH_LONG,
+                              gravity: Toast.BOTTOM);
+                        }),
+                  );
+                }
               },
             );
           } else {

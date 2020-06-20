@@ -98,7 +98,7 @@ class __ReceiveViewState extends State<_ReceiveView> {
                 onTap: () {
                   Navigator.pushNamed(context, '/alladdresses');
                 },
-                title: Text('Show previous addresses'),
+                title: Text('Show address book'),
                 trailing: Icon(Icons.chevron_right),
               )
             ],
@@ -190,6 +190,7 @@ class __SendViewState extends State<_SendView> {
   var rawFiatPrice = '0.0' ?? '0.0';
 
   dynamic selectedFee;
+  int currentSelection = 0;
 
   recalculateDisplayPriceFromInput(amount, rawPriceInFiat) {
     final rawFiatPriceFromInput = rawPriceInFiat * double.parse(amount);
@@ -234,7 +235,7 @@ class __SendViewState extends State<_SendView> {
     );
   }
 
-  void _checkAndBuild(FeeObject _feeObject) async {
+  void _checkAndBuild(dynamic feeSelection) async {
     final BitcoinService btcService = Provider.of<BitcoinService>(context);
     final List<UtxoObject> allOutputs = btcService.allOutputs;
     int spendableSatoshiAmt = 0;
@@ -305,7 +306,7 @@ class __SendViewState extends State<_SendView> {
     print(spendableSatoshiAmt);
     dynamic transactionHexOrError = await btcService.coinSelection(
       satoshiAmount,
-      _feeObject.fast,
+      feeSelection,
       _recipientAddress.text,
     );
 
@@ -341,11 +342,46 @@ class __SendViewState extends State<_SendView> {
     }
   }
 
+  Widget _buildFeeSelectionWidget(FeeObject _feeObj) {
+    final slowOption = _feeObj.slow.toDouble();
+    final mediumOption = _feeObj.medium.toDouble();
+    final fastOption = _feeObj.fast.toDouble();
+
+    final List<double> feeList = [fastOption, mediumOption, slowOption];
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: MaterialButton(
+        color: Colors.blue,
+        highlightColor: Colors.purple,
+        splashColor: Colors.tealAccent,
+        height: 40,
+        child: Center(
+          child: Text(
+            feeList[currentSelection].toString() + ' sats/vByte',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        onPressed: () {
+          setState(() {
+            if (currentSelection == 0 || currentSelection == 1) {
+              currentSelection += 1;
+              selectedFee = feeList[currentSelection];
+            } else {
+              currentSelection = 0;
+              selectedFee = feeList[currentSelection];
+            }
+            print(selectedFee);
+          });
+        },
+      ),
+    );
+  }
+
   _buildMainSendView(BuildContext context, AsyncSnapshot<FeeObject> feeObj,
       AsyncSnapshot<String> currency, AsyncSnapshot<dynamic> bitcoinPrice) {
     final String _currency = currency.data;
     final FeeObject _feeObj = feeObj.data;
-    final BitcoinService btcService = Provider.of<BitcoinService>(context);
     final double rawBitcoinPrice = bitcoinPrice.data;
 
     final String displayCurrency = currencyMap[_currency];
@@ -362,7 +398,7 @@ class __SendViewState extends State<_SendView> {
             child: CupertinoButton.filled(
           child: Text('Preview transaction'),
           onPressed: () async {
-            _checkAndBuild(_feeObj);
+            _checkAndBuild(selectedFee ??= feeObj.data.fast);
           },
         )),
       ),
@@ -379,7 +415,6 @@ class __SendViewState extends State<_SendView> {
                   Expanded(
                     child: TextField(
                       controller: _inputAmount,
-                      autofocus: true,
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       style: TextStyle(fontSize: 20),
@@ -424,7 +459,14 @@ class __SendViewState extends State<_SendView> {
                   ),
                 ],
               ),
-              SizedBox(height: 60)
+              SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('Fee:', textScaleFactor: 1.3),
+                  _buildFeeSelectionWidget(_feeObj)
+                ],
+              )
             ],
           ),
         ),
@@ -564,7 +606,8 @@ class _PreviewTransactionDialog extends StatelessWidget {
           bottomNavigationBar: Container(
             height: 100,
             child: Center(
-              child: CupertinoButton.filled(child: Text('Send Transaction'), onPressed: () {}),
+              child: CupertinoButton.filled(
+                  child: Text('Send Transaction'), onPressed: () {}),
             ),
           ),
           body: SingleChildScrollView(

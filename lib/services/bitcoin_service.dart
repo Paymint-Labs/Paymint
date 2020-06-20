@@ -693,6 +693,20 @@ class BitcoinService extends ChangeNotifier {
       }
     }
 
+    // If restoring a wallet that never received any funds, then set receivingArray manually
+    // If we didn't do this, it'd store an empty array
+    if (receivingIndex == 0) {
+      final String receivingAddress = await generateAddressForChain(0, receivingIndex);
+      receivingAddressArray.add(receivingAddress);
+    }
+
+    // If restoring a wallet that never sent any funds with change, then set changeArray
+    // manually. If we didn't do this, it'd store an empty array.
+    if (changeIndex == 0) {
+      final String changeAddress = await generateAddressForChain(1, changeIndex);
+      changeAddressArray.add(changeAddress);
+    }
+
     final wallet = await Hive.openBox('wallet');
     await wallet.put('receivingAddresses', receivingAddressArray);
     await wallet.put('changeAddresses', changeAddressArray);
@@ -701,6 +715,7 @@ class BitcoinService extends ChangeNotifier {
 
     final secureStore = new FlutterSecureStorage();
     await secureStore.write(key: 'mnemonic', value: suppliedMnemonic.trim());
+    notifyListeners();
   }
 }
 
