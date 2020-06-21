@@ -52,7 +52,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   flutter_money_formatter: ^0.8.3
   grouped_buttons: ^1.0.4
-
+  pattern_lock: ^1.0.3
 
 dev_dependencies:
   flutter_test:

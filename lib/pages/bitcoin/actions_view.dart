@@ -343,11 +343,11 @@ class __SendViewState extends State<_SendView> {
   }
 
   Widget _buildFeeSelectionWidget(FeeObject _feeObj) {
-    final slowOption = _feeObj.slow.toDouble();
-    final mediumOption = _feeObj.medium.toDouble();
-    final fastOption = _feeObj.fast.toDouble();
+    final slowOption = _feeObj.slow.toStringAsFixed(2);
+    final mediumOption = _feeObj.medium.toStringAsFixed(2);
+    final fastOption = _feeObj.fast.toStringAsFixed(2);
 
-    final List<double> feeList = [fastOption, mediumOption, slowOption];
+    final List<String> feeList = [fastOption, mediumOption, slowOption];
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -358,7 +358,7 @@ class __SendViewState extends State<_SendView> {
         height: 40,
         child: Center(
           child: Text(
-            feeList[currentSelection].toString() + ' sats/vByte',
+            feeList[currentSelection] + ' sats/vByte',
             style: TextStyle(color: Colors.white),
           ),
         ),

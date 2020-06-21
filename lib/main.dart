@@ -76,7 +76,7 @@ class _InitViewState extends State<InitView> {
     final mscData = await Hive.openBox('miscellaneous');
     _isFirstLaunch = mscData.get('first_launch');
     if (this._isFirstLaunch == false) {
-      Navigator.pushNamed(context, '/mainview');
+      Navigator.pushNamed(context, '/onboard');
     } else {
       Navigator.pushNamed(context, '/onboard');
     }
