@@ -635,6 +635,7 @@ class BitcoinService extends ChangeNotifier {
 
     // Deriving and checking for receiving addresses
     for (var i = 0; i < 1000; i++) {
+      await Future.delayed(Duration(milliseconds: 500));
       // Break out of loop when receivingGapCounter hits 20
       if (receivingGapCounter == 20) {
         break;
@@ -665,6 +666,7 @@ class BitcoinService extends ChangeNotifier {
 
     // Deriving and checking for change addresses
     for (var i = 0; i < 1000; i++) {
+      await Future.delayed(Duration(milliseconds: 500));
       // Same gap limit for change as for receiving, breaks when it hits 20
       if (changeGapCounter == 20) {
         break;

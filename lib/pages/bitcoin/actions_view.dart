@@ -530,7 +530,7 @@ class _InputAmountToMuchDialog extends StatelessWidget {
     return AlertDialog(
       title: Text('Amount too high'),
       content: Text(
-          "You do not have that much Bitcoin to spend. Please try a smaller amount.\n\n It's also possible you're not leaving enough over for transaction fees."),
+          "You do not have that much Bitcoin to spend. Please try a smaller amount.\n\nIt's also possible you're not leaving enough over for transaction fees."),
       actions: <Widget>[
         FlatButton(
           onPressed: () {
