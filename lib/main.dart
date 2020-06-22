@@ -75,8 +75,9 @@ class _InitViewState extends State<InitView> {
   _checkFirstLaunch() async {
     final mscData = await Hive.openBox('miscellaneous');
     _isFirstLaunch = mscData.get('first_launch');
+    print(_isFirstLaunch);
     if (this._isFirstLaunch == false) {
-      Navigator.pushNamed(context, '/onboard');
+      Navigator.pushNamed(context, '/lockscreen');
     } else {
       Navigator.pushNamed(context, '/onboard');
     }
@@ -84,8 +85,8 @@ class _InitViewState extends State<InitView> {
 
   @override
   void initState() {
-    super.initState();
     this._checkFirstLaunch();
+    super.initState();
   }
 
   @override

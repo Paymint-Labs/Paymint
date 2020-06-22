@@ -1,5 +1,6 @@
 export 'onboard_view.dart';
 export 'main_view.dart';
+export 'lock_view.dart';
 export 'bitcoin/bitcoin_view.dart';
 export 'bitcoin/actions_view.dart';
 export 'bitcoin/manage_backup_view.dart';

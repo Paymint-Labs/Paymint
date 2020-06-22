@@ -366,10 +366,10 @@ class __SendViewState extends State<_SendView> {
           setState(() {
             if (currentSelection == 0 || currentSelection == 1) {
               currentSelection += 1;
-              selectedFee = feeList[currentSelection];
+              selectedFee = double.parse(feeList[currentSelection]);
             } else {
               currentSelection = 0;
-              selectedFee = feeList[currentSelection];
+              selectedFee = double.parse(feeList[currentSelection]);
             }
             print(selectedFee);
           });
