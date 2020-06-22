@@ -36,12 +36,12 @@ class _LockscreenViewState extends State<LockscreenView> {
                 onInputComplete: (List<int> input) async {
                   final store = new FlutterSecureStorage();
                   final String pattern = await store.read(key: 'lockcode');
-                  final List patternList = jsonDecode(pattern);
-                  List<int> xx = new List();
-                  for (var i = 0; i < patternList.length; i++) {
-                    xx.add(patternList[i]);
+                  final List patternListJson = jsonDecode(pattern);
+                  List<int> actual = new List();
+                  for (var i = 0; i < patternListJson.length; i++) {
+                    actual.add(patternListJson[i]);
                   }
-                  if (listEquals(xx, input)) {
+                  if (listEquals(actual, input)) {
                     Navigator.pushNamed(context, '/mainview');
                   } else {
                     scaffoldKey.currentState.hideCurrentSnackBar();

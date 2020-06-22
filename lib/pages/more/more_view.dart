@@ -187,7 +187,9 @@ class _MoreViewState extends State<MoreView> {
           ListTile(
             title: Text('Terms of service'),
             trailing: Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () {
+              _launchToS(context);
+            },
           ),
           ListTile(
             title: Text('Licenses'),
@@ -223,6 +225,16 @@ class _MoreViewState extends State<MoreView> {
 
 void _launchTwitter(BuildContext context) async {
   final String url = 'https://twitter.com/paymint_labs';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    Toast.show('Cannot launch url', context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+  }
+}
+
+void _launchToS(BuildContext context) async {
+  final String url = 'https://paymint-tos.webflow.io/';
   if (await canLaunch(url)) {
     await launch(url);
   } else {
