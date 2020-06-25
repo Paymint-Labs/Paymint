@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,8 @@ import 'dart:math' as math;
 import 'package:majascan/majascan.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
+import 'package:http/http.dart' as http;
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class ActionsView extends StatefulWidget {
   ActionsView({Key key}) : super(key: key);
@@ -586,6 +590,8 @@ class _PreviewTransactionDialog extends StatelessWidget {
   final int recipientAmt;
   final int fees;
 
+  final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
+
   String _displauAddr(String address) {
     return address.substring(0, 5) +
         '...' +
@@ -595,6 +601,19 @@ class _PreviewTransactionDialog extends StatelessWidget {
   // Parameters optional for now
   _PreviewTransactionDialog(
       this.hex, this.recipient, this.recipientAmt, this.fees);
+
+  pushtx(BuildContext context) async {
+    bool res = await _submitHexToNetwork(hex);
+    if (res) {
+      _btnController.success();
+      Future.delayed(Duration(milliseconds: 850));
+      Navigator.pop(context);
+    } else {
+      _btnController.error();
+      Future.delayed(Duration(milliseconds: 850));
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -606,8 +625,11 @@ class _PreviewTransactionDialog extends StatelessWidget {
           bottomNavigationBar: Container(
             height: 100,
             child: Center(
-              child: CupertinoButton.filled(
-                  child: Text('Send Transaction'), onPressed: () {}),
+              child: RoundedLoadingButton(
+                controller: _btnController,
+                child: Text('Send transaction', style: TextStyle(color: Colors.white)),
+                onPressed: pushtx(context),
+              )
             ),
           ),
           body: SingleChildScrollView(
@@ -666,6 +688,22 @@ class _PreviewTransactionDialog extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<bool> _submitHexToNetwork(String hex) async {
+    final Map<String, dynamic> obj = {"hex": hex};
+
+    final res = await http.post(
+      'https://www.api.paymintapp.com/btc/pushtx',
+      body: jsonEncode(obj),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

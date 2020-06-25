@@ -463,11 +463,13 @@ class BitcoinService extends ChangeNotifier {
         final nodeChange = root.derivePath("m/84'/0'/0'/1/$i");
 
         if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.address == addressToCheckFor) {
+          print('Receiving found on loop $i');
           elipticCurvePairArray.add(ECPair.fromWIF(nodeReceiving.toWIF()));
           outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.output);
           break;
         }
         if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.address == addressToCheckFor) { 
+          print('Change found on loop $i');
           elipticCurvePairArray.add(ECPair.fromWIF(nodeChange.toWIF()));
           outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.output);
           break;
@@ -486,9 +488,13 @@ class BitcoinService extends ChangeNotifier {
     for (var i = 0; i < recipients.length; i++) {
       txb.addOutput(recipients[i], satoshisPerRecipient[i]);
     }
+    // print('-----------');
+    // print(utxosToUse[0].txid + '   ' + utxosToUse[1].txid);
+    // print(P2WPKH(data: new PaymentData(pubkey: elipticCurvePairArray[0].publicKey)).data.address + '     ' + P2WPKH(data: new PaymentData(pubkey: elipticCurvePairArray[1].publicKey)).data.address);
+
     // Sign the transaction accordingly
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.sign(vin: 0, keyPair: elipticCurvePairArray[i], witnessValue: utxosToUse[i].value);
+      txb.sign(vin: i, keyPair: elipticCurvePairArray[i], witnessValue: utxosToUse[i].value);
     }
     return txb.build().toHex();
   }
@@ -657,7 +663,7 @@ class BitcoinService extends ChangeNotifier {
 
     // Deriving and checking for receiving addresses
     for (var i = 0; i < 1000; i++) {
-      await Future.delayed(Duration(milliseconds: 1000));
+      await Future.delayed(Duration(milliseconds: 650));
       // Break out of loop when receivingGapCounter hits 20
       if (receivingGapCounter == 20) {
         break;
@@ -676,8 +682,8 @@ class BitcoinService extends ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final int numTxs = json.decode(response.body);
         if (numTxs >= 1) {
-          receivingAddressArray.add(address);
           receivingIndex = i;
+          receivingAddressArray.add(address);
         } else if (numTxs == 0) {
           receivingGapCounter += 1;
         }
@@ -688,7 +694,7 @@ class BitcoinService extends ChangeNotifier {
 
     // Deriving and checking for change addresses
     for (var i = 0; i < 1000; i++) {
-      await Future.delayed(Duration(milliseconds: 1000));
+      await Future.delayed(Duration(milliseconds: 650));
       // Same gap limit for change as for receiving, breaks when it hits 20
       if (changeGapCounter == 20) {
         break;
@@ -707,8 +713,8 @@ class BitcoinService extends ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final int numTxs = json.decode(response.body);
         if (numTxs >= 1) {
-          changeAddressArray.add(address);
           changeIndex = i;
+          changeAddressArray.add(address);
         } else if (numTxs == 0) {
           changeGapCounter += 1;
         }

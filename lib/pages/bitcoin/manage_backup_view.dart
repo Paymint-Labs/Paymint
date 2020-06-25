@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
-import 'package:paymint/services/bitcoin_service.dart';
 
 class ManageBackupView extends StatefulWidget {
   ManageBackupView({Key key}) : super(key: key);
