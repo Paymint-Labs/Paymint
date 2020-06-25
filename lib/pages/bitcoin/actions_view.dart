@@ -382,11 +382,11 @@ class __SendViewState extends State<_SendView> {
       AsyncSnapshot<String> currency, AsyncSnapshot<dynamic> bitcoinPrice) {
     final String _currency = currency.data;
     final FeeObject _feeObj = feeObj.data;
-    final double rawBitcoinPrice = bitcoinPrice.data;
+    final dynamic rawBitcoinPrice = bitcoinPrice.data;
 
     final String displayCurrency = currencyMap[_currency];
     final String displayBitcoinPrice =
-        FlutterMoneyFormatter(amount: rawBitcoinPrice)
+        FlutterMoneyFormatter(amount: double.parse(rawBitcoinPrice.toString()))
             .output
             .nonSymbol
             .toString();
@@ -627,6 +627,12 @@ class _PreviewTransactionDialog extends StatelessWidget {
                 ListTile(
                   title: Text('Amount (in BTC):'),
                   trailing: Text((recipientAmt / 100000000).toString(),
+                      style: TextStyle(color: Colors.grey)),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text('Amount (in sats):'),
+                  trailing: Text(recipientAmt.toString(),
                       style: TextStyle(color: Colors.grey)),
                   onTap: () {},
                 ),

@@ -23,6 +23,7 @@ dependencies:
   http: ^0.12.0+2
   flutter_hooks: ^0.9.0
   majascan: ^0.3.7
+  local_auth: ^0.6.2+3
 
   # Bitcoin plugins
   bitcoin_flutter: ^2.0.0

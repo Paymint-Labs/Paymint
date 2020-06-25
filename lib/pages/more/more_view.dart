@@ -28,7 +28,16 @@ class _MoreViewState extends State<MoreView> {
             builder:
                 (BuildContext context, AsyncSnapshot<String> currentAddress) {
               if (currentAddress.connectionState == ConnectionState.done) {
-                return _buildMoreView(context, currency, currentAddress);
+                return FutureBuilder(
+                  future: btcService.useBiometrics,
+                  builder: (BuildContext context, AsyncSnapshot<bool> bioAuth) {
+                    if (bioAuth.connectionState == ConnectionState.done) {
+                      return _buildMoreView(context, currency, currentAddress, bioAuth);
+                    } else {
+                      return _MoreViewLoading();
+                    }
+                  },
+                );
               } else {
                 return _MoreViewLoading();
               }
@@ -48,7 +57,7 @@ class _MoreViewState extends State<MoreView> {
   }
 
   _buildMoreView(BuildContext context, AsyncSnapshot<String> currency,
-      AsyncSnapshot<String> currentAddress) {
+      AsyncSnapshot<String> currentAddress, AsyncSnapshot<bool> useBiometrics) {
     return Scaffold(
       body: ListView(
         children: <Widget>[
@@ -164,14 +173,12 @@ class _MoreViewState extends State<MoreView> {
             },
           ),
           ListTile(
-            title: Text('Pattern lock settings'),
-            trailing: Icon(Icons.chevron_right),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text('Manage app permissions'),
-            trailing: Icon(Icons.chevron_right),
-            onTap: () {},
+            title: Text('Biometric authentication'),
+            trailing: Text(_returnBioAuthDisplayText(useBiometrics.data), style: TextStyle(color: Colors.blue)),
+            onTap: () async {
+              final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
+              await bitcoinService.updateBiometricsUsage();
+            },
           ),
           Divider(),
           Padding(
@@ -208,6 +215,14 @@ class _MoreViewState extends State<MoreView> {
         ],
       ),
     );
+  }
+
+  String _returnBioAuthDisplayText(bool authSetting) {
+    if (authSetting == true) {
+      return 'Enabled';
+    } else {
+      return 'Disabled';
+    }
   }
 
   _refreshDialog() {

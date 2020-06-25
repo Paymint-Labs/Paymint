@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:pattern_lock/pattern_lock.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class OnboardView extends StatefulWidget {
   const OnboardView({Key key}) : super(key: key);
@@ -30,17 +31,160 @@ class _OnboardViewState extends State<OnboardView> {
     );
   }
 
+  ListView _buildHorizontalListView() {
+    return ListView(
+      padding: EdgeInsets.all(16),
+      scrollDirection: Axis.horizontal,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 250,
+            color: Colors.pink,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.attach_money,
+                        color: Colors.white,
+                      ),
+                      Icon(
+                        Icons.trending_up,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Pay lower fees with Native Segwit transactions',
+                    textScaleFactor: 1.3,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 32),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 250,
+            color: Colors.blue,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.security,
+                        color: Colors.white,
+                      ),
+                      Icon(
+                        Icons.block,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Block suspicious outputs to conceal your identity',
+                    textScaleFactor: 1.3,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 32),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 250,
+            color: Colors.orange,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Icon(
+                    Icons.remove_red_eye,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'View your wallet\'s previous addresses',
+                    textScaleFactor: 1.3,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 32),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 150,
+            color: Colors.purple,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.more_horiz,
+                    color: Colors.white,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'And more...',
+                    textScaleFactor: 1.3,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   PageView _buildLockPageView() {
     return PageView(
       physics: NeverScrollableScrollPhysics(),
       controller: pageController,
       children: <Widget>[
         Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: Colors.black,
+            title: Text('Paymint', style: GoogleFonts.rubik()),
+            leading: SizedBox(),
+          ),
           backgroundColor: Colors.black,
-          body: Center(child: CircularProgressIndicator()),
+          body: Center(
+            child: Container(
+              child: _buildHorizontalListView(),
+              height: 170,
+            ),
+          ),
           bottomNavigationBar: Container(
-            padding: EdgeInsets.all(8),
-            height: 200,
+            padding: EdgeInsets.all(16),
+            height: 250,
             child: ListView(
               children: <Widget>[
                 Text(
@@ -131,11 +275,12 @@ class _OnboardViewState extends State<OnboardView> {
                         curve: Curves.easeInOut);
                   } else {
                     final store = new FlutterSecureStorage();
-                    await store.write(key: 'lockcode', value: jsonEncode(input));
-                    
+                    await store.write(
+                        key: 'lockcode', value: jsonEncode(input));
+
                     final mscData = await Hive.openBox('miscellaneous');
                     await mscData.put('first_launch', false);
-                    
+
                     scaffoldKey.currentState.hideCurrentSnackBar();
                     scaffoldKey.currentState.showSnackBar(SnackBar(
                       content: Text('Lock set'),
@@ -151,8 +296,3 @@ class _OnboardViewState extends State<OnboardView> {
     );
   }
 }
-
-/// KEEP THIS HERE FOR NOW
-// final mscData = await Hive.openBox('miscellaneous');
-// await mscData.put('first_launch', false);
-// Navigator.pushNamed(context, '/mainview');

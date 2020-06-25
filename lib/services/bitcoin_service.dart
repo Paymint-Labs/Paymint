@@ -46,9 +46,12 @@ class BitcoinService extends ChangeNotifier {
   Future<bool> _physicalBackupStatus;
   Future<bool> get physicalBackupStatus => _physicalBackupStatus;
 
-  /// Holds all active outputs for wallet, used for displaying utxos in app security view
+  /// Holds all outputs for wallet, used for displaying utxos in app security view
   List<UtxoObject> _outputsList = [];
   List<UtxoObject> get allOutputs => _outputsList;
+
+  Future<bool> _useBiomterics;
+  Future<bool> get useBiometrics => _useBiomterics;
 
   BitcoinService() {
     _currency = CurrencyUtilities.fetchPreferredCurrency();
@@ -72,6 +75,7 @@ class BitcoinService extends ChangeNotifier {
       // Wallet alreiady exists, triggers for a returning user
       this._currentReceivingAddress = _getCurrentAddressForChain(0);
       this._physicalBackupStatus = Future(() async => await wallet.get('phys_backup'));
+      this._useBiomterics = Future(() async => await wallet.get('use_biometrics'));
       DevUtilities.debugPrintWalletState();
     }
   }
@@ -82,6 +86,7 @@ class BitcoinService extends ChangeNotifier {
     await secureStore.write(key: 'mnemonic', value: bip39.generateMnemonic());
     // Set relevant indexes
     await wallet.put('receivingIndex', 0);
+    await wallet.put('use_biometrics', false);
     await wallet.put('changeIndex', 0);
     await wallet.put('phys_backup', false);
     await wallet.put('cloud_backup', false);
@@ -94,6 +99,23 @@ class BitcoinService extends ChangeNotifier {
     await addToAddressesArrayForChain(initialReceivingAddress, 0);
     await addToAddressesArrayForChain(initialChangeAddress, 1);
     this._currentReceivingAddress = Future(() => initialReceivingAddress);
+    this._useBiomterics = Future(() async => await wallet.get('use_biometrics'));
+  }
+
+  /// Changes the biometrics auth setting used on the lockscreen as an alternative
+  /// to the pattern lock
+  updateBiometricsUsage() async {
+    final wallet = await Hive.openBox('wallet');
+    final bool useBio = await wallet.get('use_biometrics');
+
+    if (useBio) {
+      _useBiomterics = Future(() => false);
+      await wallet.put('use_biometrics', false);
+    } else {
+      _useBiomterics = Future(() => true);
+      await wallet.put('use_biometrics', true);
+    }
+    notifyListeners();
   }
 
   /// Generates a new internal or external chain address for the wallet using a BIP84 derivation path.
@@ -635,7 +657,7 @@ class BitcoinService extends ChangeNotifier {
 
     // Deriving and checking for receiving addresses
     for (var i = 0; i < 1000; i++) {
-      await Future.delayed(Duration(milliseconds: 650));
+      await Future.delayed(Duration(milliseconds: 1000));
       // Break out of loop when receivingGapCounter hits 20
       if (receivingGapCounter == 20) {
         break;
@@ -666,7 +688,7 @@ class BitcoinService extends ChangeNotifier {
 
     // Deriving and checking for change addresses
     for (var i = 0; i < 1000; i++) {
-      await Future.delayed(Duration(milliseconds: 650));
+      await Future.delayed(Duration(milliseconds: 1000));
       // Same gap limit for change as for receiving, breaks when it hits 20
       if (changeGapCounter == 20) {
         break;
