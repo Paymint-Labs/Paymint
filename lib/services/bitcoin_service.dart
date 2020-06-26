@@ -555,6 +555,7 @@ class BitcoinService extends ChangeNotifier {
     final Map<String, dynamic> requestBody = {
       "currency": currency,
       "allAddresses": allAddresses,
+      "changeAddresses": changeAddresses
     };
 
     final response = await http.post(

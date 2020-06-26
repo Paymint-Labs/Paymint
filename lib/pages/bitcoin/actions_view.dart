@@ -590,7 +590,7 @@ class _PreviewTransactionDialog extends StatelessWidget {
   final int recipientAmt;
   final int fees;
 
-  final RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
+  RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
 
   String _displauAddr(String address) {
     return address.substring(0, 5) +
@@ -602,7 +602,7 @@ class _PreviewTransactionDialog extends StatelessWidget {
   _PreviewTransactionDialog(
       this.hex, this.recipient, this.recipientAmt, this.fees);
 
-  pushtx(BuildContext context) async {
+  void pushtx(BuildContext context) async {
     bool res = await _submitHexToNetwork(hex);
     if (res) {
       _btnController.success();
@@ -628,7 +628,9 @@ class _PreviewTransactionDialog extends StatelessWidget {
               child: RoundedLoadingButton(
                 controller: _btnController,
                 child: Text('Send transaction', style: TextStyle(color: Colors.white)),
-                onPressed: pushtx(context),
+                onPressed: () {
+                  pushtx(context);
+                },
               )
             ),
           ),
