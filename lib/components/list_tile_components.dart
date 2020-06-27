@@ -490,71 +490,77 @@ class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Transaction details',
-            style: GoogleFonts.rubik(
-              textStyle: TextStyle(color: Colors.white, fontSize: 20),
-            ),
+      appBar: AppBar(
+        title: Text(
+          'Transaction details',
+          style: GoogleFonts.rubik(
+            textStyle: TextStyle(color: Colors.white, fontSize: 20),
           ),
-          backgroundColor: Colors.black,
-          elevation: 10,
         ),
-        body: ListView(
-          children: <Widget>[
-            Container(
-                height: MediaQuery.of(context).size.width / 2,
-                color: Colors.black,
-                child: Center(
-                    child: FlareActor('assets/rive/success.flr',
-                        animation: 'Untitled'))),
-            ListTile(
-              title: Text('Date/Time:'),
-              trailing: Text(_buildDateTimeForTx(widget._tx.timestamp)),
-              onTap: () {},
+        backgroundColor: Colors.black,
+        elevation: 10,
+      ),
+      body: ListView(
+        children: <Widget>[
+          Container(
+              height: MediaQuery.of(context).size.width / 2,
+              color: Colors.black,
+              child: Center(
+                  child: FlareActor('assets/rive/success.flr',
+                      animation: 'Untitled'))),
+          ListTile(
+            title: Text('Date/Time:'),
+            trailing: Text(_buildDateTimeForTx(widget._tx.timestamp)),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Action:'),
+            trailing: Text(widget._tx.txType),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Amount:'),
+            trailing: Text(_extractBtcFromSatoshis(widget._tx.amount)),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Worth now:'),
+            trailing: Text(widget._tx.worthNow),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Worth when received:'),
+            trailing: Text(widget._tx.worthAtBlockTimestamp),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Fee paid:'),
+            trailing: Text(widget._tx.fees.toString() + ' sats'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text(
+              'Copy transaction ID',
+              style: TextStyle(color: Colors.blue),
             ),
-            ListTile(
-              title: Text('Action:'),
-              trailing: Text(widget._tx.txType),
-              onTap: () {},
+            onTap: () {
+              Clipboard.setData(new ClipboardData(text: widget._tx.txid));
+              Toast.show('ID copied to clipboard', context,
+                  duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Verify on blockchain',
+              style: TextStyle(color: Colors.blue),
             ),
-            ListTile(
-              title: Text('Amount:'),
-              trailing: Text(_extractBtcFromSatoshis(widget._tx.amount)),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Worth now:'),
-              trailing: Text(widget._tx.worthNow),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Worth when received:'),
-              trailing: Text(widget._tx.worthAtBlockTimestamp),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text('Fee paid:'),
-              trailing: Text(widget._tx.fees.toString() + ' sats'),
-              onTap: () {},
-            ),
-            ListTile(
-                title: Text('Copy transaction ID',
-                    style: TextStyle(color: Colors.blue)),
-                onTap: () {
-                  Clipboard.setData(new ClipboardData(text: widget._tx.txid));
-                  Toast.show('ID copied to clipboard', context,
-                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                }),
-            ListTile(
-              title: Text('Verify on blockchain',
-                  style: TextStyle(color: Colors.blue)),
-              onTap: () {
-                _launchTransactionUrl(context, widget._tx.txid);
-              },
-            )
-          ],
-        ));
+            onTap: () {
+              _launchTransactionUrl(context, widget._tx.txid);
+            },
+          )
+        ],
+      ),
+    );
   }
 }
 
