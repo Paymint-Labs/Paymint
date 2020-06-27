@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/pages/pages.dart';
 import 'package:animations/animations.dart';
-
+import 'package:connectivity/connectivity.dart';
 
 /// MainView refers to the main tab bar navigation and view system in place
 class MainView extends StatefulWidget {
@@ -15,11 +15,7 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _currentIndex = 0;
 
-  List<Widget> children = [
-    BitcoinView(),
-    BuyView(),
-    MoreView()
-  ];
+  List<Widget> children = [BitcoinView(), BuyView(), MoreView()];
 
   // Tab icon color based on tab selection
   Color _buildIconColor(int index) {
@@ -42,6 +38,16 @@ class _MainViewState extends State<MainView> {
   void _setCurrentIndex(int newIndex) {
     setState(() {
       _currentIndex = newIndex;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        Navigator.pushNamed(context, '/404');
+      }
     });
   }
 

@@ -24,6 +24,7 @@ dependencies:
   flutter_hooks: ^0.9.0
   majascan: ^0.3.7
   local_auth: ^0.6.2+3
+  connectivity: ^0.4.8+6
 
   # Bitcoin plugins
   bitcoin_flutter: ^2.0.0
@@ -85,6 +86,7 @@ flutter:
     - assets/images/btc.png
     - assets/images/work-in-progress.png
     - assets/images/mirage-payment-processed.png
+    - assets/images/404image.png
     - assets/rive/success.flr
     - assets/icon/icon.png
     - google_fonts/

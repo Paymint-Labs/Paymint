@@ -26,6 +26,8 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => AllAddressesView());
       case '/lockscreen':
         return CupertinoPageRoute(builder: (_) => LockscreenView());
+      case '/404':
+        return CupertinoPageRoute(builder: (_) => Error404View());
       default:
         return _routeError();
     }
