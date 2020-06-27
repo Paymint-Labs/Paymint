@@ -459,10 +459,6 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
               onTap: () {},
             ),
             ListTile(
-                title: Text('Reveal recipients',
-                    style: TextStyle(color: Colors.blue)),
-                onTap: () {}),
-            ListTile(
                 title: Text('Copy transaction ID',
                     style: TextStyle(color: Colors.blue)),
                 onTap: () {

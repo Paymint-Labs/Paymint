@@ -112,11 +112,6 @@ class _MoreViewState extends State<MoreView> {
             },
           ),
           ListTile(
-            title: Text('Live support'),
-            trailing: Icon(Icons.chevron_right),
-            onTap: () {},
-          ),
-          ListTile(
             title: Text('Follow us on Twitter'),
             trailing: Icon(Icons.chevron_right),
             onTap: () {
@@ -126,7 +121,9 @@ class _MoreViewState extends State<MoreView> {
           ListTile(
             title: Text('Join us on Discord'),
             trailing: Icon(Icons.chevron_right),
-            onTap: () {},
+            onTap: () {
+              _launchDiscord(context);
+            },
           ),
           Divider(),
           Padding(
@@ -250,6 +247,16 @@ void _launchTwitter(BuildContext context) async {
 
 void _launchToS(BuildContext context) async {
   final String url = 'https://paymint-tos.webflow.io/';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    Toast.show('Cannot launch url', context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+  }
+}
+
+void _launchDiscord(BuildContext context) async {
+  final String url = 'https://discord.gg/N8RNnev';
   if (await canLaunch(url)) {
     await launch(url);
   } else {

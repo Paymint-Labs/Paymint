@@ -590,7 +590,8 @@ class _PreviewTransactionDialog extends StatelessWidget {
   final int recipientAmt;
   final int fees;
 
-  RoundedLoadingButtonController _btnController = new RoundedLoadingButtonController();
+  final RoundedLoadingButtonController btnController =
+      new RoundedLoadingButtonController();
 
   String _displauAddr(String address) {
     return address.substring(0, 5) +
@@ -605,11 +606,9 @@ class _PreviewTransactionDialog extends StatelessWidget {
   void pushtx(BuildContext context) async {
     bool res = await _submitHexToNetwork(hex);
     if (res) {
-      _btnController.success();
       Future.delayed(Duration(milliseconds: 850));
       Navigator.pop(context);
     } else {
-      _btnController.error();
       Future.delayed(Duration(milliseconds: 850));
       Navigator.pop(context);
     }
@@ -625,14 +624,14 @@ class _PreviewTransactionDialog extends StatelessWidget {
           bottomNavigationBar: Container(
             height: 100,
             child: Center(
-              child: RoundedLoadingButton(
-                controller: _btnController,
-                child: Text('Send transaction', style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  pushtx(context);
-                },
-              )
-            ),
+                child: RoundedLoadingButton(
+              controller: btnController,
+              child: Text('Send transaction',
+                  style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                pushtx(context);
+              },
+            )),
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -713,8 +712,11 @@ class _WaitDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text('Please do not exit...'),
-        content: Container(
-            child: Center(child: CircularProgressIndicator()), height: 100));
+      title: Text('Please do not exit...'),
+      content: Container(
+        child: Center(child: CircularProgressIndicator()),
+        height: 100,
+      ),
+    );
   }
 }
