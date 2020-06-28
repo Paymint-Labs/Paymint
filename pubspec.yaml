@@ -53,7 +53,6 @@ dependencies:
   rounded_loading_button: ^1.0.0
   cupertino_icons: ^0.1.2
   flutter_money_formatter: ^0.8.3
-  grouped_buttons: ^1.0.4
   pattern_lock: ^1.0.3
 
 dev_dependencies:
@@ -61,11 +60,17 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^1.9.0
   flutter_launcher_icons: ^0.7.3
+  flutter_native_splash: ^0.1.9
 
 flutter_icons:
   android: true
   ios: true
   image_path: assets/icon/icon.png
+
+flutter_native_splash:
+  image: assets/images/splash.png
+  color: "001124"
+  android_disable_fullscreen: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

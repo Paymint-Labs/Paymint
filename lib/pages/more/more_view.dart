@@ -5,6 +5,7 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:animations/animations.dart';
 import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 class MoreView extends StatefulWidget {
   MoreView({Key key}) : super(key: key);
@@ -16,7 +17,7 @@ class MoreView extends StatefulWidget {
 class _MoreViewState extends State<MoreView> {
   @override
   Widget build(BuildContext context) {
-    FlutterStatusbarcolor.setStatusBarColor(Colors.black);
+    FlutterStatusbarcolor.setStatusBarColor(Colors.red);
     final BitcoinService btcService = Provider.of<BitcoinService>(context);
 
     return FutureBuilder(
@@ -32,7 +33,8 @@ class _MoreViewState extends State<MoreView> {
                   future: btcService.useBiometrics,
                   builder: (BuildContext context, AsyncSnapshot<bool> bioAuth) {
                     if (bioAuth.connectionState == ConnectionState.done) {
-                      return _buildMoreView(context, currency, currentAddress, bioAuth);
+                      return _buildMoreView(
+                          context, currency, currentAddress, bioAuth);
                     } else {
                       return _MoreViewLoading();
                     }
@@ -65,23 +67,28 @@ class _MoreViewState extends State<MoreView> {
             color: Colors.black,
             height: 150,
             child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  MaterialButton(
-                    color: Colors.white,
-                    child: Text(_displayFormatAddress(currentAddress.data)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.verified_user),
-                    color: Colors.redAccent,
-                  ),
-                ],
-              )
-            ),
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                MaterialButton(
+                  color: Colors.white,
+                  child: Text(_displayFormatAddress(currentAddress.data)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  onPressed: () {},
+                ),
+                IconButton(
+                  onPressed: () {
+                    Clipboard.setData(
+                        new ClipboardData(text: currentAddress.data));
+                    Toast.show('Address copied to clipboard', context,
+                        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                  },
+                  icon: Icon(Icons.content_copy),
+                  color: Colors.white,
+                ),
+              ],
+            )),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
@@ -171,9 +178,11 @@ class _MoreViewState extends State<MoreView> {
           ),
           ListTile(
             title: Text('Biometric authentication'),
-            trailing: Text(_returnBioAuthDisplayText(useBiometrics.data), style: TextStyle(color: Colors.blue)),
+            trailing: Text(_returnBioAuthDisplayText(useBiometrics.data),
+                style: TextStyle(color: Colors.blue)),
             onTap: () async {
-              final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
+              final BitcoinService bitcoinService =
+                  Provider.of<BitcoinService>(context);
               await bitcoinService.updateBiometricsUsage();
             },
           ),
@@ -284,4 +293,3 @@ class _MoreViewLoading extends StatelessWidget {
     ));
   }
 }
-

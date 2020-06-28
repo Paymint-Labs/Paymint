@@ -169,6 +169,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.12"
+  color:
+    dependency: transitive
+    description:
+      name: color
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   connectivity:
     dependency: "direct main"
     description:
@@ -279,6 +286,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.3"
+  flutter_native_splash:
+    dependency: "direct dev"
+    description:
+      name: flutter_native_splash
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.9"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -331,13 +345,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
-  grouped_buttons:
-    dependency: "direct main"
-    description:
-      name: grouped_buttons
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.4"
   hex:
     dependency: transitive
     description:
