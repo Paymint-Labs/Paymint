@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -243,6 +243,20 @@ class __SendViewState extends State<_SendView> {
     final BitcoinService btcService = Provider.of<BitcoinService>(context);
     final List<UtxoObject> allOutputs = btcService.allOutputs;
     int spendableSatoshiAmt = 0;
+
+    final wallet = await Hive.openBox('wallet');
+    final List externalChainArray = await wallet.get('receivingAddresses');
+    final List internalChainArray = await wallet.get('changeAddresses');
+
+    if (externalChainArray.contains(_recipientAddress.text) ||
+        internalChainArray.contains(_recipientAddress.text)) {
+      showModal(
+          context: context,
+          configuration: FadeScaleTransitionConfiguration(),
+          builder: (BuildContext context) {
+            return _SelfPaymentWarningDialog();
+          });
+    }
 
     for (var i = 0; i < allOutputs.length; i++) {
       if (allOutputs[i].blocked == false &&
@@ -584,6 +598,70 @@ class _InvalidAddressDialog extends StatelessWidget {
   }
 }
 
+class _SelfPaymentWarningDialog extends StatelessWidget {
+  const _SelfPaymentWarningDialog({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Self payment warning'),
+      content: Text(
+          'Please do not send transactions to yourself. This feature will be coming soon.'),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        )
+      ],
+    );
+  }
+}
+
+class _TransactionSuccessDialog extends StatelessWidget {
+  const _TransactionSuccessDialog({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Transaction successful!'),
+      content: Container(
+        height: 100,
+        child: Center(child: Icon(Icons.check_circle, color: Colors.green)),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        )
+      ],
+    );
+  }
+}
+
+class _TransactionFailureDialod extends StatelessWidget {
+  const _TransactionFailureDialod({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Transaction unsuccessful!'),
+      content: Text('Please try again'),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('OK'),
+        )
+      ],
+    );
+  }
+}
+
 class _PreviewTransactionDialog extends StatelessWidget {
   final String hex;
   final String recipient;
@@ -608,9 +686,21 @@ class _PreviewTransactionDialog extends StatelessWidget {
     if (res) {
       Future.delayed(Duration(milliseconds: 850));
       Navigator.pop(context);
+      showModal(
+          context: context,
+          configuration: FadeScaleTransitionConfiguration(),
+          builder: (BuildContext context) {
+            return _TransactionSuccessDialog();
+          });
     } else {
       Future.delayed(Duration(milliseconds: 850));
       Navigator.pop(context);
+      showModal(
+          context: context,
+          configuration: FadeScaleTransitionConfiguration(),
+          builder: (BuildContext context) {
+            return _TransactionFailureDialod();
+          });
     }
   }
 

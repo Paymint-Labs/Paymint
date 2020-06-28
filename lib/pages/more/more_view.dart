@@ -17,8 +17,7 @@ class MoreView extends StatefulWidget {
 class _MoreViewState extends State<MoreView> {
   @override
   Widget build(BuildContext context) {
-    FlutterStatusbarcolor.setStatusBarColor(Colors.red);
-    final BitcoinService btcService = Provider.of<BitcoinService>(context);
+     final BitcoinService btcService = Provider.of<BitcoinService>(context);
 
     return FutureBuilder(
       future: btcService.currency,

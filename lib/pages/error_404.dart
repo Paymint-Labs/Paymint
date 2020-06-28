@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:provider/provider.dart';
+import 'package:paymint/services/bitcoin_service.dart';
 
 class Error404View extends StatefulWidget {
   Error404View({Key key}) : super(key: key);
@@ -13,9 +15,12 @@ class _Error404ViewState extends State<Error404View> {
   
   @override
   void initState() {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
       if (result != ConnectivityResult.none) {
         this._connectionFound = true;
+        await bitcoinService.refreshWalletData();
         Navigator.pop(context);
       }
     });
@@ -55,7 +60,7 @@ class _Error404ViewState extends State<Error404View> {
           SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.all(32.0),
-            child: Text("We'll redirect you back to the main app one we detect an active connection...", textScaleFactor: 1.2),
+            child: Text("We'll redirect you back to the main app once we detect an active connection...", textScaleFactor: 1.2),
           ),
           SizedBox(height: 32),
           Center(child: buildConnectionLoadingView())

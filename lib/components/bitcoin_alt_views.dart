@@ -65,8 +65,8 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
                 key: bitcoinViewScrollOffset,
                 controller: bitcoinViewTabController,
                 labelStyle: GoogleFonts.rubik(),
+                indicatorSize: TabBarIndicatorSize.label,
                 indicator: UnderlineTabIndicator(
-                  insets: EdgeInsets.fromLTRB(60, 0, 60, 0),
                   borderSide: const BorderSide(width: 3.0, color: Colors.blue),
                 ),
                 tabs: <Widget>[
@@ -82,11 +82,65 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
           ];
         },
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           key: bitcoinViewScrollOffset,
           controller: bitcoinViewTabController,
           children: <Widget>[
-            Container(
-              color: Colors.white,
+            Column(
+              children: <Widget>[
+                SizedBox(height: 16),
+                ListTile(
+                  leading: Shimmer.fromColors(
+                    period: Duration(milliseconds: 800),
+                    baseColor: Colors.grey[300],
+                    highlightColor: Colors.grey[100],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        height: 20,
+                        width: 180,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+                Shimmer.fromColors(
+                  period: Duration(milliseconds: 850),
+                  baseColor: Colors.grey[300],
+                  highlightColor: Colors.grey[100],
+                  child: ListTile(
+                    leading: CircleAvatar(),
+                    title: Text('Received'),
+                    subtitle: Text('0.000238 BTC'),
+                    trailing: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('\$48.26 now'),
+                        Text('\$43.91 when received'),
+                      ],
+                    ),
+                  ),
+                ),
+                Shimmer.fromColors(
+                  period: Duration(milliseconds: 850),
+                  baseColor: Colors.grey[300],
+                  highlightColor: Colors.grey[100],
+                  child: ListTile(
+                    leading: CircleAvatar(),
+                    title: Text('Sent'),
+                    subtitle: Text('0.0001 BTC'),
+                    trailing: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('\$3.24 now'),
+                        Text('\$8.91 when sent'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
             Container(
               color: Colors.white,
