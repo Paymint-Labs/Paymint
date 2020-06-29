@@ -99,7 +99,7 @@ class _BitcoinViewLoadingState extends State<BitcoinViewLoading> {
                       child: Container(
                         height: 20,
                         width: 180,
-                        color: Colors.grey,
+                        color: Colors.white,
                       ),
                     ),
                   ),

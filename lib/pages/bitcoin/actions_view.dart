@@ -251,11 +251,12 @@ class __SendViewState extends State<_SendView> {
     if (externalChainArray.contains(_recipientAddress.text) ||
         internalChainArray.contains(_recipientAddress.text)) {
       showModal(
-          context: context,
-          configuration: FadeScaleTransitionConfiguration(),
-          builder: (BuildContext context) {
-            return _SelfPaymentWarningDialog();
-          });
+        context: context,
+        configuration: FadeScaleTransitionConfiguration(),
+        builder: (BuildContext context) {
+          return _SelfPaymentWarningDialog();
+        },
+      );
     }
 
     for (var i = 0; i < allOutputs.length; i++) {
@@ -347,16 +348,17 @@ class __SendViewState extends State<_SendView> {
       Navigator.pop(context);
       print(transactionHexOrError);
       showModal(
-          context: context,
-          configuration: FadeScaleTransitionConfiguration(),
-          builder: (BuildContext context) {
-            return _PreviewTransactionDialog(
-              transactionHexOrError['hex'],
-              transactionHexOrError['recipient'],
-              transactionHexOrError['recipientAmt'],
-              transactionHexOrError['fee'],
-            );
-          });
+        context: context,
+        configuration: FadeScaleTransitionConfiguration(),
+        builder: (BuildContext context) {
+          return _PreviewTransactionDialog(
+            transactionHexOrError['hex'],
+            transactionHexOrError['recipient'],
+            transactionHexOrError['recipientAmt'],
+            transactionHexOrError['fee'],
+          );
+        },
+      );
     }
   }
 
@@ -628,7 +630,8 @@ class _TransactionSuccessDialog extends StatelessWidget {
       title: Text('Transaction successful!'),
       content: Container(
         height: 100,
-        child: Center(child: Icon(Icons.check_circle, color: Colors.green)),
+        child: Center(
+            child: Icon(Icons.check_circle, color: Colors.green, size: 35)),
       ),
       actions: <Widget>[
         FlatButton(

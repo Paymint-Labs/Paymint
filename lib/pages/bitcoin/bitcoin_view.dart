@@ -27,11 +27,11 @@ class _BitcoinViewState extends State<BitcoinView>
   ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
   double _fabDimension = 56.0;
 
-
   @override
   void initState() {
     super.initState();
-    bitcoinViewTabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    bitcoinViewTabController =
+        TabController(length: 2, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -84,9 +84,7 @@ class _BitcoinViewState extends State<BitcoinView>
         },
       ),
       body: NestedScrollView(
-        pinnedHeaderSliverHeightBuilder: () =>
-            _pinnedHeaderHeight +
-            50,
+        pinnedHeaderSliverHeightBuilder: () => _pinnedHeaderHeight + 50,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
           return <Widget>[
             SliverAppBar(
@@ -196,27 +194,30 @@ class _BitcoinViewState extends State<BitcoinView>
     } else {
       // Assuming here that #transactions >= 1
       return Container(
-        child: ListView.builder(
-          itemCount: txData.data.txChunks.length,
-          itemBuilder: (BuildContext context, int index) {
-            return StickyHeader(
-              header: Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
-                  child: Text(
-                    extractDateFromTimestamp(
-                        txData.data.txChunks[index].timestamp ?? 0),
-                    textScaleFactor: 1.25,
-                  )),
-              content: ListView(
-                physics: NeverScrollableScrollPhysics(),
-                children: _buildTransactionChildLists(
-                    txData.data.txChunks[index].transactions),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-              ),
-            );
-          },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+          child: ListView.builder(
+            itemCount: txData.data.txChunks.length,
+            itemBuilder: (BuildContext context, int index) {
+              return StickyHeader(
+                header: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.fromLTRB(10, 8, 0, 5),
+                    child: Text(
+                      extractDateFromTimestamp(
+                          txData.data.txChunks[index].timestamp ?? 0),
+                      textScaleFactor: 1.25,
+                    )),
+                content: ListView(
+                  physics: NeverScrollableScrollPhysics(),
+                  children: _buildTransactionChildLists(
+                      txData.data.txChunks[index].transactions),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                ),
+              );
+            },
+          ),
         ),
       );
     }
