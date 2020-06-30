@@ -197,13 +197,6 @@ class _MoreViewState extends State<MoreView> {
             ),
           ),
           ListTile(
-            title: Text('Terms of service'),
-            trailing: Icon(Icons.chevron_right),
-            onTap: () {
-              _launchToS(context);
-            },
-          ),
-          ListTile(
             title: Text('Licenses'),
             trailing: Icon(Icons.chevron_right),
             onTap: () {
@@ -216,7 +209,21 @@ class _MoreViewState extends State<MoreView> {
                       'All rights reserved © Ready Systems Ltd.\n\nPaymint Labs',
                   applicationVersion: '0.1.0');
             },
-          )
+          ),
+          ListTile(
+            title: Text('Terms of service'),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              _launchToS(context);
+            },
+          ),
+          ListTile(
+            title: Text('Privacy policy'),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              _launchPrivacyPolicy(context);
+            },
+          ),
         ],
       ),
     );
@@ -255,6 +262,16 @@ void _launchTwitter(BuildContext context) async {
 
 void _launchToS(BuildContext context) async {
   final String url = 'https://paymint-tos.webflow.io/';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    Toast.show('Cannot launch url', context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+  }
+}
+
+void _launchPrivacyPolicy(BuildContext context) async {
+  final String url = 'https://paymint-privacy-policy.webflow.io/';
   if (await canLaunch(url)) {
     await launch(url);
   } else {

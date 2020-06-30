@@ -718,6 +718,7 @@ class _PreviewTransactionDialog extends StatelessWidget {
             height: 100,
             child: Center(
                 child: RoundedLoadingButton(
+                  color: Colors.black,
               controller: btnController,
               child: Text('Send transaction',
                   style: TextStyle(color: Colors.white)),
