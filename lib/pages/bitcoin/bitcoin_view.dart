@@ -13,6 +13,7 @@ import 'package:paymint/components/globals.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:paymint/components/globals.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -31,7 +32,7 @@ class _BitcoinViewState extends State<BitcoinView>
   void initState() {
     super.initState();
     bitcoinViewTabController =
-        TabController(length: 2, vsync: this, initialIndex: 0);
+        TabController(length: 2, vsync: this);
   }
 
   @override
@@ -84,6 +85,13 @@ class _BitcoinViewState extends State<BitcoinView>
         },
       ),
       body: NestedScrollView(
+        innerScrollPositionKeyBuilder: () {
+          if (bitcoinViewTabController.index == 0) {
+            return PageStorageKey('ActivityKey');
+          } else {
+            return PageStorageKey('SecurityKey');
+          }
+        },
         pinnedHeaderSliverHeightBuilder: () => _pinnedHeaderHeight + 50,
         headerSliverBuilder: (BuildContext _, bool boxIsScrolled) {
           return <Widget>[
@@ -148,16 +156,17 @@ class _BitcoinViewState extends State<BitcoinView>
           controller: bitcoinViewTabController,
           children: <Widget>[
             NestedScrollViewInnerScrollPositionKeyWidget(
-                Key('ActivityKey'),
-                NestedScrollViewRefreshIndicator(
-                  child: _buildActivityView(context, txData),
-                  onRefresh: () async {
-                    final btcService = Provider.of<BitcoinService>(context);
-                    await btcService.refreshWalletData();
-                  },
-                )),
+              PageStorageKey('ActivityKey'),
+              NestedScrollViewRefreshIndicator(
+                child: _buildActivityView(context, txData),
+                onRefresh: () async {
+                  final btcService = Provider.of<BitcoinService>(context);
+                  await btcService.refreshWalletData();
+                },
+              ),
+            ),
             NestedScrollViewInnerScrollPositionKeyWidget(
-                Key('SecurityKey'),
+                PageStorageKey('SecurityKey'),
                 NestedScrollViewRefreshIndicator(
                   child: _buildSecurityView(utxoData, context),
                   onRefresh: () async {

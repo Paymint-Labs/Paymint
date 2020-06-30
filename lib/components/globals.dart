@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 // BitcoinView Keys
-PageStorageKey bitcoinViewScrollOffset = new PageStorageKey(0);
+PageStorageKey bitcoinViewScrollOffset = PageStorageKey('bitcoinview');
 ScrollController bitcoinViewScrollController;
 TabController bitcoinViewTabController;
+
+// MoreView keys
+PageStorageKey moreViewKey = PageStorageKey('moreview');
 
 final RoundedLoadingButtonController buttonController = new RoundedLoadingButtonController();
 

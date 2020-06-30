@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paymint/services/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:paymint/components/globals.dart';
 import 'package:animations/animations.dart';
 import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -60,6 +60,7 @@ class _MoreViewState extends State<MoreView> {
   _buildMoreView(BuildContext context, AsyncSnapshot<String> currency,
       AsyncSnapshot<String> currentAddress, AsyncSnapshot<bool> useBiometrics) {
     return Scaffold(
+      key: moreViewKey,
       body: ListView(
         children: <Widget>[
           Container(
@@ -296,6 +297,7 @@ class _MoreViewLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: moreViewKey,
         body: ListView(
       children: <Widget>[
         Container(
