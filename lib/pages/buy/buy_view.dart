@@ -12,12 +12,6 @@ class _BuyViewState extends State<BuyView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Container(
-        height: 100,
-        child: Center(
-          child: CupertinoButton.filled(child: Text('Leave us feedback'), onPressed: () {}),
-        )
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
