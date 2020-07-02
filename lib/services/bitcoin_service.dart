@@ -74,8 +74,10 @@ class BitcoinService extends ChangeNotifier {
     } else {
       // Wallet alreiady exists, triggers for a returning user
       this._currentReceivingAddress = _getCurrentAddressForChain(0);
-      this._physicalBackupStatus = Future(() async => await wallet.get('phys_backup'));
-      this._useBiomterics = Future(() async => await wallet.get('use_biometrics'));
+      this._physicalBackupStatus =
+          Future(() async => await wallet.get('phys_backup'));
+      this._useBiomterics =
+          Future(() async => await wallet.get('use_biometrics'));
       DevUtilities.debugPrintWalletState();
     }
   }
@@ -99,7 +101,8 @@ class BitcoinService extends ChangeNotifier {
     await addToAddressesArrayForChain(initialReceivingAddress, 0);
     await addToAddressesArrayForChain(initialChangeAddress, 1);
     this._currentReceivingAddress = Future(() => initialReceivingAddress);
-    this._useBiomterics = Future(() async => await wallet.get('use_biometrics'));
+    this._useBiomterics =
+        Future(() async => await wallet.get('use_biometrics'));
   }
 
   /// Changes the biometrics auth setting used on the lockscreen as an alternative
@@ -138,7 +141,8 @@ class BitcoinService extends ChangeNotifier {
 
     for (var i = 0; i < 500; i++) {
       final node = root.derivePath("m/84'/0'/0'/0/$i");
-      final addr = P2WPKH(data: new PaymentData(pubkey: node.publicKey)).data.address;
+      final addr =
+          P2WPKH(data: new PaymentData(pubkey: node.publicKey)).data.address;
       lol.add(addr);
     }
 
@@ -232,10 +236,10 @@ class BitcoinService extends ChangeNotifier {
   }
 
   changeCurrency(String newCurrency) async {
-   final prefs = await Hive.openBox('prefs');
-   await prefs.put('currency', newCurrency);
-   this._currency = Future(() => newCurrency);
-   notifyListeners();
+    final prefs = await Hive.openBox('prefs');
+    await prefs.put('currency', newCurrency);
+    this._currency = Future(() => newCurrency);
+    notifyListeners();
   }
 
   _sortOutputs(List<UtxoObject> utxos) async {
@@ -264,7 +268,8 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
-  dynamic coinSelection(int satoshiAmountToSend, dynamic selectedTxFee, String _recipientAddress) async {
+  dynamic coinSelection(int satoshiAmountToSend, dynamic selectedTxFee,
+      String _recipientAddress) async {
     final List<UtxoObject> availableOutputs = this.allOutputs;
     final List<UtxoObject> spendableOutputs = new List();
     int spendableSatoshiValue = 0;
@@ -292,16 +297,16 @@ class BitcoinService extends ChangeNotifier {
     // the added transaction fee, which may require an extra input and will need to be checked for
     // later on.
 
+    // Possible situation right here
     int satoshisBeingUsed = 0;
     int inputsBeingConsumed = 0;
     List<UtxoObject> utxoObjectsToUse = new List();
 
-    while (satoshisBeingUsed < satoshiAmountToSend) {
-      for (var i = 0; i < spendableOutputs.length; i++) {
-        utxoObjectsToUse.add(spendableOutputs[i]);
-        satoshisBeingUsed += spendableOutputs[i].value;
-        inputsBeingConsumed += 1;
-      }
+    // I BELIEVE THAT THIS FIXES THE USE ALL INPUTS IN EVERY TX BUG. FURTHER TESTING REQUIRED
+    for (var i = 0; satoshisBeingUsed < satoshiAmountToSend; i++) {
+      utxoObjectsToUse.add(spendableOutputs[i]);
+      satoshisBeingUsed += spendableOutputs[i].value;
+      inputsBeingConsumed += 1;
     }
 
     // numberOfOutputs' length must always be equal to that of recipientsArray and recipientsAmtArray
@@ -409,12 +414,12 @@ class BitcoinService extends ChangeNotifier {
       dynamic hex = await buildTransaction(
           utxoObjectsToUse, recipientsArray, recipientsAmtArray);
       Map<String, dynamic> transactionObject = {
-          "hex": hex,
-          "recipient": recipientsArray[0],
-          "recipientAmt": recipientsAmtArray[0],
-          "fee": feeForOneOutput
-        };
-        return transactionObject;
+        "hex": hex,
+        "recipient": recipientsArray[0],
+        "recipientAmt": recipientsAmtArray[0],
+        "fee": feeForOneOutput
+      };
+      return transactionObject;
     } else {
       // Remember that returning 2 indicates that the user does not have a sufficient balance to
       // pay for the transaction fee. Ideally, at this stage, we should check if the user has any
@@ -462,16 +467,28 @@ class BitcoinService extends ChangeNotifier {
         final nodeReceiving = root.derivePath("m/84'/0'/0'/0/$i");
         final nodeChange = root.derivePath("m/84'/0'/0'/1/$i");
 
-        if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.address == addressToCheckFor) {
+        if (P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey))
+                .data
+                .address ==
+            addressToCheckFor) {
           print('Receiving found on loop $i');
           elipticCurvePairArray.add(ECPair.fromWIF(nodeReceiving.toWIF()));
-          outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey)).data.output);
+          outputDataArray.add(
+              P2WPKH(data: new PaymentData(pubkey: nodeReceiving.publicKey))
+                  .data
+                  .output);
           break;
         }
-        if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.address == addressToCheckFor) { 
+        if (P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey))
+                .data
+                .address ==
+            addressToCheckFor) {
           print('Change found on loop $i');
           elipticCurvePairArray.add(ECPair.fromWIF(nodeChange.toWIF()));
-          outputDataArray.add(P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey)).data.output);
+          outputDataArray.add(
+              P2WPKH(data: new PaymentData(pubkey: nodeChange.publicKey))
+                  .data
+                  .output);
           break;
         }
       }
@@ -482,7 +499,8 @@ class BitcoinService extends ChangeNotifier {
 
     // Add transaction inputs
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.addInput(utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
+      txb.addInput(
+          utxosToUse[i].txid, utxosToUse[i].vout, null, outputDataArray[i]);
     }
     // Add transaction outputs
     for (var i = 0; i < recipients.length; i++) {
@@ -494,7 +512,10 @@ class BitcoinService extends ChangeNotifier {
 
     // Sign the transaction accordingly
     for (var i = 0; i < utxosToUse.length; i++) {
-      txb.sign(vin: i, keyPair: elipticCurvePairArray[i], witnessValue: utxosToUse[i].value);
+      txb.sign(
+          vin: i,
+          keyPair: elipticCurvePairArray[i],
+          witnessValue: utxosToUse[i].value);
     }
     return txb.build().toHex();
   }
@@ -671,7 +692,10 @@ class BitcoinService extends ChangeNotifier {
       }
 
       final currentNode = root.derivePath("m/84'/0'/0'/0/$i");
-      final address = P2WPKH(data: new PaymentData(pubkey: currentNode.publicKey)).data.address;
+      final address =
+          P2WPKH(data: new PaymentData(pubkey: currentNode.publicKey))
+              .data
+              .address;
       final Map<String, String> requestBody = {"address": address};
 
       final response = await http.post(
@@ -689,7 +713,9 @@ class BitcoinService extends ChangeNotifier {
           receivingGapCounter += 1;
         }
       } else {
-        throw Exception('Something happened: ' + response.statusCode.toString() + response.body);
+        throw Exception('Something happened: ' +
+            response.statusCode.toString() +
+            response.body);
       }
     }
 
@@ -700,9 +726,12 @@ class BitcoinService extends ChangeNotifier {
       if (changeGapCounter == 20) {
         break;
       }
-      
+
       final currentNode = root.derivePath("m/84'/0'/0'/1/$i");
-      final address = P2WPKH(data: new PaymentData(pubkey: currentNode.publicKey)).data.address;
+      final address =
+          P2WPKH(data: new PaymentData(pubkey: currentNode.publicKey))
+              .data
+              .address;
       final Map<String, String> requestBody = {"address": address};
 
       final response = await http.post(
@@ -720,21 +749,25 @@ class BitcoinService extends ChangeNotifier {
           changeGapCounter += 1;
         }
       } else {
-        throw Exception('Something happened: ' + response.statusCode.toString() + response.body);
+        throw Exception('Something happened: ' +
+            response.statusCode.toString() +
+            response.body);
       }
     }
 
     // If restoring a wallet that never received any funds, then set receivingArray manually
     // If we didn't do this, it'd store an empty array
     if (receivingIndex == 0) {
-      final String receivingAddress = await generateAddressForChain(0, receivingIndex);
+      final String receivingAddress =
+          await generateAddressForChain(0, receivingIndex);
       receivingAddressArray.add(receivingAddress);
     }
 
     // If restoring a wallet that never sent any funds with change, then set changeArray
     // manually. If we didn't do this, it'd store an empty array.
     if (changeIndex == 0) {
-      final String changeAddress = await generateAddressForChain(1, changeIndex);
+      final String changeAddress =
+          await generateAddressForChain(1, changeIndex);
       changeAddressArray.add(changeAddress);
     }
 
@@ -749,4 +782,3 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 }
-
