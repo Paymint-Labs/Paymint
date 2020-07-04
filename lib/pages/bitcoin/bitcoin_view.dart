@@ -13,7 +13,8 @@ import 'package:paymint/components/globals.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:paymint/components/globals.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -420,11 +421,21 @@ class _UtxoExplanationDialog extends StatelessWidget {
         ),
         FlatButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            _launchDustingAttackInfo(context);
           },
           child: const Text('OK'),
         ),
       ],
     );
+  }
+}
+
+void _launchDustingAttackInfo(BuildContext context) async {
+  final String url = 'https://discord.gg/N8RNnev';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    Toast.show('Cannot launch url', context,
+        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
   }
 }

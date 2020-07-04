@@ -4,8 +4,6 @@ import 'package:paymint/pages/pages.dart';
 import 'package:animations/animations.dart';
 import 'package:connectivity/connectivity.dart';
 
-import 'package:paymint/components/bitcoin_alt_views.dart';
-
 /// MainView refers to the main tab bar navigation and view system in place
 class MainView extends StatefulWidget {
   MainView({Key key}) : super(key: key);
