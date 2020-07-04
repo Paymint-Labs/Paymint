@@ -431,7 +431,7 @@ class _UtxoExplanationDialog extends StatelessWidget {
 }
 
 void _launchDustingAttackInfo(BuildContext context) async {
-  final String url = 'https://discord.gg/N8RNnev';
+  final String url = 'https://academy.binance.com/security/what-is-a-dusting-attack';
   if (await canLaunch(url)) {
     await launch(url);
   } else {
