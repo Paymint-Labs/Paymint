@@ -513,9 +513,10 @@ class BitcoinService extends ChangeNotifier {
     // Sign the transaction accordingly
     for (var i = 0; i < utxosToUse.length; i++) {
       txb.sign(
-          vin: i,
-          keyPair: elipticCurvePairArray[i],
-          witnessValue: utxosToUse[i].value);
+        vin: i,
+        keyPair: elipticCurvePairArray[i],
+        witnessValue: utxosToUse[i].value,
+      );
     }
     return txb.build().toHex();
   }
