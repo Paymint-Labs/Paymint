@@ -1,11 +1,16 @@
-/// This class is meant for deserializing response objects from the Paymint API.
-/// It specifically handles data for the unspent outputs endpoint. This endpoint
-/// provides the wallet with a UTXO list and corresponding balances
+import 'package:hive/hive.dart';
 
+part 'type_adaptors/utxo_model.g.dart';
+
+@HiveType(typeId: 6)
 class UtxoData {
+  @HiveField(0)
   final String totalUserCurrency;
+  @HiveField(1)
   final int satoshiBalance;
+  @HiveField(2)
   final dynamic bitcoinBalance;
+  @HiveField(3)
   List<UtxoObject> unspentOutputArray;
 
   UtxoData({this.totalUserCurrency, this.satoshiBalance, this.bitcoinBalance, this.unspentOutputArray});
@@ -25,13 +30,21 @@ class UtxoData {
   }
 }
 
+@HiveType(typeId: 7)
 class UtxoObject {
+  @HiveField(0)
   final String txid;
+  @HiveField(1)
   final int vout;
+  @HiveField(2)
   final Status status;
+  @HiveField(3)
   final int value;
+  @HiveField(4)
   final String fiatWorth;
+  @HiveField(5)
   String txName;
+  @HiveField(6)
   bool blocked;
 
   UtxoObject({this.txid, this.vout, this.status, this.value, this.fiatWorth, this.txName, this.blocked});
@@ -49,10 +62,15 @@ class UtxoObject {
   }
 }
 
+@HiveType(typeId: 8)
 class Status {
+  @HiveField(0)
   final bool confirmed;
+  @HiveField(1)
   final String blockHash;
+  @HiveField(2)
   final int blockHeight;
+  @HiveField(3)
   final int blockTime;
 
   Status({this.confirmed, this.blockHash, this.blockHeight, this.blockTime});
@@ -65,5 +83,4 @@ class Status {
       blockTime: json['block_time']
     );
   }
-
 }

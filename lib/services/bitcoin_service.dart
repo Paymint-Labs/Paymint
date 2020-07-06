@@ -506,9 +506,6 @@ class BitcoinService extends ChangeNotifier {
     for (var i = 0; i < recipients.length; i++) {
       txb.addOutput(recipients[i], satoshisPerRecipient[i]);
     }
-    // print('-----------');
-    // print(utxosToUse[0].txid + '   ' + utxosToUse[1].txid);
-    // print(P2WPKH(data: new PaymentData(pubkey: elipticCurvePairArray[0].publicKey)).data.address + '     ' + P2WPKH(data: new PaymentData(pubkey: elipticCurvePairArray[1].publicKey)).data.address);
 
     // Sign the transaction accordingly
     for (var i = 0; i < utxosToUse.length; i++) {
@@ -547,16 +544,30 @@ class BitcoinService extends ChangeNotifier {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('utxo call done');
+      print('Outputs fetched');
       final List<UtxoObject> allOutputs =
           UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
       await _sortOutputs(allOutputs);
+      await wallet.put(
+          'latest_utxo_model', UtxoData.fromJson(json.decode(response.body)));
       notifyListeners();
       return UtxoData.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Something happened: ' +
-          response.statusCode.toString() +
-          response.body);
+      print("Output fetch unsuccessful");
+      final latestTxModel = await wallet.get('latest_utxo_model');
+
+      if (latestTxModel == null) {
+        final emptyModel = {
+          "total_user_currency": "\$0.00",
+          "total_sats": 0,
+          "total_btc": 0,
+          "outputArray": []
+        };
+        return UtxoData.fromJson(emptyModel);
+      } else {
+        print("Old output model located");
+        return latestTxModel;
+      }
     }
   }
 
@@ -587,13 +598,22 @@ class BitcoinService extends ChangeNotifier {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('tx call done');
+      print('Transactions fetched');
       notifyListeners();
+      await wallet.put('latest_tx_model',
+          TransactionData.fromJson(json.decode(response.body)));
       return TransactionData.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Something happened: ' +
-          response.statusCode.toString() +
-          response.body);
+      print("Transaction fetch unsuccessful");
+      final latestModel = await wallet.get('latest_tx_model');
+
+      if (latestModel == null) {
+        final emptyModel = {"dateTimeChunks": []};
+        return TransactionData.fromJson(emptyModel);
+      } else {
+        print("Old transaction model located");
+        return latestModel;
+      }
     }
   }
 

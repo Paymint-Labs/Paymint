@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:paymint/models/models.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:paymint/services/services.dart';
@@ -14,6 +15,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDirectory = await path.getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDirectory.path);
+  Hive.registerAdapter(TransactionDataAdapter());
+  Hive.registerAdapter(UtxoDataAdapter());
   runApp(MyApp());
 
   final mscData = await Hive.openBox('miscellaneous');

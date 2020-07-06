@@ -1,4 +1,10 @@
+import 'package:hive/hive.dart';
+
+part 'type_adaptors/transactions_model.g.dart';
+
+@HiveType(typeId: 1)
 class TransactionData {
+  @HiveField(0)
   final List<TransactionChunk> txChunks;
 
   TransactionData({this.txChunks});
@@ -13,8 +19,11 @@ class TransactionData {
   }
 }
 
+@HiveType(typeId: 2)
 class TransactionChunk {
+  @HiveField(0)
   final int timestamp;
+  @HiveField(1)
   final List<Transaction> transactions;
 
   TransactionChunk({this.timestamp, this.transactions});
@@ -30,21 +39,35 @@ class TransactionChunk {
   }
 }
 
+@HiveType(typeId: 3)
 class Transaction {
+  @HiveField(0)
   final String txid;
+  @HiveField(1)
   final bool confirmedStatus;
+  @HiveField(2)
   final int timestamp;
+  @HiveField(3)
   final String txType;
+  @HiveField(4)
   final int amount;
+  @HiveField(5)
   final List aliens;
   /// Keep worthNow as dynamic
+  @HiveField(6)
   final dynamic worthNow;
   /// worthAtBlockTimestamp has to be dynamic in case the server fucks up the price quote and returns null instead of a double
+  @HiveField(7)
   final dynamic worthAtBlockTimestamp;
+  @HiveField(8)
   final int fees;
+  @HiveField(9)
   final int inputSize;
+  @HiveField(10)
   final int outputSize;
+  @HiveField(11)
   final List<Input> inputs;
+  @HiveField(12)
   final List<Output> outputs;
 
   Transaction({this.txid, this.confirmedStatus, this.timestamp, this.txType, this.amount, this.aliens, this.worthNow, this.worthAtBlockTimestamp,
@@ -75,15 +98,25 @@ class Transaction {
   }
 }
 
+@HiveType(typeId: 4)
 class Input {
+  @HiveField(0)
   final String txid;
+  @HiveField(1)
   final int vout;
+  @HiveField(2)
   final Output prevout;
+  @HiveField(3)
   final String scriptsig;
+  @HiveField(4)
   final String scriptsigAsm;
+  @HiveField(5)
   final List<dynamic> witness;
+  @HiveField(6)
   final bool isCoinbase;
+  @HiveField(7)
   final int sequence;
+  @HiveField(8)
   final String innerRedeemscriptAsm;
 
   Input({this.txid, this.vout, this.prevout, this.scriptsig, this.scriptsigAsm, this.witness, this.isCoinbase, this.sequence, this.innerRedeemscriptAsm });
@@ -104,11 +137,17 @@ class Input {
 
 }
 
+@HiveType(typeId: 5)
 class Output {
+  @HiveField(0)
   final String scriptpubkey;
+  @HiveField(1)
   final String scriptpubkeyAsm;
+  @HiveField(2)
   final String scriptpubkeyType;
+  @HiveField(3)
   final String scriptpubkeyAddress;
+  @HiveField(4)
   final int value;
 
   Output({this.scriptpubkey, this.scriptpubkeyAsm, this.scriptpubkeyType, this.scriptpubkeyAddress, this.value});

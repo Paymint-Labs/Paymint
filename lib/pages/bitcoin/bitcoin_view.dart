@@ -14,7 +14,6 @@ import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
