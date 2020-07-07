@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:local_auth/local_auth.dart';
 import 'package:hive/hive.dart';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 
 class LockscreenView extends StatefulWidget {
   LockscreenView({Key key}) : super(key: key);
@@ -38,11 +39,17 @@ class _LockscreenViewState extends State<LockscreenView> {
       } else if (Platform.isAndroid) {
         if (availableSystems.contains(BiometricType.fingerprint)) {
           bool didAuthenticate = await localAuth.authenticateWithBiometrics(
-            localizedReason: 'Please authenticate to access wallet',
-            stickyAuth: true
-          );
+              localizedReason: 'Please authenticate to access wallet',
+              stickyAuth: true);
 
-          if (didAuthenticate) { Navigator.pushNamed(context, '/mainview'); }
+          if (didAuthenticate) {
+            final result = await Connectivity().checkConnectivity();
+            if (result == ConnectivityResult.none) {
+              Navigator.pushNamed(context, '/404');
+            } else {
+              Navigator.pushNamed(context, '/mainview');
+            }
+          }
         }
       }
     }
@@ -57,40 +64,50 @@ class _LockscreenViewState extends State<LockscreenView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Colors.black,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Text(
-              'Draw pattern to unlock',
-              style: TextStyle(color: Colors.white),
-              textScaleFactor: 1.3,
+      key: scaffoldKey,
+      backgroundColor: Colors.black,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Text(
+            'Draw pattern to unlock',
+            style: TextStyle(color: Colors.white),
+            textScaleFactor: 1.3,
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height / 2,
+            child: PatternLock(
+              selectedColor: Colors.purple,
+              dimension: 3,
+              notSelectedColor: Colors.white,
+              onInputComplete: (List<int> input) async {
+                final store = new FlutterSecureStorage();
+                final String pattern = await store.read(key: 'lockcode');
+                final List patternListJson = jsonDecode(pattern);
+                List<int> actual = new List();
+                for (var i = 0; i < patternListJson.length; i++) {
+                  actual.add(patternListJson[i]);
+                }
+                if (listEquals(actual, input)) {
+                  final result = await Connectivity().checkConnectivity();
+                  if (result == ConnectivityResult.none) {
+                    Navigator.pushNamed(context, '/404');
+                  } else {
+                    Navigator.pushNamed(context, '/mainview');
+                  }
+                } else {
+                  scaffoldKey.currentState.hideCurrentSnackBar();
+                  scaffoldKey.currentState.showSnackBar(
+                    SnackBar(
+                      content: Text('Incorrect pattern. Try again.'),
+                    ),
+                  );
+                }
+              },
             ),
-            Container(
-              height: MediaQuery.of(context).size.height / 2,
-              child: PatternLock(
-                  selectedColor: Colors.purple,
-                  dimension: 3,
-                  notSelectedColor: Colors.white,
-                  onInputComplete: (List<int> input) async {
-                    final store = new FlutterSecureStorage();
-                    final String pattern = await store.read(key: 'lockcode');
-                    final List patternListJson = jsonDecode(pattern);
-                    List<int> actual = new List();
-                    for (var i = 0; i < patternListJson.length; i++) {
-                      actual.add(patternListJson[i]);
-                    }
-                    if (listEquals(actual, input)) {
-                      Navigator.pushNamed(context, '/mainview');
-                    } else {
-                      scaffoldKey.currentState.hideCurrentSnackBar();
-                      scaffoldKey.currentState.showSnackBar(SnackBar(
-                          content: Text('Incorrect pattern. Try again.')));
-                    }
-                  }),
-            )
-          ],
-        ));
+          )
+        ],
+      ),
+    );
   }
 }

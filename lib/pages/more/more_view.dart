@@ -181,9 +181,7 @@ class _MoreViewState extends State<MoreView> {
             trailing: Text(_returnBioAuthDisplayText(useBiometrics.data),
                 style: TextStyle(color: Colors.blue)),
             onTap: () async {
-              final BitcoinService bitcoinService =
-                  Provider.of<BitcoinService>(context);
-              await bitcoinService.updateBiometricsUsage();
+              Navigator.pushNamed(context, '/bioauth');
             },
           ),
           Divider(),

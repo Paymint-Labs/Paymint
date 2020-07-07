@@ -14,6 +14,7 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   int _currentIndex = 0;
+  GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   List<Widget> children = [BitcoinView(), BuyView(), MoreView()];
 
@@ -46,7 +47,7 @@ class _MainViewState extends State<MainView> {
     super.initState();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       if (result == ConnectivityResult.none) {
-        Navigator.pushNamed(context, '/404');
+        _key.currentState.showSnackBar(SnackBar(content: Text('Please check internet access.')));
       }
     });
   }
@@ -54,6 +55,7 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,

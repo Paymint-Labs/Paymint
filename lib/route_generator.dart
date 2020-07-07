@@ -28,6 +28,8 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => LockscreenView());
       case '/404':
         return CupertinoPageRoute(builder: (_) => Error404View());
+      case '/bioauth':
+        return CupertinoPageRoute(builder: (_) => BioAuthView());
       default:
         return _routeError();
     }

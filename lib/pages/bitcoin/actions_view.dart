@@ -415,8 +415,9 @@ class __SendViewState extends State<_SendView> {
       bottomNavigationBar: Container(
         height: 80,
         child: Center(
-            child: CupertinoButton.filled(
-          child: Text('Preview transaction'),
+            child: CupertinoButton(
+              color: Colors.black,
+          child: Text('Preview transaction', style: GoogleFonts.rubik()),
           onPressed: () async {
             _checkAndBuild(selectedFee ??= feeObj.data.fast);
           },

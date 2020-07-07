@@ -36,7 +36,7 @@ class _ManageBackupViewState extends State<ManageBackupView> {
               height: 100,
               child: Center(
                 child: CupertinoButton.filled(
-                  child: Text('Reveal wallet mnemonic'),
+                  child: Text('Reveal wallet mnemonic', style: GoogleFonts.rubik()),
                   onPressed: () {
                     Navigator.pushNamed(context, '/revealmnemonic');
                   },
@@ -48,7 +48,7 @@ class _ManageBackupViewState extends State<ManageBackupView> {
                 Navigator.pushNamed(context, '/restorewallet');
               },
               child: Text('Restore wallet from backup',
-                  style: TextStyle(color: Colors.blue)),
+                  style: GoogleFonts.rubik(color: Colors.blue)),
             ),
           ],
         ),

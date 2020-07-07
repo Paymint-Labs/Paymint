@@ -309,8 +309,9 @@ List<Widget> _buildSecurityListView(BuildContext context) {
     Container(
       height: 100,
       child: Center(
-        child: CupertinoButton.filled(
-          child: Text('Manage wallet backup'),
+        child: CupertinoButton(
+          color: Colors.black,
+          child: Text('Manage wallet backup', style: GoogleFonts.rubik()),
           onPressed: () {
             Navigator.pushNamed(context, '/backupmanager');
           },
@@ -414,13 +415,13 @@ class _UtxoExplanationDialog extends StatelessWidget {
       actions: <Widget>[
         FlatButton(
           onPressed: () {
-            Navigator.of(context).pop();
+            _launchDustingAttackInfo(context);
           },
           child: const Text('Learn more'),
         ),
         FlatButton(
           onPressed: () {
-            _launchDustingAttackInfo(context);
+            Navigator.pop(context);
           },
           child: const Text('OK'),
         ),
