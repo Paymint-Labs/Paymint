@@ -415,13 +415,13 @@ class __SendViewState extends State<_SendView> {
       bottomNavigationBar: Container(
         height: 80,
         child: Center(
-            child: CupertinoButton(
-              color: Colors.black,
-          child: Text('Preview transaction', style: GoogleFonts.rubik()),
-          onPressed: () async {
-            _checkAndBuild(selectedFee ??= feeObj.data.fast);
-          },
-        )),
+          child: CupertinoButton.filled(
+            child: Text('Preview transaction', style: GoogleFonts.rubik()),
+            onPressed: () async {
+              _checkAndBuild(selectedFee ??= feeObj.data.fast);
+            },
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -719,7 +719,7 @@ class _PreviewTransactionDialog extends StatelessWidget {
             height: 100,
             child: Center(
                 child: RoundedLoadingButton(
-                  color: Colors.black,
+              color: Colors.black,
               controller: btnController,
               child: Text('Send transaction',
                   style: TextStyle(color: Colors.white)),

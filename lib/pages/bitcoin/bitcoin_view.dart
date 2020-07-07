@@ -309,8 +309,7 @@ List<Widget> _buildSecurityListView(BuildContext context) {
     Container(
       height: 100,
       child: Center(
-        child: CupertinoButton(
-          color: Colors.black,
+        child: CupertinoButton.filled(
           child: Text('Manage wallet backup', style: GoogleFonts.rubik()),
           onPressed: () {
             Navigator.pushNamed(context, '/backupmanager');
