@@ -12,3 +12,4 @@ export 'bitcoin/manage_backup_subviews/reveal_mnemonic.dart';
 export 'bitcoin/manage_backup_subviews/restore_wallet_view.dart';
 export 'error_404.dart';
 export 'more/bio_auth_view.dart';
+export 'more/submit_raw_hex.dart';

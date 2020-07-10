@@ -30,6 +30,8 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => Error404View());
       case '/bioauth':
         return CupertinoPageRoute(builder: (_) => BioAuthView());
+      case '/submitrawhex':
+        return CupertinoPageRoute(builder: (_) => SubmitRawTxHexView());
       default:
         return _routeError();
     }

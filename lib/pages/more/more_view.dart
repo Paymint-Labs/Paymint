@@ -137,6 +137,24 @@ class _MoreViewState extends State<MoreView> {
             padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
             child: Row(
               children: <Widget>[
+                Icon(Icons.clear_all),
+                SizedBox(width: 10),
+                Text('Advanced', textScaleFactor: 1.3),
+              ],
+            ),
+          ),
+          ListTile(
+            title: Text('Submit raw transaction'),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              Navigator.pushNamed(context, '/submitrawhex');
+            },
+          ),
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
+            child: Row(
+              children: <Widget>[
                 Icon(Icons.language),
                 SizedBox(width: 10),
                 Text('Localization preferences', textScaleFactor: 1.3),
@@ -206,7 +224,7 @@ class _MoreViewState extends State<MoreView> {
                       height: 40, width: 40),
                   applicationLegalese:
                       'All rights reserved © Ready Systems Ltd.\n\nPaymint Labs',
-                  applicationVersion: '0.1.0');
+                  applicationVersion: '1.1.0');
             },
           ),
           ListTile(

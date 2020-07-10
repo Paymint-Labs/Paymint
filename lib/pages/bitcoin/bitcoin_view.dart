@@ -203,30 +203,27 @@ class _BitcoinViewState extends State<BitcoinView>
     } else {
       // Assuming here that #transactions >= 1
       return Container(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-          child: ListView.builder(
-            itemCount: txData.data.txChunks.length,
-            itemBuilder: (BuildContext context, int index) {
-              return StickyHeader(
-                header: Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.fromLTRB(10, 8, 0, 5),
-                    child: Text(
-                      extractDateFromTimestamp(
-                          txData.data.txChunks[index].timestamp ?? 0),
-                      textScaleFactor: 1.25,
-                    )),
-                content: ListView(
-                  physics: NeverScrollableScrollPhysics(),
-                  children: _buildTransactionChildLists(
-                      txData.data.txChunks[index].transactions),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                ),
-              );
-            },
-          ),
+        child: ListView.builder(
+          itemCount: txData.data.txChunks.length,
+          itemBuilder: (BuildContext context, int index) {
+            return StickyHeader(
+              header: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.fromLTRB(10, 8, 0, 5),
+                  child: Text(
+                    extractDateFromTimestamp(
+                        txData.data.txChunks[index].timestamp ?? 0),
+                    textScaleFactor: 1.25,
+                  )),
+              content: ListView(
+                physics: NeverScrollableScrollPhysics(),
+                children: _buildTransactionChildLists(
+                    txData.data.txChunks[index].transactions),
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+              ),
+            );
+          },
         ),
       );
     }

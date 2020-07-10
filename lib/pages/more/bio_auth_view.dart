@@ -1,4 +1,4 @@
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/services.dart';
@@ -18,7 +18,7 @@ class _BioAuthViewState extends State<BioAuthView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Biometric Authentication'),
+        title: Text('Biometric Authentication', style: GoogleFonts.rubik(),),
       ),
       body: ListView(
         children: <Widget>[

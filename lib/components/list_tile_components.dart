@@ -44,34 +44,47 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
         colors: [Colors.cyanAccent, Colors.lightBlueAccent, Colors.cyanAccent]),
   ];
 
+  ContainerTransitionType _containerTransitionType =
+      ContainerTransitionType.fadeThrough;
+
   _ActiveOutputTileState(
       this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(_name),
-      subtitle: Text(_blockHeight),
-      trailing: Text(_currentValue),
-      leading: CircleAvatar(
-        child: ClipRRect(
-          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-      onTap: () async {
-        print('Blocking output...');
-        final service = Provider.of<BitcoinService>(context);
-        service.blockOutput(_fullOutput.txid);
-        final wallet = await Hive.openBox('wallet');
-        final blockedList = await wallet.get('blocked_tx_hashes');
-        final blockedCopy = new List();
-        for (var i = 0; i < blockedList.length; i++) {
-          blockedCopy.add(blockedList[i]);
-        }
-        blockedCopy.add(_fullOutput.txid);
-        await wallet.put('blocked_tx_hashes', blockedCopy);
-        print(blockedCopy);
+    return OpenContainer(
+      transitionType: _containerTransitionType,
+      closedElevation: 0.0,
+      openElevation: 0.0,
+      closedBuilder: (BuildContext context, VoidCallback openContainer) {
+        return ListTile(
+          title: Text(_name),
+          subtitle: Text(_blockHeight),
+          trailing: Text(_currentValue),
+          leading: CircleAvatar(
+            child: ClipRRect(
+              child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          // onTap: () async {
+          //   print('Blocking output...');
+          //   final service = Provider.of<BitcoinService>(context);
+          //   service.blockOutput(_fullOutput.txid);
+          //   final wallet = await Hive.openBox('wallet');
+          //   final blockedList = await wallet.get('blocked_tx_hashes');
+          //   final blockedCopy = new List();
+          //   for (var i = 0; i < blockedList.length; i++) {
+          //     blockedCopy.add(blockedList[i]);
+          //   }
+          //   blockedCopy.add(_fullOutput.txid);
+          //   await wallet.put('blocked_tx_hashes', blockedCopy);
+          //   print(blockedCopy);
+          // },
+        );
+      },
+      openBuilder: (BuildContext context, VoidCallback openContainer) {
+        return UtxoDetailView(output: _fullOutput);
       },
     );
   }
@@ -163,46 +176,59 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
     ]),
   ];
 
+  ContainerTransitionType containerTransitionType =
+      ContainerTransitionType.fadeThrough;
+
   _InactiveOutputTileState(
       this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(_name),
-      subtitle: Text(_blockHeight),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Text(
-            _currentValue,
+    return OpenContainer(
+      transitionType: containerTransitionType,
+      closedElevation: 0.0,
+      openElevation: 0.0,
+      closedBuilder: (BuildContext context, VoidCallback openContainer) {
+        return ListTile(
+          title: Text(_name),
+          subtitle: Text(_blockHeight),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                _currentValue,
+              ),
+              Text(
+                'Blocked',
+                style: TextStyle(color: Colors.purple),
+              )
+            ],
           ),
-          Text(
-            'Blocked',
-            style: TextStyle(color: Colors.purple),
-          )
-        ],
-      ),
-      leading: CircleAvatar(
-        child: ClipRRect(
-          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-      onTap: () async {
-        print('Unblocking Output...');
-        final service = Provider.of<BitcoinService>(context);
-        service.unblockOutput(_fullOutput.txid);
-        final wallet = await Hive.openBox('wallet');
-        final blockedList = await wallet.get('blocked_tx_hashes');
-        final List blockedCopyWithoutTxid = new List();
-        for (var i = 0; i < blockedList.length; i++) {
-          if (blockedList[i] != _fullOutput.txid) {
-            blockedCopyWithoutTxid.add(blockedList[i]);
-          }
-        }
-        await wallet.put('blocked_tx_hashes', blockedCopyWithoutTxid);
+          leading: CircleAvatar(
+            child: ClipRRect(
+              child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          // onTap: () async {
+          //   print('Unblocking Output...');
+          //   final service = Provider.of<BitcoinService>(context);
+          //   service.unblockOutput(_fullOutput.txid);
+          //   final wallet = await Hive.openBox('wallet');
+          //   final blockedList = await wallet.get('blocked_tx_hashes');
+          //   final List blockedCopyWithoutTxid = new List();
+          //   for (var i = 0; i < blockedList.length; i++) {
+          //     if (blockedList[i] != _fullOutput.txid) {
+          //       blockedCopyWithoutTxid.add(blockedList[i]);
+          //     }
+          //   }
+          //   await wallet.put('blocked_tx_hashes', blockedCopyWithoutTxid);
+          // },
+        );
+      },
+      openBuilder: (BuildContext context, VoidCallback openContainer) {
+        return UtxoDetailView(output: _fullOutput);
       },
     );
   }
@@ -253,6 +279,129 @@ class _OutgoingTransactionListTileState
       trailing: Text(widget.currentValue),
       onTap: () {},
     );
+  }
+}
+
+class UtxoDetailView extends StatefulWidget {
+  final UtxoObject output;
+
+  UtxoDetailView({Key key, @required this.output}) : super(key: key);
+
+  @override
+  _UtxoDetailViewState createState() => _UtxoDetailViewState(output);
+}
+
+class _UtxoDetailViewState extends State<UtxoDetailView> {
+  final UtxoObject _utxoObject;
+
+  _UtxoDetailViewState(this._utxoObject);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title:
+            Text(_utxoObject.txName + ' Details', style: GoogleFonts.rubik()),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ListTile(
+            title: Text('Transaction ID:'),
+            trailing: Text(shortenTxid(_utxoObject.txid)),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('DateTime:'),
+            trailing: Text(_buildDateTimeForTx(_utxoObject.status.blockTime)),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Status:'),
+            trailing: buildStatusTileTrailingWidget(_utxoObject.blocked),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Current Worth:'),
+            trailing: Text(_utxoObject.fiatWorth),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Amount (in BTC):'),
+            trailing: Text((_utxoObject.value / 100000000).toString() + ' BTC'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Amount (in Sats):'),
+            trailing: Text(_utxoObject.value.toString() + ' Sats'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Output Index:'),
+            trailing: Text('Output #' + (_utxoObject.vout + 1).toString() + ' in Transaction'),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text('Copy Transaction ID',
+                style: TextStyle(color: Colors.blue)),
+            onTap: () {
+              Clipboard.setData(new ClipboardData(text: _utxoObject.txid));
+                  Toast.show('ID copied to clipboard', context,
+                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+            },
+          ),
+          ListTile(
+            title: buildBlockButtonForOutput(_utxoObject.blocked),
+            onTap: () async {
+              if (_utxoObject.blocked == true) {
+                final service = Provider.of<BitcoinService>(context);
+                service.unblockOutput(_utxoObject.txid);
+                final wallet = await Hive.openBox('wallet');
+                final blockedList = await wallet.get('blocked_tx_hashes');
+                final List blockedCopyWithoutTxid = new List();
+                for (var i = 0; i < blockedList.length; i++) {
+                  if (blockedList[i] != _utxoObject.txid) {
+                    blockedCopyWithoutTxid.add(blockedList[i]);
+                  }
+                }
+                await wallet.put('blocked_tx_hashes', blockedCopyWithoutTxid);
+              } else {
+                final service = Provider.of<BitcoinService>(context);
+                service.blockOutput(_utxoObject.txid);
+                final wallet = await Hive.openBox('wallet');
+                final blockedList = await wallet.get('blocked_tx_hashes');
+                final blockedCopy = new List();
+                for (var i = 0; i < blockedList.length; i++) {
+                  blockedCopy.add(blockedList[i]);
+                }
+                blockedCopy.add(_utxoObject.txid);
+                await wallet.put('blocked_tx_hashes', blockedCopy);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String shortenTxid(String txid) {
+  return txid.substring(0, 4) + '...' + txid.substring(txid.length - 4);
+}
+
+Text buildStatusTileTrailingWidget(bool blockStatus) {
+  if (blockStatus == true) {
+    return Text('BLOCKED', style: TextStyle(color: Colors.red));
+  } else {
+    return Text('Active', style: TextStyle(color: Colors.green));
+  }
+}
+
+Text buildBlockButtonForOutput(bool blockStatus) {
+  if (blockStatus == true) {
+    return Text('Activate output', style: TextStyle(color: Colors.blue));
+  } else {
+    return Text('Block output', style: TextStyle(color: Colors.blue));
   }
 }
 
@@ -429,7 +578,7 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
                     child: FlareActor('assets/rive/success.flr',
                         animation: 'Untitled'))),
             ListTile(
-              title: Text('Date/Time:'),
+              title: Text('DateTime:'),
               trailing: Text(_buildDateTimeForTx(widget._tx.timestamp)),
               onTap: () {},
             ),
@@ -509,7 +658,7 @@ class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
                   child: FlareActor('assets/rive/success.flr',
                       animation: 'Untitled'))),
           ListTile(
-            title: Text('Date/Time:'),
+            title: Text('DateTime:'),
             trailing: Text(_buildDateTimeForTx(widget._tx.timestamp)),
             onTap: () {},
           ),

@@ -22,11 +22,14 @@ class _OnboardViewState extends State<OnboardView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Colors.black,
-        body: _buildLockPageView(),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: SafeArea(
+        child: Scaffold(
+          key: scaffoldKey,
+          backgroundColor: Colors.black,
+          body: _buildLockPageView(),
+        ),
       ),
     );
   }

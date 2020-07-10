@@ -112,7 +112,6 @@ class __ReceiveViewState extends State<_ReceiveView> {
           future: _bitcoinService.currentReceivingAddress,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              print(snapshot.data);
               return SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -423,73 +422,72 @@ class __SendViewState extends State<_SendView> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('Amount in bitcoin:'),
-              // Bitcoin amount input text field
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: _inputAmount,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      style: TextStyle(fontSize: 20),
-                      inputFormatters: [
-                        DecimalTextInputFormatter(decimalRange: 8)
-                      ],
-                      onChanged: (amt) {
-                        setState(() {
-                          recalculateDisplayPriceFromInput(
-                              amt, rawBitcoinPrice);
-                        });
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Text('BTC', textScaleFactor: 1.5)
-                ],
-              ),
-              SizedBox(height: 32),
-              Text('~ Sending $displayCurrency$rawFiatPrice in Bitcoin',
-                  textScaleFactor: 1.3, style: TextStyle(color: Colors.grey)),
-              Text('~ @ $displayCurrency$displayBitcoinPrice per Bitcoin',
-                  textScaleFactor: 1.3, style: TextStyle(color: Colors.grey)),
-              SizedBox(height: 32),
-              Text('Recipient\'s Address:'),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextFormField(controller: _recipientAddress),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.camera),
-                    onPressed: () async {
-                      String qrString = await MajaScan.startScan(
-                          title: 'Scan QR Code',
-                          titleColor: Colors.white,
-                          qRCornerColor: Colors.white,
-                          qRScannerColor: Colors.red,
-                          scanAreaScale: 0.7);
-                      this._recipientAddress.text = qrString;
+      body: Padding(
+        padding: EdgeInsets.all(16),
+        child: ListView(
+          children: <Widget>[
+            Text('Amount in bitcoin:'),
+            // Bitcoin amount input text field
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: _inputAmount,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    style: TextStyle(fontSize: 20),
+                    inputFormatters: [
+                      DecimalTextInputFormatter(decimalRange: 8)
+                    ],
+                    onChanged: (amt) {
+                      setState(() {
+                        recalculateDisplayPriceFromInput(
+                          amt,
+                          rawBitcoinPrice,
+                        );
+                      });
                     },
                   ),
-                ],
-              ),
-              SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('Fee:', textScaleFactor: 1.3),
-                  _buildFeeSelectionWidget(_feeObj)
-                ],
-              )
-            ],
-          ),
+                ),
+                SizedBox(width: 10),
+                Text('BTC', textScaleFactor: 1.5)
+              ],
+            ),
+            SizedBox(height: 32),
+            Text('~ Sending $displayCurrency$rawFiatPrice in Bitcoin',
+                textScaleFactor: 1.3, style: TextStyle(color: Colors.grey)),
+            Text('~ @ $displayCurrency$displayBitcoinPrice per Bitcoin',
+                textScaleFactor: 1.3, style: TextStyle(color: Colors.grey)),
+            SizedBox(height: 32),
+            Text('Recipient\'s Address:'),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextFormField(controller: _recipientAddress),
+                ),
+                IconButton(
+                  icon: Icon(Icons.camera),
+                  onPressed: () async {
+                    String qrString = await MajaScan.startScan(
+                        title: 'Scan QR Code',
+                        titleColor: Colors.white,
+                        qRCornerColor: Colors.white,
+                        qRScannerColor: Colors.red,
+                        scanAreaScale: 0.7);
+                    this._recipientAddress.text = qrString;
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('Fee:', textScaleFactor: 1.3),
+                _buildFeeSelectionWidget(_feeObj)
+              ],
+            )
+          ],
         ),
       ),
     );
@@ -630,9 +628,9 @@ class _TransactionSuccessDialog extends StatelessWidget {
     return AlertDialog(
       title: Text('Transaction successful!'),
       content: Container(
-        height: 100,
+        height: 80,
         child: Center(
-            child: Icon(Icons.check_circle, color: Colors.green, size: 35)),
+            child: Icon(Icons.check_circle, color: Colors.green, size: 70)),
       ),
       actions: <Widget>[
         FlatButton(
@@ -771,10 +769,10 @@ class _PreviewTransactionDialog extends StatelessWidget {
                 ),
                 ListTile(
                   title: Text('Save hex to local database',
-                      style: TextStyle(color: Colors.blue)),
+                      style: TextStyle(color: Colors.grey)),
                   onTap: () {
                     Clipboard.setData(new ClipboardData(text: hex));
-                    Toast.show('Transaction hex stored locally', context,
+                    Toast.show('Feature coming soon', context,
                         duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
                   },
                 )

@@ -242,6 +242,8 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Takes in a list of UtxoObjects and adds a name (dependent on object index within list)
+  /// and checks for the txid associated with the utxo being blocked and marks it accordingly
   _sortOutputs(List<UtxoObject> utxos) async {
     final wallet = await Hive.openBox('wallet');
     final blockedHashArray = wallet.get('blocked_tx_hashes');
@@ -268,6 +270,10 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// The coinselection algorithm decides hether or not the user is eligible to make the transaction
+  /// with [satoshiAmountToSend] and [selectedTxFee]. If so, it will call buildTrasaction() and return
+  /// a map containing the tx hex along with other important information. If not, then it will return
+  /// an integer (1 or 2)
   dynamic coinSelection(int satoshiAmountToSend, dynamic selectedTxFee,
       String _recipientAddress) async {
     final List<UtxoObject> availableOutputs = this.allOutputs;
@@ -429,6 +435,7 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
+  /// Builds and signs a transaction
   Future<dynamic> buildTransaction(List<UtxoObject> utxosToUse,
       List<String> recipients, List<int> satoshisPerRecipient) async {
     List<String> addressesToDerive = new List();
@@ -548,6 +555,7 @@ class BitcoinService extends ChangeNotifier {
       final List<UtxoObject> allOutputs =
           UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
       await _sortOutputs(allOutputs);
+      print(json.decode(response.body));
       await wallet.put(
           'latest_utxo_model', UtxoData.fromJson(json.decode(response.body)));
       notifyListeners();

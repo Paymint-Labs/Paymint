@@ -15,8 +15,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final appDirectory = await path.getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDirectory.path);
+
+  // Registering Transaction Model Adapters
   Hive.registerAdapter(TransactionDataAdapter());
+  Hive.registerAdapter(TransactionChunkAdapter());
+  Hive.registerAdapter(TransactionAdapter());
+  Hive.registerAdapter(InputAdapter());
+  Hive.registerAdapter(OutputAdapter());
+  
+  // Registering Utxo Model Adapters
   Hive.registerAdapter(UtxoDataAdapter());
+  Hive.registerAdapter(UtxoObjectAdapter());
+  Hive.registerAdapter(StatusAdapter());
+  
   runApp(MyApp());
 
   final mscData = await Hive.openBox('miscellaneous');
