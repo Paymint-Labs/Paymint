@@ -203,6 +203,7 @@ class _BitcoinViewState extends State<BitcoinView>
     } else {
       // Assuming here that #transactions >= 1
       return Container(
+        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
         child: ListView.builder(
           itemCount: txData.data.txChunks.length,
           itemBuilder: (BuildContext context, int index) {

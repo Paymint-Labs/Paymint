@@ -52,7 +52,7 @@ class _SubmitRawTxHexViewState extends State<SubmitRawTxHexView> {
             child: RoundedLoadingButton(
           color: Colors.black,
           child: Text(
-            'Submit transaction',
+            'Submit offline transaction',
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
@@ -69,7 +69,7 @@ class _SubmitRawTxHexViewState extends State<SubmitRawTxHexView> {
         child: ListView(
           children: <Widget>[
             Text(
-              'Please paste the raw transaction in hex form into the text box shown below.',
+              'Please paste the raw transaction in hex form into the text box shown below.\n\nThis feature is used to broadcast transactions saved offline to the network. All you need to make sure for is that you still have the utxos you want to spend',
               style: TextStyle(color: Colors.grey),
             ),
             SizedBox(height: 16.0),

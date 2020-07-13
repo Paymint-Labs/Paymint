@@ -22,12 +22,12 @@ void main() async {
   Hive.registerAdapter(TransactionAdapter());
   Hive.registerAdapter(InputAdapter());
   Hive.registerAdapter(OutputAdapter());
-  
+
   // Registering Utxo Model Adapters
   Hive.registerAdapter(UtxoDataAdapter());
   Hive.registerAdapter(UtxoObjectAdapter());
   Hive.registerAdapter(StatusAdapter());
-  
+
   runApp(MyApp());
 
   final mscData = await Hive.openBox('miscellaneous');
@@ -61,17 +61,18 @@ class MaterialAppWithTheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Paymint Alpha',
-        onGenerateRoute: RouteGenerator.generateRoute,
-        theme: ThemeData(
-            textTheme: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme),
-            primarySwatch: Colors.blue,
-            pageTransitionsTheme: const PageTransitionsTheme(
-              builders: <TargetPlatform, PageTransitionsBuilder>{
-                TargetPlatform.android: ZoomPageTransitionsBuilder(),
-              },
-            )),
-        home: InitView());
+      title: 'Paymint',
+      onGenerateRoute: RouteGenerator.generateRoute,
+      theme: ThemeData(
+          textTheme: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme),
+          primarySwatch: Colors.blue,
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: <TargetPlatform, PageTransitionsBuilder>{
+              TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            },
+          )),
+      home: InitView(),
+    );
   }
 }
 
