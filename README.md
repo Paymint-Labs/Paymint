@@ -1,5 +1,8 @@
 # Paymint - A secure bitcoin wallet
-Paymint is a Bitcoin thin client written in Dart. 
+Paymint is a Bitcoin thin client written in Dart.
+
+## Download Links
+Google Play: https://play.google.com/store/apps/details?id=com.paymintlabs.paymint
 
 ## Build and run
 
