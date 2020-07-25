@@ -280,7 +280,7 @@ class _MoreViewState extends State<MoreView> {
 }
 
 void _launchTwitter(BuildContext context) async {
-  final String url = 'https://twitter.com/paymint_labs';
+  final String url = 'https://twitter.com/paymint_wallet';
   if (await canLaunch(url)) {
     await launch(url);
   } else {
