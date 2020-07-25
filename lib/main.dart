@@ -94,6 +94,7 @@ class _InitViewState extends State<InitView> {
     if (this._isFirstLaunch == false) {
       Navigator.pushNamed(context, '/lockscreen');
     } else {
+      await Future.delayed(Duration(milliseconds: 1000));
       Navigator.pushNamed(context, '/onboard');
     }
   }
@@ -113,8 +114,9 @@ class _InitViewState extends State<InitView> {
 
 Widget _buildLoading(BuildContext context) {
   return Center(
-      child: Container(
-    width: MediaQuery.of(context).size.width / 2,
-    child: LinearProgressIndicator(),
-  ));
+    child: Container(
+      width: MediaQuery.of(context).size.width / 2,
+      child: LinearProgressIndicator(),
+    ),
+  );
 }
