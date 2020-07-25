@@ -12,6 +12,7 @@ import 'package:toast/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter/cupertino.dart';
 
 class ActiveOutputTile extends StatefulWidget {
   final String name;
@@ -52,39 +53,23 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
-      transitionType: _containerTransitionType,
-      closedElevation: 0.0,
-      openElevation: 0.0,
-      closedBuilder: (BuildContext context, VoidCallback openContainer) {
-        return ListTile(
-          title: Text(_name),
-          subtitle: Text(_blockHeight),
-          trailing: Text(_currentValue),
-          leading: CircleAvatar(
-            child: ClipRRect(
-              child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
-              borderRadius: BorderRadius.circular(15),
-            ),
+    return ListTile(
+      title: Text(_name),
+      subtitle: Text(_blockHeight),
+      trailing: Text(_currentValue),
+      leading: CircleAvatar(
+        child: ClipRRect(
+          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (_) => UtxoDetailView(output: _fullOutput),
           ),
-          // onTap: () async {
-          //   print('Blocking output...');
-          //   final service = Provider.of<BitcoinService>(context);
-          //   service.blockOutput(_fullOutput.txid);
-          //   final wallet = await Hive.openBox('wallet');
-          //   final blockedList = await wallet.get('blocked_tx_hashes');
-          //   final blockedCopy = new List();
-          //   for (var i = 0; i < blockedList.length; i++) {
-          //     blockedCopy.add(blockedList[i]);
-          //   }
-          //   blockedCopy.add(_fullOutput.txid);
-          //   await wallet.put('blocked_tx_hashes', blockedCopy);
-          //   print(blockedCopy);
-          // },
         );
-      },
-      openBuilder: (BuildContext context, VoidCallback openContainer) {
-        return UtxoDetailView(output: _fullOutput);
       },
     );
   }
@@ -184,51 +169,35 @@ class _InactiveOutputTileState extends State<InactiveOutputTile> {
 
   @override
   Widget build(BuildContext context) {
-    return OpenContainer(
-      transitionType: containerTransitionType,
-      closedElevation: 0.0,
-      openElevation: 0.0,
-      closedBuilder: (BuildContext context, VoidCallback openContainer) {
-        return ListTile(
-          title: Text(_name),
-          subtitle: Text(_blockHeight),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Text(
-                _currentValue,
-              ),
-              Text(
-                'Blocked',
-                style: TextStyle(color: Colors.purple),
-              )
-            ],
+    return ListTile(
+      title: Text(_name),
+      subtitle: Text(_blockHeight),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            _currentValue,
           ),
-          leading: CircleAvatar(
-            child: ClipRRect(
-              child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
-              borderRadius: BorderRadius.circular(15),
-            ),
+          Text(
+            'Blocked',
+            style: TextStyle(color: Colors.purple),
+          )
+        ],
+      ),
+      leading: CircleAvatar(
+        child: ClipRRect(
+          child: AnimatedGradientBox(_sweepGradients, Curves.bounceInOut),
+          borderRadius: BorderRadius.circular(15),
+        ),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (_) => UtxoDetailView(output: _fullOutput),
           ),
-          // onTap: () async {
-          //   print('Unblocking Output...');
-          //   final service = Provider.of<BitcoinService>(context);
-          //   service.unblockOutput(_fullOutput.txid);
-          //   final wallet = await Hive.openBox('wallet');
-          //   final blockedList = await wallet.get('blocked_tx_hashes');
-          //   final List blockedCopyWithoutTxid = new List();
-          //   for (var i = 0; i < blockedList.length; i++) {
-          //     if (blockedList[i] != _fullOutput.txid) {
-          //       blockedCopyWithoutTxid.add(blockedList[i]);
-          //     }
-          //   }
-          //   await wallet.put('blocked_tx_hashes', blockedCopyWithoutTxid);
-          // },
         );
-      },
-      openBuilder: (BuildContext context, VoidCallback openContainer) {
-        return UtxoDetailView(output: _fullOutput);
       },
     );
   }
@@ -292,12 +261,19 @@ class UtxoDetailView extends StatefulWidget {
 }
 
 class _UtxoDetailViewState extends State<UtxoDetailView> {
-  final UtxoObject _utxoObject;
+  final UtxoObject _utxoObj;
 
-  _UtxoDetailViewState(this._utxoObject);
+  _UtxoDetailViewState(this._utxoObj);
 
   @override
   Widget build(BuildContext context) {
+    final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
+    UtxoObject _utxoObject;
+    for (var i = 0; i < bitcoinService.allOutputs.length; i++) {
+      if (bitcoinService.allOutputs[i].txid == _utxoObj.txid) {
+        _utxoObject = bitcoinService.allOutputs[i];
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -338,7 +314,9 @@ class _UtxoDetailViewState extends State<UtxoDetailView> {
           ),
           ListTile(
             title: Text('Output Index:'),
-            trailing: Text('Output #' + (_utxoObject.vout + 1).toString() + ' in Transaction'),
+            trailing: Text('Output #' +
+                (_utxoObject.vout + 1).toString() +
+                ' in Transaction'),
             onTap: () {},
           ),
           ListTile(
@@ -346,8 +324,19 @@ class _UtxoDetailViewState extends State<UtxoDetailView> {
                 style: TextStyle(color: Colors.blue)),
             onTap: () {
               Clipboard.setData(new ClipboardData(text: _utxoObject.txid));
-                  Toast.show('ID copied to clipboard', context,
-                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              Toast.show('ID copied to clipboard', context,
+                  duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+            },
+          ),
+          ListTile(
+            title: Text('Rename Output', style: TextStyle(color: Colors.blue)),
+            onTap: () {
+              showModal(
+                  context: context,
+                  configuration: FadeScaleTransitionConfiguration(),
+                  builder: (BuildContext context) {
+                    return _RenameOutputDialog(_utxoObject.txid);
+                  });
             },
           ),
           ListTile(
@@ -380,6 +369,50 @@ class _UtxoDetailViewState extends State<UtxoDetailView> {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class _RenameOutputDialog extends StatelessWidget {
+  final String txid;
+  TextEditingController textEditingController = new TextEditingController();
+
+  _RenameOutputDialog(this.txid);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Rename output'),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('OK'),
+          onPressed: () async {
+            final labels = await Hive.openBox('labels');
+            await labels.put(txid, textEditingController.text);
+            final BitcoinService bitcoinService =
+                Provider.of<BitcoinService>(context);
+            bitcoinService.renameOutput(txid, textEditingController.text);
+            Navigator.pop(context);
+          },
+        ),
+        FlatButton(
+          child: Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        )
+      ],
+      content: Container(
+        height: 50,
+        child: Center(
+          child: TextField(
+            autofocus: true,
+            controller: textEditingController,
+            decoration: InputDecoration(labelText: 'Ouput Name'),
+          ),
+        ),
       ),
     );
   }

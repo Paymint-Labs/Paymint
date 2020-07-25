@@ -205,6 +205,17 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
+  void renameOutput(String txid, String newName) {
+    for (var i = 0; i < allOutputs.length; i++) {
+      if (allOutputs[i].txid == txid) {
+        allOutputs[i].txName = newName;
+        notifyListeners();
+      }
+    }
+    notifyListeners();
+  }
+
+  /// Refreshes display data for the wallet
   refreshWalletData() async {
     final UtxoData newUtxoData = await _fetchUtxoData();
     final TransactionData newTxData = await _fetchTransactionData();
@@ -219,6 +230,7 @@ class BitcoinService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Switches preferred fiat currency for display and data fetching purposes
   changeCurrency(String newCurrency) async {
     final prefs = await Hive.openBox('prefs');
     await prefs.put('currency', newCurrency);
@@ -227,26 +239,31 @@ class BitcoinService extends ChangeNotifier {
   }
 
   /// Takes in a list of UtxoObjects and adds a name (dependent on object index within list)
-  /// and checks for the txid associated with the utxo being blocked and marks it accordingly
+  /// and checks for the txid associated with the utxo being blocked and marks it accordingly.
+  /// Now also checks for output labeling.
   _sortOutputs(List<UtxoObject> utxos) async {
     final wallet = await Hive.openBox('wallet');
     final blockedHashArray = wallet.get('blocked_tx_hashes');
     final lst = new List();
     blockedHashArray.forEach((hash) => lst.add(hash));
+    final labels = await Hive.openBox('labels');
 
     this._outputsList = [];
 
     for (var i = 0; i < utxos.length; i++) {
+      if (labels.get(utxos[i].txid) != null) {
+        utxos[i].txName = labels.get(utxos[i].txid);
+      } else {
+        utxos[i].txName = 'Output #$i';
+      }
+
       if (utxos[i].status.confirmed == false) {
-        utxos[i].txName = 'Output $i';
         this._outputsList.add(utxos[i]);
       } else {
         if (lst.contains(utxos[i].txid)) {
           utxos[i].blocked = true;
-          utxos[i].txName = 'Output #$i';
           this._outputsList.add(utxos[i]);
         } else if (!lst.contains(utxos[i].txid)) {
-          utxos[i].txName = 'Output #$i';
           this._outputsList.add(utxos[i]);
         }
       }
@@ -311,9 +328,6 @@ class BitcoinService extends ChangeNotifier {
     final feeForTwoOutputs =
         ((42 + 272 * inputsBeingConsumed + 128 * 2) / 4).ceil() *
             selectedTxFee.ceil();
-
-    print('Fee for one output: $feeForOneOutput');
-    print('Fee for two outputs: $feeForTwoOutputs');
 
     if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput) {
       if (satoshisBeingUsed - satoshiAmountToSend > feeForOneOutput + 293) {
@@ -762,9 +776,11 @@ class BitcoinService extends ChangeNotifier {
           changeGapCounter += 1;
         }
       } else {
-        throw Exception('Something happened: ' +
-            response.statusCode.toString() +
-            response.body);
+        throw Exception(
+          'Something happened: ' +
+              response.statusCode.toString() +
+              response.body,
+        );
       }
     }
 
