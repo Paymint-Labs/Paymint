@@ -144,7 +144,19 @@ class _MoreViewState extends State<MoreView> {
             ),
           ),
           ListTile(
-            title: Text('Submit raw transaction'),
+            title: Text('Network preferences'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            title: Text('Export output labels'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            title: Text('Restore output labels'),
+            trailing: Icon(Icons.chevron_right),
+          ),
+          ListTile(
+            title: Text('Submit raw transaction hex'),
             trailing: Icon(Icons.chevron_right),
             onTap: () {
               Navigator.pushNamed(context, '/submitrawhex');
