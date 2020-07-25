@@ -14,6 +14,7 @@ import 'package:sticky_headers/sticky_headers/widget.dart';
 import 'package:toast/toast.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 /// BitcoinView refers to the first tab in the app's [main_view] widget.
 class BitcoinView extends StatefulWidget {
@@ -31,12 +32,13 @@ class _BitcoinViewState extends State<BitcoinView>
   @override
   void initState() {
     super.initState();
-    bitcoinViewTabController =
-        TabController(length: 2, vsync: this);
+    bitcoinViewTabController = TabController(length: 2, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: Colors.black));
     final wallet = Provider.of<BitcoinService>(context);
     return FutureBuilder(
       future: wallet.transactionData,
@@ -428,7 +430,8 @@ class _UtxoExplanationDialog extends StatelessWidget {
 }
 
 void _launchDustingAttackInfo(BuildContext context) async {
-  final String url = 'https://academy.binance.com/security/what-is-a-dusting-attack';
+  final String url =
+      'https://academy.binance.com/security/what-is-a-dusting-attack';
   if (await canLaunch(url)) {
     await launch(url);
   } else {

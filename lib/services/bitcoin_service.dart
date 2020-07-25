@@ -133,22 +133,6 @@ class BitcoinService extends ChangeNotifier {
     return P2WPKH(data: new PaymentData(pubkey: node.publicKey)).data.address;
   }
 
-  test() async {
-    final secureStore = new FlutterSecureStorage();
-    final seed = bip39.mnemonicToSeed(await secureStore.read(key: 'mnemonic'));
-    final root = bip32.BIP32.fromSeed(seed);
-    List<String> lol = new List();
-
-    for (var i = 0; i < 500; i++) {
-      final node = root.derivePath("m/84'/0'/0'/0/$i");
-      final addr =
-          P2WPKH(data: new PaymentData(pubkey: node.publicKey)).data.address;
-      lol.add(addr);
-    }
-
-    print(lol);
-  }
-
   /// Increases the index for either the internal or external chain, depending on [chain].
   /// [chain] - Use 0 for receiving (external), 1 for change (internal). Should not be any other value!
   Future<void> incrementAddressIndexForChain(int chain) async {
