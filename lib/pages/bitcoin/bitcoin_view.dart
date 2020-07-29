@@ -101,20 +101,18 @@ class _BitcoinViewState extends State<BitcoinView>
               backgroundColor: Colors.black,
               leading: IconButton(
                 icon: Icon(Icons.notifications_none),
-                onPressed: () {
-                  Toast.show('Coming soon', context,
-                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                },
+                color: Colors.black,
+                onPressed: () {},
               ),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.chat_bubble_outline),
-                  onPressed: () {
-                    Toast.show('Coming soon', context,
-                        duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                  },
-                )
-              ],
+              // actions: <Widget>[
+              //   IconButton(
+              //     icon: Icon(Icons.chat_bubble_outline),
+              //     onPressed: () {
+              //       Toast.show('Coming soon', context,
+              //           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+              //     },
+              //   )
+              // ],
               pinned: true,
               forceElevated: boxIsScrolled,
               expandedHeight: MediaQuery.of(context).size.width / 1.75,
@@ -144,7 +142,7 @@ class _BitcoinViewState extends State<BitcoinView>
                 ),
                 tabs: <Widget>[
                   Tab(
-                    text: 'Activity',
+                    text: 'Transactions',
                   ),
                   Tab(
                     text: 'Security',
@@ -157,25 +155,20 @@ class _BitcoinViewState extends State<BitcoinView>
         body: TabBarView(
           controller: bitcoinViewTabController,
           children: <Widget>[
-            NestedScrollViewInnerScrollPositionKeyWidget(
-              PageStorageKey('ActivityKey'),
-              NestedScrollViewRefreshIndicator(
-                child: _buildActivityView(context, txData),
-                onRefresh: () async {
-                  final btcService = Provider.of<BitcoinService>(context);
-                  await btcService.refreshWalletData();
-                },
-              ),
+            NestedScrollViewRefreshIndicator(
+              child: _buildActivityView(context, txData),
+              onRefresh: () async {
+                final btcService = Provider.of<BitcoinService>(context);
+                await btcService.refreshWalletData();
+              },
             ),
-            NestedScrollViewInnerScrollPositionKeyWidget(
-                PageStorageKey('SecurityKey'),
-                NestedScrollViewRefreshIndicator(
-                  child: _buildSecurityView(utxoData, context),
-                  onRefresh: () async {
-                    final btcService = Provider.of<BitcoinService>(context);
-                    await btcService.refreshWalletData();
-                  },
-                )),
+            NestedScrollViewRefreshIndicator(
+              child: _buildSecurityView(utxoData, context),
+              onRefresh: () async {
+                final btcService = Provider.of<BitcoinService>(context);
+                await btcService.refreshWalletData();
+              },
+            ),
           ],
         ),
       ),
@@ -205,14 +198,14 @@ class _BitcoinViewState extends State<BitcoinView>
     } else {
       // Assuming here that #transactions >= 1
       return Container(
-        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: ListView.builder(
           itemCount: txData.data.txChunks.length,
           itemBuilder: (BuildContext context, int index) {
             return StickyHeader(
               header: Container(
                   color: Colors.white,
-                  padding: EdgeInsets.fromLTRB(10, 8, 0, 5),
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 8),
                   child: Text(
                     extractDateFromTimestamp(
                         txData.data.txChunks[index].timestamp ?? 0),
