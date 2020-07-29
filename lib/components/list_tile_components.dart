@@ -45,9 +45,6 @@ class _ActiveOutputTileState extends State<ActiveOutputTile> {
         colors: [Colors.cyanAccent, Colors.lightBlueAccent, Colors.cyanAccent]),
   ];
 
-  ContainerTransitionType _containerTransitionType =
-      ContainerTransitionType.fadeThrough;
-
   _ActiveOutputTileState(
       this._name, this._currentValue, this._blockHeight, this._fullOutput);
 
