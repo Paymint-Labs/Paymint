@@ -21,10 +21,8 @@ dependencies:
     sdk: flutter
   provider: ^3.2.0
   http: ^0.12.0+2
-  flutter_hooks: ^0.9.0
   majascan: ^0.3.7
   local_auth: ^0.6.2+3
-  connectivity: ^0.4.8+6
 
   # Bitcoin plugins
   bitcoin_flutter: ^2.0.0
@@ -33,27 +31,24 @@ dependencies:
 
   # Storage plugins
   flutter_secure_storage: ^3.3.3
-  hive: ^1.4.1+1
-  hive_flutter: ^0.3.0+2
+  hive: ^1.4.2
+  hive_flutter: ^0.3.1
   path_provider: ^1.5.1
-  
+
   # UI/Component plugins
-  extended_nested_scroll_view: ^0.4.0
-  sticky_headers: ^0.1.8
+  animations: ^1.1.2
   toast: ^0.1.5
-  flare_flutter: ^2.0.3
+  flare_flutter: ^2.0.6
+  flutter_inner_drawer: ^0.5.7+2
+  flutter_echarts: ^1.3.5
+  marquee: ^1.5.2
+  sticky_headers: ^0.1.8
   google_fonts: ^1.0.0
   pretty_qr_code: ^1.0.1
-  shimmer: ^1.1.1
-  animations: ^1.0.0+5
-  flutter_statusbarcolor: ^0.2.3
   share: ^0.6.4
+  url_launcher: ^5.5.0
   timeago: ^2.0.26
-  url_launcher: ^5.4.7
-  rounded_loading_button: ^1.0.10
   cupertino_icons: ^0.1.2
-  flutter_money_formatter: ^0.8.3
-  pattern_lock: ^1.0.3
 
 dev_dependencies:
   flutter_test:
@@ -73,7 +68,7 @@ flutter_icons:
 
 flutter_native_splash:
   image: assets/images/splash.png
-  color: "001124"
+  color: "121212"
   android_disable_fullscreen: true
 
 # For information on the generic Dart part of this file, see the
@@ -81,7 +76,6 @@ flutter_native_splash:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -101,10 +95,8 @@ flutter:
     - google_fonts/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

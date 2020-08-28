@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:paymint/models/models.dart';
+import 'package:paymint/pages/main_view.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:paymint/services/services.dart';
 import 'route_generator.dart';
+import 'package:flutter/services.dart';
 
 // main() is the entry point to the app. It initializes Hive (local database),
 // runs the MyApp widget and checks for new users, caching the value in the
@@ -53,10 +55,20 @@ class MyApp extends StatelessWidget {
 
 // Sidenote: MaterialAppWithTheme and InitView are only separated for clarity. No other reason.
 
-class MaterialAppWithTheme extends StatelessWidget {
+class MaterialAppWithTheme extends StatefulWidget {
   const MaterialAppWithTheme({
     Key key,
   }) : super(key: key);
+
+  @override
+  _MaterialAppWithThemeState createState() => _MaterialAppWithThemeState();
+}
+
+class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,59 +76,17 @@ class MaterialAppWithTheme extends StatelessWidget {
       title: 'Paymint',
       onGenerateRoute: RouteGenerator.generateRoute,
       theme: ThemeData(
-          textTheme: GoogleFonts.rubikTextTheme(Theme.of(context).textTheme),
-          primarySwatch: Colors.blue,
-          pageTransitionsTheme: const PageTransitionsTheme(
-            builders: <TargetPlatform, PageTransitionsBuilder>{
-              TargetPlatform.android: ZoomPageTransitionsBuilder(),
-            },
-          )),
-      home: InitView(),
+        brightness: Brightness.dark,
+        textTheme: GoogleFonts.rubikTextTheme(),
+        primaryColor: Colors.cyan,
+        accentColor: Colors.cyanAccent,
+        appBarTheme: AppBarTheme(
+          centerTitle: true,
+          color: Color(0xff121212),
+          elevation: 0,
+        ),
+      ),
+      home: MainView(),
     );
   }
-}
-
-/// The initView
-class InitView extends StatefulWidget {
-  const InitView({Key key}) : super(key: key);
-
-  @override
-  _InitViewState createState() => _InitViewState();
-}
-
-class _InitViewState extends State<InitView> {
-  bool _isFirstLaunch;
-
-  _checkFirstLaunch() async {
-    final mscData = await Hive.openBox('miscellaneous');
-    _isFirstLaunch = mscData.get('first_launch');
-    print(_isFirstLaunch);
-    if (this._isFirstLaunch == false) {
-      Navigator.pushNamed(context, '/lockscreen');
-    } else {
-      await Future.delayed(Duration(milliseconds: 1000));
-      Navigator.pushNamed(context, '/onboard');
-    }
-  }
-
-  @override
-  void initState() {
-    this._checkFirstLaunch();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.black, body: _buildLoading(context));
-  }
-}
-
-Widget _buildLoading(BuildContext context) {
-  return Center(
-    child: Container(
-      width: MediaQuery.of(context).size.width / 2,
-      child: LinearProgressIndicator(),
-    ),
-  );
 }

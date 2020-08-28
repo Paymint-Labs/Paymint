@@ -1,17 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
-
-// BitcoinView Keys
-PageStorageKey bitcoinViewScrollOffset = PageStorageKey('bitcoinview');
-ScrollController bitcoinViewScrollController;
-TabController bitcoinViewTabController;
-
-// MoreView keys
-PageStorageKey moreViewKey = PageStorageKey('moreview');
-
-final RoundedLoadingButtonController buttonController = new RoundedLoadingButtonController();
-
-// Globally used Maps
 final Map<int, String> weekDayMap = {
   1: 'Monday',
   2: 'Tuesday',
@@ -38,9 +24,8 @@ final Map<int, String> monthMap = {
 };
 
 final Map<String, String> currencyMap = {
-  'AED': 'د.إ',
   'AUD': 'A\$',
-  'CAD': 'CA\$', 
+  'CAD': 'CA\$',
   'CHF': 'CHF ',
   'CNY': 'CN¥',
   'EUR': '€',
@@ -49,7 +34,7 @@ final Map<String, String> currencyMap = {
   'INR': '₹',
   'JPY': '¥',
   'KRW': '₩',
-  'PHP': 'PHP ',
+  'PHP': 'PHP ',
   'SGD': 'SGD ',
   'TRY': 'TRY ',
   'USD': '\$',

@@ -1,32 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:animations/animations.dart';
-import 'package:bip39/bip39.dart' as bip39;
-import 'package:paymint/services/bitcoin_service.dart';
 import 'package:provider/provider.dart';
+import 'package:bip39/bip39.dart' as bip39;
+import 'package:paymint/services/services.dart';
+import 'package:flutter/cupertino.dart';
 
 class RestoreWalletView extends StatefulWidget {
-  RestoreWalletView({Key key}) : super(key: key);
-
   @override
   _RestoreWalletViewState createState() => _RestoreWalletViewState();
 }
 
 class _RestoreWalletViewState extends State<RestoreWalletView> {
   TextEditingController textController = new TextEditingController();
-  String txCountSelection = "0-50";
-  int txCountSelectionIndex = 0;
-
-  @override
-  void dispose() {
-    textController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff121212),
       bottomNavigationBar: Container(
         height: 100,
         child: Center(
@@ -44,8 +34,7 @@ class _RestoreWalletViewState extends State<RestoreWalletView> {
                 final btcService = Provider.of<BitcoinService>(context);
                 showModal(
                   context: context,
-                  configuration: FadeScaleTransitionConfiguration(
-                      barrierDismissible: false),
+                  configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
                   builder: (BuildContext context) {
                     return WaitDialog();
                   },
@@ -66,10 +55,6 @@ class _RestoreWalletViewState extends State<RestoreWalletView> {
           ),
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text('Restore wallet', style: GoogleFonts.rubik()),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView(
@@ -83,6 +68,7 @@ class _RestoreWalletViewState extends State<RestoreWalletView> {
               controller: textController,
               autofocus: true,
               showCursor: true,
+              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 filled: true,
                 labelText: 'Wallet mnemonic',
@@ -95,6 +81,8 @@ class _RestoreWalletViewState extends State<RestoreWalletView> {
     );
   }
 }
+
+// Dialog Widgets
 
 class InvalidInputDialog extends StatelessWidget {
   const InvalidInputDialog({Key key}) : super(key: key);
@@ -123,8 +111,7 @@ class RecoveryCompleteDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Recovery complete'),
-      content: Text(
-          'Wallet recovery has completed. Hop in support if something doesn\'t seem right'),
+      content: Text('Wallet recovery has completed. Hop in support if something doesn\'t seem right'),
       actions: <Widget>[
         FlatButton(
           child: Text('OK'),

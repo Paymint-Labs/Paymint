@@ -12,30 +12,44 @@ class RouteGenerator {
     switch (settings.name) {
       case '/mainview':
         return CupertinoPageRoute(builder: (_) => MainView());
-      case '/onboard':
-        return CupertinoPageRoute(builder: (_) => OnboardView());
-      case '/changecurency':
-        return CupertinoPageRoute(builder: (_) => CurrencyChangeView());
-      case '/backupmanager':
-        return CupertinoPageRoute(builder: (_) => ManageBackupView());
-      case '/revealmnemonic':
-        return CupertinoPageRoute(builder: (_) => RevealMnemonicView());
-      case '/restorewallet':
+      case '/receive':
+        return CupertinoPageRoute(builder: (_) => ReceiveView());
+      case '/send':
+        return CupertinoPageRoute(builder: (_) => SendView());
+      case '/addressbook':
+        return CupertinoPageRoute(builder: (_) => AddressBookView());
+      case '/generalview':
+        return CupertinoPageRoute(builder: (_) => GeneralView());
+      case '/advancedview':
+        return CupertinoPageRoute(builder: (_) => AdvancedView());
+      case '/restorewalletview':
         return CupertinoPageRoute(builder: (_) => RestoreWalletView());
-      case '/alladdresses':
-        return CupertinoPageRoute(builder: (_) => AllAddressesView());
-      case '/lockscreen':
-        return CupertinoPageRoute(builder: (_) => LockscreenView());
-      case '/404':
-        return CupertinoPageRoute(builder: (_) => Error404View());
-      case '/bioauth':
-        return CupertinoPageRoute(builder: (_) => BioAuthView());
-      case '/submitrawhex':
-        return CupertinoPageRoute(builder: (_) => SubmitRawTxHexView());
+      case '/changecurrency':
+        return CupertinoPageRoute(builder: (_) => ChangeCurrencyView());
+      case '/esploraview':
+        return CupertinoPageRoute(builder: (_) => EsploraView());
       default:
         return _routeError();
     }
   }
+}
+
+Route createSlideTransitionRoute(Widget viewToInsert) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => viewToInsert,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.easeInOut;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
 
 Route<dynamic> _routeError() {
