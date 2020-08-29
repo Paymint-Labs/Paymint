@@ -22,16 +22,6 @@ class _ReceiveViewState extends State<ReceiveView> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xff121212),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          backgroundColor: Color(0xff81D4FA),
-          child: Icon(
-            Icons.arrow_back,
-            color: Color(0xff121212),
-          ),
-        ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

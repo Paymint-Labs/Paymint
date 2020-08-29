@@ -15,13 +15,6 @@ class _SendViewState extends State<SendView> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xff121212),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          backgroundColor: Color(0xff81D4FA),
-          child: Icon(Icons.arrow_back),
-        ),
         body: Column(
           children: [
             Container(
