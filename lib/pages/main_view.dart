@@ -17,6 +17,7 @@ class _MainViewState extends State<MainView> {
 
   List<Widget> children = [
     WalletView(),
+    Container(color: Colors.amber),
     TransactionsView(),
     TransferView(),
     MoreView(),
@@ -82,32 +83,42 @@ class _MainViewState extends State<MainView> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
+                  Icons.attach_money,
+                  color: _buildIconColor(1),
+                ),
+                title: Text(
+                  'Invest',
+                  style: _buildTextStyle(1), // Index 0
+                ),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
                   Icons.menu,
-                  color: _buildIconColor(1), // Index 1
+                  color: _buildIconColor(2), // Index 1
                 ),
                 title: Text(
                   'Transactions',
-                  style: _buildTextStyle(1), // Index 1
+                  style: _buildTextStyle(2), // Index 1
                 ),
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.send,
-                  color: _buildIconColor(2), // Index 2
+                  color: _buildIconColor(3), // Index 2
                 ),
                 title: Text(
                   'Transfer',
-                  style: _buildTextStyle(2), // Index 2
+                  style: _buildTextStyle(3), // Index 2
                 ),
               ),
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.settings,
-                  color: _buildIconColor(3), // Index 2
+                  color: _buildIconColor(4), // Index 2
                 ),
                 title: Text(
                   'Settings',
-                  style: _buildTextStyle(3), // Index 2
+                  style: _buildTextStyle(4), // Index 2
                 ),
               )
             ],
