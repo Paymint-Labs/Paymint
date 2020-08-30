@@ -90,7 +90,10 @@ flutter:
   assets:
     - assets/images/btc.png
     - assets/images/work-in-progress.png
-    - assets/images/mirage-payment-processed.png
+    - assets/images/splash.png
+    - assets/images/mastercard.png
+    - assets/images/mastercard.jpg
+    - assets/images/visa.png
     - assets/images/404image.png
     - assets/rive/success.flr
     - assets/icon/icon.png
