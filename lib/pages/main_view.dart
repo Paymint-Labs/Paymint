@@ -17,7 +17,7 @@ class _MainViewState extends State<MainView> {
 
   List<Widget> children = [
     WalletView(),
-    Container(color: Colors.amber),
+    InvestView(),
     TransactionsView(),
     TransferView(),
     MoreView(),
