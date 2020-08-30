@@ -13,3 +13,4 @@ export './more_view/settings_subviews/about_us_view.dart';
 export './more_view/settings_subviews/restore_wallet_view.dart';
 export './more_view/settings_subviews/change_currency_view.dart';
 export './more_view/settings_subviews/esplora_view.dart';
+export './invest_view/invest_view.dart';
