@@ -6,6 +6,8 @@ import 'package:paymint/services/globals.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:paymint/services/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class InvestView extends StatefulWidget {
   @override
@@ -71,7 +73,28 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
                     color: Colors.white,
                   ),
                 ],
-              )
+              ),
+              SizedBox(width: 8),
+              GestureDetector(
+                onTap: () => showPaymentOptionsModal(),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(30),
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Icon(
+                      Icons.add,
+                      color: Colors.green,
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -132,7 +155,6 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
                             if (priceData.connectionState == ConnectionState.done) {
                               if (priceData.hasError || priceData.data == null) {
                                 // Build price load error widget below later
-
                                 return Text(
                                   'Stack sats with Paymint',
                                   style: TextStyle(color: Colors.white),
@@ -172,14 +194,47 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
     );
   }
 
-  showPurchaseModal() {
+  showPurchaseModal() async {
+    await Permission.camera.request();
+
     showCupertinoModalBottomSheet(
       context: context,
       bounce: true,
       expand: true,
-      builder: (context, scrollController) => Container(
-        color: Colors.white,
-      ),
+      builder: (context, scrollController) {
+        return InAppWebView(
+          initialUrl: 'https://buy.moonpay.io/',
+        );
+      },
+    );
+  }
+
+  showPaymentOptionsModal() {
+    showCupertinoModalBottomSheet(
+      context: context,
+      bounce: true,
+      expand: false,
+      builder: (context, scrollController) {
+        return Material(
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    'We offer Bitcoin purchasing via our partners, MoonPay. MoonPay accepts most major credit cards including Visa, MasterCard, and Maestro.\n\nAlso, they accept some debit cards that are prepaid or virtual, including Apple Pay.',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

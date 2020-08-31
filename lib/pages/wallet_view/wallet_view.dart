@@ -98,76 +98,76 @@ class _WalletViewState extends State<WalletView> {
 
             // Charting widget - bottom half of Wallet View
 
-            // Expanded(
-            //   child: FutureBuilder(
-            //     future: bitcoinService.chartData,
-            //     builder: (BuildContext context, AsyncSnapshot<ChartModel> chartData) {
-            //       if (chartData.connectionState == ConnectionState.done) {
-            //         return FutureBuilder(
-            //           future: bitcoinService.currency,
-            //           builder: (BuildContext context, AsyncSnapshot<String> currency) {
-            //             if (currency.connectionState == ConnectionState.done) {
-            //               if (chartData == null || chartData.hasError) {
-            //                 return Container(
-            //                   child: Center(
-            //                     child: Text(
-            //                       'Cannot fetch chart data. Please check connection',
-            //                       style: TextStyle(color: Colors.white),
-            //                     ),
-            //                   ),
-            //                 );
-            //               }
-            //               return FutureBuilder(
-            //                 future: bitcoinService.bitcoinPrice,
-            //                 builder: (BuildContext context, AsyncSnapshot<dynamic> price) {
-            //                   if (price.connectionState == ConnectionState.done) {
-            //                     final symbol = currency.data;
-            //                     final midDate = chartData.data.xAxis[chartData.data.xAxis.length - 35];
+            Expanded(
+              child: FutureBuilder(
+                future: bitcoinService.chartData,
+                builder: (BuildContext context, AsyncSnapshot<ChartModel> chartData) {
+                  if (chartData.connectionState == ConnectionState.done) {
+                    return FutureBuilder(
+                      future: bitcoinService.currency,
+                      builder: (BuildContext context, AsyncSnapshot<String> currency) {
+                        if (currency.connectionState == ConnectionState.done) {
+                          if (chartData == null || chartData.hasError) {
+                            return Container(
+                              child: Center(
+                                child: Text(
+                                  'Cannot fetch chart data. Please check connection',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }
+                          return FutureBuilder(
+                            future: bitcoinService.bitcoinPrice,
+                            builder: (BuildContext context, AsyncSnapshot<dynamic> price) {
+                              if (price.connectionState == ConnectionState.done) {
+                                final symbol = currency.data;
+                                final midDate = chartData.data.xAxis[chartData.data.xAxis.length - 35];
 
-            //                     FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: price.data);
+                                FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: price.data);
 
-            //                     final String displayPrice = currencyMap[symbol] + fmf.output.nonSymbol ?? '???';
+                                final String displayPrice = currencyMap[symbol] + fmf.output.nonSymbol ?? '???';
 
-            //                     return Padding(
-            //                       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            //                       child: Echarts(
-            //                         extensions: [darkThemeScript],
-            //                         theme: 'dark',
-            //                         option: json.encode({
-            //                           "title": {"text": "BTC/$symbol @ $displayPrice", "left": 15},
-            //                           "tooltip": {
-            //                             "trigger": 'axis',
-            //                             "axisPointer": {"type": 'cross'}
-            //                           },
-            //                           "xAxis": {"data": chartData.data.xAxis},
-            //                           "yAxis": {"show": false, "scale": true},
-            //                           "dataZoom": buildDataZoomOptions(midDate),
-            //                           "series": [
-            //                             {
-            //                               "type": 'k',
-            //                               "itemStyle": buildCandleStickColorData(),
-            //                               "data": chartData.data.candleData,
-            //                             }
-            //                           ]
-            //                         }),
-            //                       ),
-            //                     );
-            //                   } else {
-            //                     return Center(child: buildChartLoadingWidget());
-            //                   }
-            //                 },
-            //               );
-            //             } else {
-            //               return Center(child: buildChartLoadingWidget());
-            //             }
-            //           },
-            //         );
-            //       } else {
-            //         return Center(child: buildChartLoadingWidget());
-            //       }
-            //     },
-            //   ),
-            // ),
+                                return Padding(
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  child: Echarts(
+                                    extensions: [darkThemeScript],
+                                    theme: 'dark',
+                                    option: json.encode({
+                                      "title": {"text": "BTC/$symbol @ $displayPrice", "left": 15},
+                                      "tooltip": {
+                                        "trigger": 'axis',
+                                        "axisPointer": {"type": 'cross'}
+                                      },
+                                      "xAxis": {"data": chartData.data.xAxis},
+                                      "yAxis": {"show": false, "scale": true},
+                                      "dataZoom": buildDataZoomOptions(midDate),
+                                      "series": [
+                                        {
+                                          "type": 'k',
+                                          "itemStyle": buildCandleStickColorData(),
+                                          "data": chartData.data.candleData,
+                                        }
+                                      ]
+                                    }),
+                                  ),
+                                );
+                              } else {
+                                return Center(child: buildChartLoadingWidget());
+                              }
+                            },
+                          );
+                        } else {
+                          return Center(child: buildChartLoadingWidget());
+                        }
+                      },
+                    );
+                  } else {
+                    return Center(child: buildChartLoadingWidget());
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),
