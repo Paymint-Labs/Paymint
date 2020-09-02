@@ -340,11 +340,12 @@ class _UtxoDetailViewState extends State<UtxoDetailView> {
               title: Text('Rename Output', style: TextStyle(color: Colors.cyanAccent)),
               onTap: () {
                 showModal(
-                    context: context,
-                    configuration: FadeScaleTransitionConfiguration(),
-                    builder: (BuildContext context) {
-                      return _RenameOutputDialog(_utxoObject.txid);
-                    });
+                  context: context,
+                  configuration: FadeScaleTransitionConfiguration(),
+                  builder: (BuildContext context) {
+                    return _RenameOutputDialog(_utxoObject.txid);
+                  },
+                );
               },
             ),
             ListTile(
@@ -393,6 +394,7 @@ class _RenameOutputDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.black,
       title: Text('Rename output', style: TextStyle(color: Colors.white)),
       actions: <Widget>[
         FlatButton(

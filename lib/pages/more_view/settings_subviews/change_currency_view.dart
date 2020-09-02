@@ -93,6 +93,7 @@ class _ChangeCurrencyViewState extends State<ChangeCurrencyView> {
 
   _currencySwitchDialog(String newCurrency) {
     return AlertDialog(
+      backgroundColor: Colors.black,
       title: Row(
         children: <Widget>[
           CircularProgressIndicator(),
