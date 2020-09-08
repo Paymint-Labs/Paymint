@@ -19,13 +19,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Utility plugins
   provider: ^3.2.0
   http: ^0.12.0+2
   majascan: ^0.3.7
   local_auth: ^0.6.2+3
-  # webview_flutter: ^0.3.22+1
   flutter_inappwebview: ^4.0.0+4
   permission_handler: ^5.0.1+1
+  csv: ^4.0.3
+  file_picker: ^1.13.3
 
   # Bitcoin plugins
   bitcoin_flutter: ^2.0.0
@@ -54,6 +57,8 @@ dependencies:
   flutter_money_formatter: ^0.8.3
   cupertino_icons: ^0.1.2
   modal_bottom_sheet: ^0.2.0+1
+  rounded_loading_button: ^1.0.0
+  pinput: ^0.2.5
 
 dev_dependencies:
   flutter_test:

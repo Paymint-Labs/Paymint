@@ -72,7 +72,6 @@ class _RestoreWalletViewState extends State<RestoreWalletView> {
               decoration: InputDecoration(
                 filled: true,
                 labelText: 'Secret Words',
-                isDense: true,
               ),
             )
           ],
@@ -110,8 +109,12 @@ class RecoveryCompleteDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Recovery complete'),
-      content: Text('Wallet recovery has completed. Hop in support if something doesn\'t seem right'),
+      backgroundColor: Colors.black,
+      title: Text('Recovery complete', style: TextStyle(color: Colors.white)),
+      content: Text(
+        'Wallet recovery has completed. Hop in support if something doesn\'t seem right',
+        style: TextStyle(color: Colors.white),
+      ),
       actions: <Widget>[
         FlatButton(
           child: Text('OK'),
@@ -130,15 +133,18 @@ class WaitDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.black,
       title: Row(
         children: <Widget>[
           CircularProgressIndicator(),
           SizedBox(width: 16),
-          Text('Please do not exit'),
+          Text('Please do not exit', style: TextStyle(color: Colors.white)),
         ],
       ),
       content: Text(
-          "We're attempting to recover your wallet and it may take a few minutes. Please do not exit the app or leave this screen"),
+        "We're attempting to recover your wallet and it may take a few minutes. Please do not exit the app or leave this screen",
+        style: TextStyle(color: Colors.white),
+      ),
     );
   }
 }

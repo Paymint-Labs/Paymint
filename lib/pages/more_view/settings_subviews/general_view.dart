@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:local_auth/local_auth.dart';
 
 class GeneralView extends StatefulWidget {
   @override
@@ -82,8 +84,36 @@ class _GeneralViewState extends State<GeneralView> {
                     ),
                     onTap: () async {
                       // Insert logic to first authenticate biometrics before enabling
+                      if (useBio.data) {
+                        await bitcoinService.updateBiometricsUsage();
+                      } else {
+                        final LocalAuthentication localAuthentication = LocalAuthentication();
 
-                      await bitcoinService.updateBiometricsUsage();
+                        bool canCheckBiometrics = await localAuthentication.canCheckBiometrics;
+
+                        if (canCheckBiometrics) {
+                          List<BiometricType> availableSystems = await localAuthentication.getAvailableBiometrics();
+
+                          if (Platform.isIOS) {
+                            if (availableSystems.contains(BiometricType.face)) {
+                              // Write iOS specific code when required
+                            } else if (availableSystems.contains(BiometricType.fingerprint)) {
+                              // Write iOS specific code when required
+                            }
+                          } else if (Platform.isAndroid) {
+                            if (availableSystems.contains(BiometricType.fingerprint)) {
+                              bool didAuthenticate = await localAuthentication.authenticateWithBiometrics(
+                                localizedReason: 'Please authenticate to enable biometric lock',
+                                stickyAuth: true,
+                              );
+                              if (didAuthenticate) {
+                                await bitcoinService.updateBiometricsUsage();
+                              }
+                            }
+                          }
+                        }
+                      }
+                      // await bitcoinService.updateBiometricsUsage();
                     },
                   );
                 } else {

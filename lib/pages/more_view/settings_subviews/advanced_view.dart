@@ -36,9 +36,7 @@ class _AdvancedViewState extends State<AdvancedView> {
               style: TextStyle(color: Colors.white),
             ),
             trailing: Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.pushNamed(context, '/restorewalletview');
-            },
+            onTap: () => Navigator.pushNamed(context, '/restorewalletview'),
           ),
           ListTile(
             leading: Text(
@@ -50,17 +48,11 @@ class _AdvancedViewState extends State<AdvancedView> {
           ),
           ListTile(
             leading: Text(
-              'Paymint API URL',
-              style: TextStyle(color: Colors.white),
-            ),
-            trailing: Icon(Icons.chevron_right),
-          ),
-          ListTile(
-            leading: Text(
               'Export output data to CSV',
               style: TextStyle(color: Colors.white),
             ),
             trailing: Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/exportoutput'),
           ),
           ListTile(
             leading: Text(
@@ -68,6 +60,7 @@ class _AdvancedViewState extends State<AdvancedView> {
               style: TextStyle(color: Colors.white),
             ),
             trailing: Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/restoreoutputcsv'),
           ),
           ListTile(
             leading: Text(
@@ -75,6 +68,7 @@ class _AdvancedViewState extends State<AdvancedView> {
               style: TextStyle(color: Colors.white),
             ),
             trailing: Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/exporttx'),
           ),
           ListTile(
             leading: Text(
@@ -82,6 +76,7 @@ class _AdvancedViewState extends State<AdvancedView> {
               style: TextStyle(color: Colors.white),
             ),
             trailing: Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, '/broadcastrawhex'),
           ),
         ],
       ),

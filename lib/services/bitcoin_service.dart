@@ -296,7 +296,6 @@ class BitcoinService extends ChangeNotifier {
     int inputsBeingConsumed = 0;
     List<UtxoObject> utxoObjectsToUse = new List();
 
-    // I BELIEVE THAT THIS FIXES THE USE ALL INPUTS IN EVERY TX BUG. FURTHER TESTING REQUIRED
     for (var i = 0; satoshisBeingUsed < satoshiAmountToSend; i++) {
       utxoObjectsToUse.add(spendableOutputs[i]);
       satoshisBeingUsed += spendableOutputs[i].value;
@@ -410,10 +409,13 @@ class BitcoinService extends ChangeNotifier {
     // Populating the addresses to derive
     for (var i = 0; i < utxosToUse.length; i++) {
       List<dynamic> lookupData = [utxosToUse[i].txid, utxosToUse[i].vout];
-      Map<String, dynamic> requestBody = {"lookupData": lookupData};
+      Map<String, dynamic> requestBody = {
+        "url": await getEsploraUrl(),
+        "lookupData": lookupData,
+      };
 
       final response = await http.post(
-        'https://www.api.paymintapp.com/btc/lookup',
+        'https://us-central1-paymint.cloudfunctions.net/api/voutLookup',
         body: json.encode(requestBody),
         headers: {'Content-Type': 'application/json'},
       );
@@ -491,6 +493,27 @@ class BitcoinService extends ChangeNotifier {
     }
   }
 
+  Future<bool> submitHexToNetwork(String hex) async {
+    final Map<String, dynamic> obj = {
+      "url": await getEsploraUrl(),
+      "hex": hex,
+    };
+
+    final res = await http.post(
+      'https://us-central1-paymint.cloudfunctions.net/api/pushtx',
+      body: jsonEncode(obj),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+      print(res.body.toString());
+      return true;
+    } else {
+      print(res.body.toString());
+      return false;
+    }
+  }
+
   Future<UtxoData> _fetchUtxoData() async {
     final wallet = await Hive.openBox('wallet');
     final List<String> allAddresses = new List();
@@ -509,7 +532,7 @@ class BitcoinService extends ChangeNotifier {
     final Map<String, dynamic> requestBody = {
       "currency": currency,
       "allAddresses": allAddresses,
-      "url": await getEsploraUrl()
+      "url": await getEsploraUrl(),
     };
 
     final response = await http.post(
@@ -524,6 +547,7 @@ class BitcoinService extends ChangeNotifier {
       await _sortOutputs(allOutputs);
       await wallet.put('latest_utxo_model', UtxoData.fromJson(json.decode(response.body)));
       notifyListeners();
+      // print(json.decode(response.body));
       return UtxoData.fromJson(json.decode(response.body));
     } else {
       print("Output fetch unsuccessful");

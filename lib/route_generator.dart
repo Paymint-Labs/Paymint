@@ -28,6 +28,16 @@ class RouteGenerator {
         return CupertinoPageRoute(builder: (_) => ChangeCurrencyView());
       case '/esploraview':
         return CupertinoPageRoute(builder: (_) => EsploraView());
+      case '/backupview':
+        return CupertinoPageRoute(builder: (_) => BackupView());
+      case '/exportoutput':
+        return CupertinoPageRoute(builder: (_) => ExportOutputCsvView());
+      case '/exporttx':
+        return CupertinoPageRoute(builder: (_) => ExportTransactionCsvView());
+      case '/broadcastrawhex':
+        return CupertinoPageRoute(builder: (_) => BroadcastRawHexView());
+      case '/restoreoutputcsv':
+        return CupertinoPageRoute(builder: (_) => RestoreOutputCsvView());
       default:
         return _routeError();
     }

@@ -201,9 +201,13 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
       context: context,
       bounce: true,
       expand: true,
+      enableDrag: false,
       builder: (context, scrollController) {
         return InAppWebView(
           initialUrl: 'https://buy.moonpay.io/',
+          androidOnPermissionRequest: (InAppWebViewController controller, String origin, List<String> resources) async {
+            return PermissionRequestResponse(resources: resources, action: PermissionRequestResponseAction.GRANT);
+          },
         );
       },
     );

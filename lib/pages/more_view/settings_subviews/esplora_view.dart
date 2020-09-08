@@ -25,7 +25,12 @@ class _EsploraViewState extends State<EsploraView> {
           child: CupertinoButton.filled(
             onPressed: () async {
               final wallet = await Hive.openBox('wallet');
-              
+
+              if (textController.text.isEmpty || textController.text.trim() == '') {
+                await wallet.put('esplora_url', 'https://www.blockstream.info/api');
+              } else {
+                await wallet.put('esplora_url', textController.text);
+              }
             },
             child: Text('Save changes'),
           ),
@@ -52,7 +57,6 @@ class _EsploraViewState extends State<EsploraView> {
                     decoration: InputDecoration(
                       filled: true,
                       labelText: 'Server URL',
-                      isDense: true,
                       hintText: esploraUrl.data,
                     ),
                   );

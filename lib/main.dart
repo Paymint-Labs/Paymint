@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'pages/pages.dart';
 import 'package:paymint/models/models.dart';
-import 'package:paymint/pages/main_view.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart' as path;
 import 'package:paymint/services/services.dart';
@@ -32,10 +32,10 @@ void main() async {
 
   runApp(MyApp());
 
-  final mscData = await Hive.openBox('miscellaneous');
-  if (mscData.isEmpty) {
-    mscData.put('first_launch', true);
-  }
+  // final mscData = await Hive.openBox('miscellaneous');
+  // if (mscData.isEmpty) {
+  //   mscData.put('first_launch', true);
+  // }
 }
 
 /// MyApp initialises relevant services with a MultiProvider
@@ -70,6 +70,17 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
     super.initState();
   }
 
+  /// Returns true if the user has never setup the PIN code before, returns false otherwise
+  Future<bool> checkForLockscreen() async {
+    final misc = await Hive.openBox('miscellaneous_v2');
+
+    if (misc.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -86,7 +97,34 @@ class _MaterialAppWithThemeState extends State<MaterialAppWithTheme> {
           elevation: 0,
         ),
       ),
-      home: MainView(),
+      home: FutureBuilder(
+        future: checkForLockscreen(),
+        builder: (BuildContext context, AsyncSnapshot<bool> shouldRouteToLockSetup) {
+          if (shouldRouteToLockSetup.connectionState == ConnectionState.done) {
+            if (shouldRouteToLockSetup.data) {
+              return SetUpLockscreenView();
+            } else {
+              return LockscreenView();
+            }
+          } else {
+            return buildLoadingView();
+          }
+        },
+      ),
     );
   }
+}
+
+Widget buildLoadingView() {
+  return Scaffold(
+    body: Container(
+      color: Color(0xff121212),
+      child: Center(
+        child: Image.asset(
+          'assets/images/splash.png',
+          height: 125,
+        ),
+      ),
+    ),
+  );
 }

@@ -6,10 +6,6 @@ class FeeObject {
   FeeObject({this.fast, this.medium, this.slow});
 
   factory FeeObject.fromJson(Map<String, dynamic> json) {
-    return FeeObject(
-      fast: json['fast'],
-      medium: json['medium'],
-      slow: json['slow']
-    );
+    return FeeObject(fast: json['fast'], medium: json['average'], slow: json['slow']);
   }
 }

@@ -84,21 +84,19 @@ class _PendingOutputTileState extends State<PendingOutputTile> {
     return Container(
       color: Color(0xff121212),
       child: ListTile(
-        title: Text('Pending output...'),
+        title: Text('Pending output...', style: TextStyle(color: Colors.white)),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text(
-              _currentValue,
-            ),
+            Text(_currentValue, style: TextStyle(color: Colors.white)),
             Text(
               'Pending',
-              style: TextStyle(color: Colors.purple),
+              style: TextStyle(color: Colors.pinkAccent),
             )
           ],
         ),
-        leading: Icon(Icons.all_out, color: Colors.purple),
+        leading: Icon(Icons.all_out, color: Colors.pinkAccent),
         onTap: () {},
       ),
     );
@@ -188,9 +186,9 @@ class _IncomingTransactionListTileState extends State<IncomingTransactionListTil
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircularProgressIndicator(),
-      title: Text('Incoming Transaction...'),
-      subtitle: Text(widget.satoshiAmt + ' BTC'),
-      trailing: Text(widget.currentValue),
+      title: Text('Incoming Transaction...', style: TextStyle(color: Colors.white)),
+      subtitle: Text(widget.satoshiAmt + ' BTC', style: TextStyle(color: Colors.white)),
+      trailing: Text(widget.currentValue, style: TextStyle(color: Colors.white)),
       onTap: () {},
     );
   }
@@ -210,9 +208,9 @@ class _OutgoingTransactionListTileState extends State<OutgoingTransactionListTil
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircularProgressIndicator(),
-      title: Text('Outgoing Transaction...'),
-      subtitle: Text(widget.satoshiAmt + ' BTC'),
-      trailing: Text(widget.currentValue),
+      title: Text('Outgoing Transaction...', style: TextStyle(color: Colors.white)),
+      subtitle: Text(widget.satoshiAmt + ' BTC', style: TextStyle(color: Colors.white)),
+      trailing: Text(widget.currentValue, style: TextStyle(color: Colors.white)),
       onTap: () {},
     );
   }
@@ -268,7 +266,7 @@ class _UtxoDetailViewState extends State<UtxoDetailView> {
             ),
             ListTile(
               title: Text(
-                'DateTime:',
+                'Date & Time:',
                 style: TextStyle(color: Colors.white),
               ),
               trailing: Text(
@@ -398,8 +396,15 @@ class _RenameOutputDialog extends StatelessWidget {
       title: Text('Rename output', style: TextStyle(color: Colors.white)),
       actions: <Widget>[
         FlatButton(
-          child: Text('OK'),
+          child: Text(
+            'OK',
+            style: TextStyle(color: Colors.cyanAccent),
+          ),
           onPressed: () async {
+            if (textEditingController.text.isEmpty) {
+              Navigator.pop(context);
+            }
+
             final labels = await Hive.openBox('labels');
             await labels.put(txid, textEditingController.text);
             final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
@@ -408,7 +413,10 @@ class _RenameOutputDialog extends StatelessWidget {
           },
         ),
         FlatButton(
-          child: Text('Cancel'),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: Colors.cyanAccent),
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -612,110 +620,111 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Color(0xff81D4FA),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text(
-            'Transaction details',
-            style: GoogleFonts.rubik(
-              textStyle: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-          ),
-          backgroundColor: Color(0xff121212),
-          elevation: 0,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Color(0xff81D4FA),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: Container(
-          color: Color(0xff121212),
-          child: ListView(
-            children: <Widget>[
-              Container(
-                  height: MediaQuery.of(context).size.width / 2,
-                  color: Color(0xff121212),
-                  child: Center(child: FlareActor('assets/rive/success.flr', animation: 'Untitled'))),
-              ListTile(
-                title: Text(
-                  'DateTime:',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  _buildDateTimeForTx(widget._tx.timestamp),
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  'Action:',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  widget._tx.txType,
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  'Amount:',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  _extractBtcFromSatoshis(widget._tx.amount),
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  'Worth now:',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  widget._tx.worthNow,
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  'Worth when sent:',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  widget._tx.worthAtBlockTimestamp,
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                title: Text(
-                  'Fee paid:',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Text(
-                  widget._tx.fees.toString() + ' sats',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {},
-              ),
-              ListTile(
-                  title: Text('Copy transaction ID', style: TextStyle(color: Colors.cyanAccent)),
-                  onTap: () {
-                    Clipboard.setData(new ClipboardData(text: widget._tx.txid));
-                    Toast.show('ID copied to clipboard', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-                  }),
-              ListTile(
-                title: Text('Verify on blockchain', style: TextStyle(color: Colors.cyanAccent)),
-                onTap: () {
-                  _launchTransactionUrl(context, widget._tx.txid);
-                },
-              )
-            ],
+        title: Text(
+          'Transaction details',
+          style: GoogleFonts.rubik(
+            textStyle: TextStyle(color: Colors.white, fontSize: 20),
           ),
-        ));
+        ),
+        backgroundColor: Color(0xff121212),
+        elevation: 0,
+      ),
+      body: Container(
+        color: Color(0xff121212),
+        child: ListView(
+          children: <Widget>[
+            Container(
+                height: MediaQuery.of(context).size.width / 2,
+                color: Color(0xff121212),
+                child: Center(child: FlareActor('assets/rive/success.flr', animation: 'Untitled'))),
+            ListTile(
+              title: Text(
+                'Date & Time:',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Text(
+                _buildDateTimeForTx(widget._tx.timestamp),
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                'Action:',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Text(
+                widget._tx.txType,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                'Amount:',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Text(
+                _extractBtcFromSatoshis(widget._tx.amount),
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                'Worth now:',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Text(
+                widget._tx.worthNow,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                'Worth when sent:',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Text(
+                widget._tx.worthAtBlockTimestamp,
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                'Fee paid:',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Text(
+                widget._tx.fees.toString() + ' sats',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+                title: Text('Copy transaction ID', style: TextStyle(color: Colors.cyanAccent)),
+                onTap: () {
+                  Clipboard.setData(new ClipboardData(text: widget._tx.txid));
+                  Toast.show('ID copied to clipboard', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                }),
+            ListTile(
+              title: Text('Verify on blockchain', style: TextStyle(color: Colors.cyanAccent)),
+              onTap: () {
+                _launchTransactionUrl(context, widget._tx.txid);
+              },
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -758,7 +767,7 @@ class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
                 )),
             ListTile(
               title: Text(
-                'DateTime:',
+                'Date & Time:',
                 style: TextStyle(color: Colors.white),
               ),
               trailing: Text(_buildDateTimeForTx(widget._tx.timestamp), style: TextStyle(color: Colors.white)),

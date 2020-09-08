@@ -6,10 +6,10 @@ import 'package:sticky_headers/sticky_headers.dart';
 import 'package:paymint/services/services.dart';
 import 'package:paymint/models/models.dart';
 import 'package:paymint/services/globals.dart';
-import 'package:toast/toast.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:paymint/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:animations/animations.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class TransactionsView extends StatefulWidget {
   @override
@@ -52,7 +52,9 @@ class _TransactionsViewState extends State<TransactionsView> {
             IconButton(
               icon: Icon(Icons.blur_circular),
               color: Color(0xff81D4FA),
-              onPressed: () {},
+              onPressed: () {
+                return showAdvancedOptions(context);
+              },
             )
           ],
           title: Text(
@@ -80,9 +82,23 @@ class _TransactionsViewState extends State<TransactionsView> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.refresh),
           backgroundColor: Color(0xff81D4FA),
-          onPressed: () {},
+          onPressed: () async {
+            final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
+
+            showModal(
+              context: context,
+              configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
+              builder: (context) {
+                return showLoading(context);
+              },
+            );
+
+            await bitcoinService.refreshWalletData();
+            Navigator.pop(context);
+          },
         ),
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: Icon(Icons.all_out),
@@ -181,19 +197,23 @@ List<Widget> _buildTransactionChildLists(List<Transaction> txChildren) {
     } else {
       // Triggers if the transaction has at least 1 confirmation on mainnet
       if (txChildren[txIndex].txType == 'Sent') {
-        finalListView.add(SendListTile(
-          amount: satoshisToBtc(tx.amount),
-          currentValue: tx.worthNow,
-          previousValue: tx.worthAtBlockTimestamp,
-          tx: txChildren[txIndex],
-        ));
+        finalListView.add(
+          SendListTile(
+            amount: satoshisToBtc(tx.amount),
+            currentValue: tx.worthNow,
+            previousValue: tx.worthAtBlockTimestamp,
+            tx: txChildren[txIndex],
+          ),
+        );
       } else if (txChildren[txIndex].txType == 'Received') {
-        finalListView.add(ReceiveListTile(
-          amount: satoshisToBtc(tx.amount),
-          currentValue: tx.worthNow,
-          previousValue: tx.worthAtBlockTimestamp,
-          tx: txChildren[txIndex],
-        ));
+        finalListView.add(
+          ReceiveListTile(
+            amount: satoshisToBtc(tx.amount),
+            currentValue: tx.worthNow,
+            previousValue: tx.worthAtBlockTimestamp,
+            tx: txChildren[txIndex],
+          ),
+        );
       }
     }
   }
@@ -261,8 +281,8 @@ List<Widget> _buildSecurityListView(BuildContext context) {
             InactiveOutputTile(
               name: _utxoList[i].txName,
               currentValue: _utxoList[i].fiatWorth,
-              fullOutput: _utxoList[i],
               blockHeight: timestampToDateString(_utxoList[i].status.blockTime),
+              fullOutput: _utxoList[i],
             ),
           );
         } else {
@@ -270,8 +290,8 @@ List<Widget> _buildSecurityListView(BuildContext context) {
             ActiveOutputTile(
               name: _utxoList[i].txName,
               currentValue: _utxoList[i].fiatWorth,
-              fullOutput: _utxoList[i],
               blockHeight: timestampToDateString(_utxoList[i].status.blockTime),
+              fullOutput: _utxoList[i],
             ),
           );
         }
@@ -287,36 +307,61 @@ String timestampToDateString(int timestamp) {
   return timeago.format(dt);
 }
 
-// class _UtxoExplanationDialog extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       title: Text('What are wallet outputs?'),
-//       content: Text(
-//           "Think of the outputs in your bitcoin wallet like the cash and change in your physical wallet.\n\nWe allow users who believe that they are being tracked via these outputs to conceal their identity by blocking suspicious outputs sent to their wallet.\n\nIf you believe you are not being tracked, you have no reason to worry about blocking outputs."),
-//       actions: <Widget>[
-//         FlatButton(
-//           onPressed: () {
-//             _launchDustingAttackInfo(context);
-//           },
-//           child: const Text('Learn more'),
-//         ),
-//         FlatButton(
-//           onPressed: () {
-//             Navigator.pop(context);
-//           },
-//           child: const Text('OK'),
-//         ),
-//       ],
-//     );
-//   }
-// }
+showAdvancedOptions(BuildContext _) {
+  showCupertinoModalBottomSheet(
+    context: _,
+    bounce: true,
+    builder: (context, scrollController) {
+      return Material(
+        color: Colors.black,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(height: 8),
+            ListTile(
+                title: Row(
+                  children: [
+                    Icon(Icons.save, color: Colors.white),
+                    SizedBox(width: 12),
+                    Text('Export output data to CSV', style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+                onTap: () => Navigator.pushNamed(_, '/exportoutput')),
+            ListTile(
+                title: Row(
+                  children: [
+                    Icon(Icons.settings_backup_restore, color: Colors.white),
+                    SizedBox(width: 12),
+                    Text('Restore output data from CSV', style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+                onTap: () => Navigator.pushNamed(_, '/restoreoutputcsv')),
+            ListTile(
+                title: Row(
+                  children: [
+                    Icon(Icons.save, color: Colors.white),
+                    SizedBox(width: 12),
+                    Text('Export transaction data to CSV', style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+                onTap: () => Navigator.pushNamed(_, '/exporttx')),
+            SizedBox(height: 8),
+          ],
+        ),
+      );
+    },
+  );
+}
 
-// void _launchDustingAttackInfo(BuildContext context) async {
-//   final String url = 'https://academy.binance.com/security/what-is-a-dusting-attack';
-//   if (await canLaunch(url)) {
-//     await launch(url);
-//   } else {
-//     Toast.show('Cannot launch url', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-//   }
-// }
+AlertDialog showLoading(BuildContext _) {
+  return AlertDialog(
+    backgroundColor: Colors.black,
+    title: Row(
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(width: 12),
+        Text('Refreshing wallet...', style: TextStyle(color: Colors.white)),
+      ],
+    ),
+  );
+}

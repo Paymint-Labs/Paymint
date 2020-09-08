@@ -76,11 +76,12 @@ class _ChangeCurrencyViewState extends State<ChangeCurrencyView> {
           title: Text(currencyList[index] + ' ~ $symbol', style: TextStyle(color: Colors.white)),
           onTap: () async {
             showModal(
-                context: context,
-                configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
-                builder: (BuildContext context) {
-                  return _currencySwitchDialog(currencyList[index]);
-                });
+              context: context,
+              configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
+              builder: (BuildContext context) {
+                return _currencySwitchDialog(currencyList[index]);
+              },
+            );
             final BitcoinService btcService = Provider.of<BitcoinService>(context);
             await btcService.changeCurrency(currencyList[index]);
             await btcService.refreshWalletData();
