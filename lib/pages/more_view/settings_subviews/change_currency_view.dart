@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:paymint/services/services.dart';
 import 'package:animations/animations.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class ChangeCurrencyView extends StatefulWidget {
   @override

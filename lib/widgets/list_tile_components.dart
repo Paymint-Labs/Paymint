@@ -187,7 +187,10 @@ class _IncomingTransactionListTileState extends State<IncomingTransactionListTil
     return ListTile(
       leading: CircularProgressIndicator(),
       title: Text('Incoming Transaction...', style: TextStyle(color: Colors.white)),
-      subtitle: Text(widget.satoshiAmt + ' BTC', style: TextStyle(color: Colors.white)),
+      subtitle: Text(
+        formatSatoshiBalance(int.parse(widget.satoshiAmt)),
+        style: TextStyle(color: Colors.white),
+      ),
       trailing: Text(widget.currentValue, style: TextStyle(color: Colors.white)),
       onTap: () {},
     );
@@ -209,7 +212,10 @@ class _OutgoingTransactionListTileState extends State<OutgoingTransactionListTil
     return ListTile(
       leading: CircularProgressIndicator(),
       title: Text('Outgoing Transaction...', style: TextStyle(color: Colors.white)),
-      subtitle: Text(widget.satoshiAmt + ' BTC', style: TextStyle(color: Colors.white)),
+      subtitle: Text(
+        formatSatoshiBalance(int.parse(widget.satoshiAmt)),
+        style: TextStyle(color: Colors.white),
+      ),
       trailing: Text(widget.currentValue, style: TextStyle(color: Colors.white)),
       onTap: () {},
     );
@@ -617,6 +623,30 @@ class _SendDetailsPage extends StatefulWidget {
 }
 
 class __SendDetailsPageState extends State<_SendDetailsPage> {
+  int viewDenomination;
+
+  @override
+  void initState() {
+    this.viewDenomination = 0; // 0 == Satoshis & 1 == BTC denomination
+    super.initState();
+  }
+
+  buildAmount() {
+    if (viewDenomination == 0) {
+      return formatSatoshiBalance(widget._tx.amount);
+    } else if (viewDenomination == 1) {
+      return (widget._tx.amount / 100000000).toString() + ' BTC';
+    }
+  }
+
+  buildFeeAmount() {
+    if (viewDenomination == 0) {
+      return formatSatoshiBalance(widget._tx.fees);
+    } else if (viewDenomination == 1) {
+      return (widget._tx.fees / 100000000).toString() + ' BTC';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -671,10 +701,18 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
                 style: TextStyle(color: Colors.white),
               ),
               trailing: Text(
-                _extractBtcFromSatoshis(widget._tx.amount),
+                buildAmount(),
                 style: TextStyle(color: Colors.white),
               ),
-              onTap: () {},
+              onTap: () {
+                setState(() {
+                  if (viewDenomination == 0) {
+                    viewDenomination = 1;
+                  } else if (viewDenomination == 1) {
+                    viewDenomination = 0;
+                  }
+                });
+              },
             ),
             ListTile(
               title: Text(
@@ -704,10 +742,18 @@ class __SendDetailsPageState extends State<_SendDetailsPage> {
                 style: TextStyle(color: Colors.white),
               ),
               trailing: Text(
-                widget._tx.fees.toString() + ' sats',
+                buildFeeAmount(),
                 style: TextStyle(color: Colors.white),
               ),
-              onTap: () {},
+              onTap: () {
+                setState(() {
+                  if (viewDenomination == 0) {
+                    viewDenomination = 1;
+                  } else if (viewDenomination == 1) {
+                    viewDenomination = 0;
+                  }
+                });
+              },
             ),
             ListTile(
                 title: Text('Copy transaction ID', style: TextStyle(color: Colors.cyanAccent)),
@@ -737,6 +783,30 @@ class _ReceiveDetailsPage extends StatefulWidget {
 }
 
 class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
+  int viewDenomination;
+
+  @override
+  void initState() {
+    this.viewDenomination = 0;
+    super.initState();
+  }
+
+  buildAmount() {
+    if (viewDenomination == 0) {
+      return formatSatoshiBalance(widget._tx.amount);
+    } else if (viewDenomination == 1) {
+      return (widget._tx.amount / 100000000).toString() + ' BTC';
+    }
+  }
+
+  buildFeeAmount() {
+    if (viewDenomination == 0) {
+      return formatSatoshiBalance(widget._tx.fees);
+    } else if (viewDenomination == 1) {
+      return (widget._tx.fees / 100000000).toString() + ' BTC';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -780,8 +850,16 @@ class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
             ),
             ListTile(
               title: Text('Amount:', style: TextStyle(color: Colors.white)),
-              trailing: Text(_extractBtcFromSatoshis(widget._tx.amount), style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              trailing: Text(buildAmount(), style: TextStyle(color: Colors.white)),
+              onTap: () {
+                setState(() {
+                  if (viewDenomination == 0) {
+                    viewDenomination = 1;
+                  } else if (viewDenomination == 1) {
+                    viewDenomination = 0;
+                  }
+                });
+              },
             ),
             ListTile(
               title: Text('Worth now:', style: TextStyle(color: Colors.white)),
@@ -795,8 +873,16 @@ class __ReceiveDetailsPageState extends State<_ReceiveDetailsPage> {
             ),
             ListTile(
               title: Text('Fee paid:', style: TextStyle(color: Colors.white)),
-              trailing: Text(widget._tx.fees.toString() + ' sats', style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              trailing: Text(buildFeeAmount(), style: TextStyle(color: Colors.white)),
+              onTap: () {
+                setState(() {
+                  if (viewDenomination == 0) {
+                    viewDenomination = 1;
+                  } else if (viewDenomination == 1) {
+                    viewDenomination = 0;
+                  }
+                });
+              },
             ),
             ListTile(
               title: Text(

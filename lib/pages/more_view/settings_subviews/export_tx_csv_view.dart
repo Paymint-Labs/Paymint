@@ -1,4 +1,3 @@
-import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +53,7 @@ class _ExportTransactionCsvViewState extends State<ExportTransactionCsvView> {
                       },
                       color: Colors.amber,
                       textColor: Color(0xff121212),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -62,7 +62,6 @@ class _ExportTransactionCsvViewState extends State<ExportTransactionCsvView> {
                           Text('Save locally to device')
                         ],
                       ),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.0)),
                     );
                   } else {
                     return Container();
@@ -77,6 +76,15 @@ class _ExportTransactionCsvViewState extends State<ExportTransactionCsvView> {
   }
 
   txDataTo2dArray(TransactionData txData) async {
+    if (txData.txChunks.length == 0) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('No transaction data to export', style: TextStyle(color: Colors.white)),
+      ));
+
+      return 0;
+    }
+
     // Output Name  --  Output txid  --  Output block status  --
     final List<List<String>> formattedData = [];
 

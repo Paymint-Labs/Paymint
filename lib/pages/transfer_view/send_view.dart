@@ -758,7 +758,7 @@ class _SendViewState extends State<SendView> {
                   // Show loading dialog
                   showModal(
                     context: context,
-                    configuration: FadeScaleTransitionConfiguration(),
+                    configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
                     builder: (BuildContext context) {
                       return attemptBuildTransactionDialog(context);
                     },
@@ -963,11 +963,11 @@ AlertDialog attemptBuildTransactionDialog(BuildContext _) {
       children: [
         CircularProgressIndicator(),
         SizedBox(width: 12),
-        Text('Please wait...', style: TextStyle(color: Colors.white)),
+        Text('Please wait', style: TextStyle(color: Colors.white)),
       ],
     ),
     content: Text(
-      'Attempting to build transaction',
+      'Attempting to build your transaction...',
       style: TextStyle(color: Colors.white),
     ),
   );

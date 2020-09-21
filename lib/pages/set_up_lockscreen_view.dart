@@ -126,13 +126,13 @@ class _SetUpLockscreenViewState extends State<SetUpLockscreenView> {
                           _globalKey1.currentState.showSnackBar(
                             SnackBar(
                                 content: Text(
-                                  'PIN code successfully set. Redirecting...',
+                                  'PIN code successfully set. Unlocking wallet...',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 backgroundColor: Colors.green),
                           );
 
-                          await Future.delayed(Duration(seconds: 1));
+                          await Future.delayed(Duration(milliseconds: 700));
 
                           Navigator.pushNamed(context, '/mainview');
                         } else {

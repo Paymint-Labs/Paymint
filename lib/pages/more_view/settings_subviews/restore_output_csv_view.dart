@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
 import 'dart:io';
@@ -22,13 +23,13 @@ class _RestoreOutputCsvViewState extends State<RestoreOutputCsvView> {
 
   initFilePicker() async {
     final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
-
     final String filePath = await FilePicker.getFilePath(type: FileType.custom, allowedExtensions: ['csv']);
 
     if (filePath == null) return 1;
 
-    final String csvFile = await File(filePath).readAsString();
+    final wallet = await Hive.openBox('wallet');
 
+    final String csvFile = await File(filePath).readAsString();
     List<List<dynamic>> rowsAsListOfValues = CsvToListConverter().convert(csvFile);
     print(rowsAsListOfValues);
 
@@ -47,8 +48,23 @@ class _RestoreOutputCsvViewState extends State<RestoreOutputCsvView> {
       final String txName = outputRow[1];
       final bool blockStatus = outputRow[2].toLowerCase() == 'true';
 
+      // Calling provider functions
       if (blockStatus == true) bitcoinService.blockOutput(txid);
       bitcoinService.renameOutput(txid, txName);
+
+      // Calling hive functions
+      final outputNames = await Hive.openBox('labels');
+      await outputNames.put(txid.toString(), txName.toString());
+
+      if (blockStatus == true) {
+        final blockedList = await wallet.get('blocked_tx_hashes');
+        final blockedCopy = new List();
+        for (var i = 0; i < blockedList.length; i++) {
+          blockedCopy.add(blockedList[i]);
+        }
+        blockedCopy.add(txid.toString());
+        await wallet.put('blocked_tx_hashes', blockedCopy);
+      }
     }
 
     await Future.delayed(Duration(milliseconds: 1500));
@@ -134,13 +150,7 @@ AlertDialog showLoadingModal(BuildContext _) {
 
 AlertDialog restorationSuccessModal(BuildContext _) {
   return AlertDialog(
-    title: Row(
-      children: [
-        CircularProgressIndicator(),
-        SizedBox(width: 12),
-        Text('Data successfully restored', style: TextStyle(color: Colors.white)),
-      ],
-    ),
+    title: Text('Data successfully restored', style: TextStyle(color: Colors.white)),
     actions: [FlatButton(onPressed: () => Navigator.pop(_), child: Text('OK'))],
   );
 }

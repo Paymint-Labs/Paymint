@@ -1,8 +1,8 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:local_auth/local_auth.dart';
 
 class GeneralView extends StatefulWidget {
@@ -130,6 +130,21 @@ class _GeneralViewState extends State<GeneralView> {
                 }
               },
             ),
+            ListTile(
+              title: Text('Refresh Wallet', style: TextStyle(color: Colors.white)),
+              trailing: Icon(Icons.refresh, color: Colors.cyanAccent),
+              onTap: () async {
+                showModal(
+                  context: context,
+                  configuration: FadeScaleTransitionConfiguration(barrierDismissible: false),
+                  builder: (BuildContext context) {
+                    return showLoadingDialog(context);
+                  },
+                );
+                await bitcoinService.refreshWalletData();
+                Navigator.pop(context);
+              },
+            )
           ],
         ),
       ),
@@ -161,4 +176,17 @@ IconData buildBioAuthIcon() {
   } else {
     return Icons.tag_faces;
   }
+}
+
+AlertDialog showLoadingDialog(BuildContext context) {
+  return AlertDialog(
+    backgroundColor: Colors.black,
+    title: Row(
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(width: 12),
+        Text('Refreshing wallet', style: TextStyle(color: Colors.white)),
+      ],
+    ),
+  );
 }

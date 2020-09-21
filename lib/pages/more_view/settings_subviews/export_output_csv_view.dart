@@ -80,7 +80,14 @@ class _ExportOutputCsvViewState extends State<ExportOutputCsvView> {
     final List<List<String>> formattedData = [];
 
     final List<UtxoObject> allOutputs = bitcoinService.allOutputs;
-    if (allOutputs.length == 0) return 0;
+    if (allOutputs.length == 0) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('No output data to export', style: TextStyle(color: Colors.white)),
+      ));
+
+      return 0;
+    }
 
     for (var i = 0; i < allOutputs.length; i++) {
       final List<String> outputDataList = [];

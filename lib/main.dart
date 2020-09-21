@@ -31,11 +31,6 @@ void main() async {
   Hive.registerAdapter(StatusAdapter());
 
   runApp(MyApp());
-
-  // final mscData = await Hive.openBox('miscellaneous');
-  // if (mscData.isEmpty) {
-  //   mscData.put('first_launch', true);
-  // }
 }
 
 /// MyApp initialises relevant services with a MultiProvider

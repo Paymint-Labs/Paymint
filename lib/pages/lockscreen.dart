@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:paymint/services/bitcoin_service.dart';
-import 'package:provider/provider.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:local_auth/local_auth.dart';
 import 'dart:io';
@@ -45,7 +43,8 @@ class _LockscreenViewState extends State<LockscreenView> {
       } else if (Platform.isAndroid) {
         if (availableSystems.contains(BiometricType.fingerprint)) {
           bool didAuthenticate = await localAuth.authenticateWithBiometrics(
-              localizedReason: 'Please authenticate to unlock wallet', stickyAuth: true);
+            localizedReason: 'Please authenticate to unlock wallet',
+          );
 
           if (didAuthenticate) Navigator.pushNamed(context, '/mainview');
         }
@@ -61,8 +60,6 @@ class _LockscreenViewState extends State<LockscreenView> {
 
   @override
   Widget build(BuildContext context) {
-    final BitcoinService bitcoinService = Provider.of<BitcoinService>(context);
-
     return Scaffold(
       key: _globalKey,
       backgroundColor: Color(0xff121212),
@@ -97,12 +94,12 @@ class _LockscreenViewState extends State<LockscreenView> {
                     SnackBar(
                       backgroundColor: Colors.green,
                       content: Text(
-                        'Unlock successful...',
+                        'PIN code correct. Unlocking wallet...',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
                   );
-                  await Future.delayed(Duration(seconds: 1));
+                  await Future.delayed(Duration(milliseconds: 600));
                   Navigator.pushNamed(context, '/mainview');
                 } else {
                   FocusScope.of(context).unfocus();

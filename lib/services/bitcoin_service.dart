@@ -8,7 +8,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
+import 'package:paymint/services/globals.dart';
 import 'package:paymint/services/utils/currency_utils.dart';
+import './utils/dev_utils.dart';
 
 class BitcoinService extends ChangeNotifier {
   /// Holds final balances, all utxos under control
@@ -54,6 +56,7 @@ class BitcoinService extends ChangeNotifier {
     _initializeBitcoinWallet().whenComplete(() {
       _utxoData = _fetchUtxoData();
       _transactionData = _fetchTransactionData();
+      DevUtilities.checkReceivingAndChangeArrays();
     }).whenComplete(() => checkReceivingAddressForTransactions());
   }
 
@@ -535,26 +538,54 @@ class BitcoinService extends ChangeNotifier {
       "url": await getEsploraUrl(),
     };
 
-    final response = await http.post(
-      'https://us-central1-paymint.cloudfunctions.net/api/outputData',
-      body: jsonEncode(requestBody),
-      headers: {'Content-Type': 'application/json'},
-    );
+    try {
+      final response = await http.post(
+        'https://us-central1-paymint.cloudfunctions.net/api/outputData',
+        body: jsonEncode(requestBody),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Outputs fetched');
-      final List<UtxoObject> allOutputs = UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
-      await _sortOutputs(allOutputs);
-      await wallet.put('latest_utxo_model', UtxoData.fromJson(json.decode(response.body)));
-      notifyListeners();
-      // print(json.decode(response.body));
-      return UtxoData.fromJson(json.decode(response.body));
-    } else {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Outputs fetched');
+        final List<UtxoObject> allOutputs = UtxoData.fromJson(json.decode(response.body)).unspentOutputArray;
+        await _sortOutputs(allOutputs);
+        await wallet.put('latest_utxo_model', UtxoData.fromJson(json.decode(response.body)));
+        notifyListeners();
+        // print(json.decode(response.body));
+        return UtxoData.fromJson(json.decode(response.body));
+      } else {
+        print("Output fetch unsuccessful");
+        final latestTxModel = await wallet.get('latest_utxo_model');
+
+        if (latestTxModel == null) {
+          final currency = await CurrencyUtilities.fetchPreferredCurrency();
+          final currencySymbol = currencyMap[currency];
+
+          final emptyModel = {
+            "total_user_currency": "${currencySymbol}0.00",
+            "total_sats": 0,
+            "total_btc": 0,
+            "outputArray": []
+          };
+          return UtxoData.fromJson(emptyModel);
+        } else {
+          print("Old output model located");
+          return latestTxModel;
+        }
+      }
+    } catch (e) {
       print("Output fetch unsuccessful");
       final latestTxModel = await wallet.get('latest_utxo_model');
+      final currency = await CurrencyUtilities.fetchPreferredCurrency();
+      final currencySymbol = currencyMap[currency];
 
       if (latestTxModel == null) {
-        final emptyModel = {"total_user_currency": "\$0.00", "total_sats": 0, "total_btc": 0, "outputArray": []};
+        final emptyModel = {
+          "total_user_currency": "${currencySymbol}0.00",
+          "total_sats": 0,
+          "total_btc": 0,
+          "outputArray": []
+        };
         return UtxoData.fromJson(emptyModel);
       } else {
         print("Old output model located");
@@ -584,18 +615,32 @@ class BitcoinService extends ChangeNotifier {
       "url": await getEsploraUrl()
     };
 
-    final response = await http.post(
-      'https://us-central1-paymint.cloudfunctions.net/api/txData',
-      body: jsonEncode(requestBody),
-      headers: {'Content-Type': 'application/json'},
-    );
+    try {
+      final response = await http.post(
+        'https://us-central1-paymint.cloudfunctions.net/api/txData',
+        body: jsonEncode(requestBody),
+        headers: {'Content-Type': 'application/json'},
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Transactions fetched');
-      notifyListeners();
-      await wallet.put('latest_tx_model', TransactionData.fromJson(json.decode(response.body)));
-      return TransactionData.fromJson(json.decode(response.body));
-    } else {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Transactions fetched');
+        notifyListeners();
+        await wallet.put('latest_tx_model', TransactionData.fromJson(json.decode(response.body)));
+        return TransactionData.fromJson(json.decode(response.body));
+      } else {
+        print("Transaction fetch unsuccessful");
+        final latestModel = await wallet.get('latest_tx_model');
+
+        if (latestModel == null) {
+          final emptyModel = {"dateTimeChunks": []};
+          return TransactionData.fromJson(emptyModel);
+        } else {
+          print("Old transaction model located");
+          print(response.body);
+          return latestModel;
+        }
+      }
+    } catch (e) {
       print("Transaction fetch unsuccessful");
       final latestModel = await wallet.get('latest_tx_model');
 
@@ -604,7 +649,6 @@ class BitcoinService extends ChangeNotifier {
         return TransactionData.fromJson(emptyModel);
       } else {
         print("Old transaction model located");
-        print(response.body);
         return latestModel;
       }
     }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 import 'package:provider/provider.dart';
-import 'package:paymint/models/models.dart';
 import 'package:animations/animations.dart';
 
 class BroadcastRawHexView extends StatefulWidget {
