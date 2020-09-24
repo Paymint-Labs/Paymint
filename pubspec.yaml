@@ -29,6 +29,7 @@ dependencies:
   permission_handler: ^5.0.1+1
   csv: ^4.0.3
   file_picker: ^1.13.3
+  flutter_web_browser: "^0.12.0"
 
   # Bitcoin plugins
   bitcoin_flutter: ^2.0.0
@@ -56,9 +57,9 @@ dependencies:
   timeago: ^2.0.26
   flutter_money_formatter: ^0.8.3
   cupertino_icons: ^0.1.2
-  modal_bottom_sheet: ^0.2.0+1
   rounded_loading_button: ^1.0.0
   pinput: ^0.2.5
+  modal_bottom_sheet: 0.2.0
 
 dev_dependencies:
   flutter_test:
@@ -102,6 +103,8 @@ flutter:
     - assets/images/mastercard.png
     - assets/images/mastercard.jpg
     - assets/images/visa.png
+    - assets/images/bank.png
+    - assets/images/card.png
     - assets/images/404image.png
     - assets/rive/success.flr
     - assets/icon/icon.png

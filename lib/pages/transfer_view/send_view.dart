@@ -861,7 +861,7 @@ Text formatAddress(String address) {
 }
 
 String validateAddress(String address) {
-  Pattern pattern = r'^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$';
+  Pattern pattern = r'^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,59}$';
   RegExp regex = new RegExp(pattern);
   if (!regex.hasMatch(address))
     return 'Invalid Address';

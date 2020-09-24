@@ -354,6 +354,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_browser:
+    dependency: "direct main"
+    description:
+      name: flutter_web_browser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -528,7 +535,7 @@ packages:
       name: modal_bottom_sheet
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0+1"
+    version: "0.2.0"
   node_interop:
     dependency: transitive
     description:

@@ -30,6 +30,7 @@ class _TransactionsViewState extends State<TransactionsView> {
 
     return InnerDrawer(
       key: _drawerKey,
+      swipeChild: true,
       onTapClose: true,
       swipe: true,
       offset: IDOffset.horizontal(1),

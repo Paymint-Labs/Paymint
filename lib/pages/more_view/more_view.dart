@@ -81,6 +81,8 @@ class _MoreViewState extends State<MoreView> {
                       if (didAuthenticate) Navigator.pushNamed(context, '/backupview');
                     }
                   }
+                } else {
+                  Navigator.pushNamed(context, '/backupview');
                 }
               },
             ),
@@ -106,7 +108,15 @@ class _MoreViewState extends State<MoreView> {
                 style: TextStyle(color: Colors.white),
               ),
               trailing: Icon(Icons.info),
-              onTap: () {},
+              onTap: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'Paymint',
+                  applicationIcon: Image.asset('assets/icon/icon.png', height: 40, width: 40),
+                  applicationLegalese: 'All rights reserved © Ready Systems Ltd.\n\nPaymint Labs',
+                  applicationVersion: '1.2.0',
+                );
+              },
             ),
             Expanded(
               child: Container(),
