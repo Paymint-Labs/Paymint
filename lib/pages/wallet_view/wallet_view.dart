@@ -68,7 +68,10 @@ class _WalletViewState extends State<WalletView> {
                     if (utxoData == null || utxoData.hasError) {
                       return Container(
                         child: Center(
-                          child: Text('Unable to fetch balance data. Please check connection'),
+                          child: Text(
+                            'Unable to fetch balance data.\nPlease check connection',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       );
                     }
