@@ -1,7 +1,7 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_money_formatter/flutter_money_formatter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:paymint/services/bitcoin_service.dart';
 import 'package:paymint/services/globals.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
@@ -9,9 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:paymint/services/utils/currency_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:paymint/services/services.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class InvestView extends StatefulWidget {
   @override
@@ -86,18 +86,41 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
         Icons.chevron_right,
         color: Colors.cyanAccent,
       ),
-      onTap: () {
-        FlutterWebBrowser.openWebPage(
-          url: "https://buy-staging.moonpay.io/?apiKey=pk_test_bW8AcwcydAq1ah9RuSkIqwvcIgSdV&currencyCode=btc",
-          androidToolbarColor: Color(0xff121212),
-          safariVCOptions: SafariViewControllerOptions(
-            barCollapsingEnabled: true,
-            preferredBarTintColor: Colors.green,
-            preferredControlTintColor: Colors.amber,
-            dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-            modalPresentationCapturesStatusBarAppearance: true,
-          ),
-        );
+      onTap: () async {
+        final requestBody = {
+          "url":
+              "https://buy.moonpay.io?apiKey=pk_live_uO38X08NU7lveH96y43ZdHrtcyi6J7X&currencyCode=btc&walletAddress=$currentAddress",
+        };
+
+        try {
+          final response = await http.post(
+            'https://us-central1-paymint.cloudfunctions.net/api/signPurchaseRequest',
+            body: jsonEncode(requestBody),
+            headers: {'Content-Type': 'application/json'},
+          );
+
+          print(json.decode(response.body));
+
+          if (response.statusCode == 200) {
+            FlutterWebBrowser.openWebPage(
+              url: json.decode(response.body),
+              androidToolbarColor: Color(0xff121212),
+              safariVCOptions: SafariViewControllerOptions(
+                barCollapsingEnabled: true,
+                preferredBarTintColor: Colors.green,
+                preferredControlTintColor: Colors.amber,
+                dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+                modalPresentationCapturesStatusBarAppearance: true,
+              ),
+            );
+          }
+        } catch (e) {
+          showModal(
+            context: context,
+            configuration: FadeScaleTransitionConfiguration(),
+            builder: (context) => showErrorDialog(context, e.toString()),
+          );
+        }
       },
     );
 
@@ -124,19 +147,43 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
         Icons.chevron_right,
         color: Colors.cyanAccent,
       ),
-      onTap: () {
-        FlutterWebBrowser.openWebPage(
-          url:
-              "https://buy-staging.moonpay.io/?apiKey=pk_test_bW8AcwcydAq1ah9RuSkIqwvcIgSdV&enabledPaymentMethods=sepa_bank_transfer,gbp_bank_transfer&currencyCode=btc",
-          androidToolbarColor: Color(0xff121212),
-          safariVCOptions: SafariViewControllerOptions(
-            barCollapsingEnabled: true,
-            preferredBarTintColor: Colors.green,
-            preferredControlTintColor: Colors.amber,
-            dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-            modalPresentationCapturesStatusBarAppearance: true,
-          ),
-        );
+      onTap: () async {
+        final x = Uri.encodeComponent('sepa_bank_transfer,gbp_bank_transfer');
+
+        final requestBody = {
+          "url":
+              "https://buy.moonpay.io?apiKey=pk_live_uO38X08NU7lveH96y43ZdHrtcyi6J7X&enabledPaymentMethods=$x&currencyCode=btc&walletAddress=$currentAddress",
+        };
+
+        try {
+          final response = await http.post(
+            'https://us-central1-paymint.cloudfunctions.net/api/signPurchaseRequest',
+            body: jsonEncode(requestBody),
+            headers: {'Content-Type': 'application/json'},
+          );
+
+          print(json.decode(response.body));
+
+          if (response.statusCode == 200) {
+            FlutterWebBrowser.openWebPage(
+              url: json.decode(response.body),
+              androidToolbarColor: Color(0xff121212),
+              safariVCOptions: SafariViewControllerOptions(
+                barCollapsingEnabled: true,
+                preferredBarTintColor: Colors.green,
+                preferredControlTintColor: Colors.amber,
+                dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+                modalPresentationCapturesStatusBarAppearance: true,
+              ),
+            );
+          }
+        } catch (e) {
+          showModal(
+            context: context,
+            configuration: FadeScaleTransitionConfiguration(),
+            builder: (context) => showErrorDialog(context, e.toString()),
+          );
+        }
       },
     );
 
@@ -218,7 +265,7 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
     }
   }
 
-  Widget buildListTilesForSell(String country) {
+  Widget buildListTilesForSell(String country, String currentAddress) {
     ListTile bankListTile = ListTile(
       leading: Stack(
         alignment: Alignment.center,
@@ -242,19 +289,52 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
         Icons.chevron_right,
         color: Colors.cyanAccent,
       ),
-      onTap: () {
-        FlutterWebBrowser.openWebPage(
-          url:
-              "https://sell-staging.moonpay.io/?apiKey=pk_test_bW8AcwcydAq1ah9RuSkIqwvcIgSdV&enabledPaymentMethods=sepa_bank_transfer,gbp_bank_transfer&currencyCode=btc",
-          androidToolbarColor: Color(0xff121212),
-          safariVCOptions: SafariViewControllerOptions(
-            barCollapsingEnabled: true,
-            preferredBarTintColor: Colors.green,
-            preferredControlTintColor: Colors.amber,
-            dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-            modalPresentationCapturesStatusBarAppearance: true,
-          ),
-        );
+      onTap: () async {
+        final requestBody = {
+          "url":
+              "https://sell.moonpay.io?apiKey=pk_live_uO38X08NU7lveH96y43ZdHrtcyi6J7X&baseCurrencyCode=btc&refundWalletAddress=$currentAddress",
+        };
+
+        try {
+          final response = await http.post(
+            'https://us-central1-paymint.cloudfunctions.net/api/signPurchaseRequest',
+            body: jsonEncode(requestBody),
+            headers: {'Content-Type': 'application/json'},
+          );
+
+          if (response.statusCode == 200) {
+            FlutterWebBrowser.openWebPage(
+              url: json.decode(response.body),
+              androidToolbarColor: Color(0xff121212),
+              safariVCOptions: SafariViewControllerOptions(
+                barCollapsingEnabled: true,
+                preferredBarTintColor: Colors.green,
+                preferredControlTintColor: Colors.amber,
+                dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+                modalPresentationCapturesStatusBarAppearance: true,
+              ),
+            );
+          }
+        } catch (e) {
+          showModal(
+            context: context,
+            configuration: FadeScaleTransitionConfiguration(),
+            builder: (context) => showErrorDialog(context, e.toString()),
+          );
+        }
+
+        // FlutterWebBrowser.openWebPage(
+        //   url:
+        //       "https://sell.moonpay.io?apiKey=pk_live_uO38X08NU7lveH96y43ZdHrtcyi6J7X&currencyCode=btc&refundWalletAddress=$currentAddress",
+        //   androidToolbarColor: Color(0xff121212),
+        //   safariVCOptions: SafariViewControllerOptions(
+        //     barCollapsingEnabled: true,
+        //     preferredBarTintColor: Colors.green,
+        //     preferredControlTintColor: Colors.amber,
+        //     dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+        //     modalPresentationCapturesStatusBarAppearance: true,
+        //   ),
+        // );
       },
     );
 
@@ -453,7 +533,7 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
                               style: TextStyle(color: Colors.grey),
                             ),
                           ),
-                          Expanded(child: buildListTilesForSell(country.data)),
+                          Expanded(child: buildListTilesForSell(country.data, address.data)),
                         ],
                       ),
                     ),
@@ -673,29 +753,24 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
       ),
     );
   }
-
-  // showPurchaseModal() async {
-  //   await Permission.camera.request();
-
-  //   showBarModalBottomSheet(
-  //     context: context,
-  //     bounce: true,
-  //     expand: true,
-  //     enableDrag: false,
-  //     builder: (context, scrollController) {
-  //       return InAppWebView(
-  //         initialUrl: 'https://buy.moonpay.io/',
-  //         androidOnPermissionRequest: (InAppWebViewController controller, String origin, List<String> resources) async {
-  //           return PermissionRequestResponse(resources: resources, action: PermissionRequestResponseAction.GRANT);
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }
 
 Center buildLoadingWidget() {
   return Center(
     child: CircularProgressIndicator(),
+  );
+}
+
+AlertDialog showErrorDialog(BuildContext context, String error) {
+  return AlertDialog(
+    title: Text(
+      'Error',
+      style: TextStyle(color: Colors.white),
+    ),
+    content: Text(
+      error,
+      style: TextStyle(color: Colors.white),
+    ),
+    actions: [FlatButton(onPressed: () => Navigator.pop(context), child: Text('OK'))],
   );
 }

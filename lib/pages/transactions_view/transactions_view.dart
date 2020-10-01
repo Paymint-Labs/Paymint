@@ -188,11 +188,11 @@ List<Widget> _buildTransactionChildLists(List<Transaction> txChildren) {
     if (tx.confirmedStatus == false) {
       if (tx.txType == 'Sent') {
         finalListView.add(
-          OutgoingTransactionListTile(satoshisToBtc(tx.amount), tx.worthNow),
+          OutgoingTransactionListTile(tx.amount.toString(), tx.worthNow),
         );
       } else if (tx.txType == 'Received') {
         finalListView.add(
-          IncomingTransactionListTile(satoshisToBtc(tx.amount), tx.worthNow),
+          IncomingTransactionListTile(tx.amount.toString(), tx.worthNow),
         );
       }
     } else {
