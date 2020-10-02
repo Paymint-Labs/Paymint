@@ -322,130 +322,123 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
             builder: (context) => showErrorDialog(context, e.toString()),
           );
         }
-
-        // FlutterWebBrowser.openWebPage(
-        //   url:
-        //       "https://sell.moonpay.io?apiKey=pk_live_uO38X08NU7lveH96y43ZdHrtcyi6J7X&currencyCode=btc&refundWalletAddress=$currentAddress",
-        //   androidToolbarColor: Color(0xff121212),
-        //   safariVCOptions: SafariViewControllerOptions(
-        //     barCollapsingEnabled: true,
-        //     preferredBarTintColor: Colors.green,
-        //     preferredControlTintColor: Colors.amber,
-        //     dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-        //     modalPresentationCapturesStatusBarAppearance: true,
-        //   ),
-        // );
       },
     );
 
-    if (country == 'Austria') {
+    /// Uncomment the countries below when EU sells are enabled by MoonPay
+
+    if (country == 'xxx') {
       return ListView(
         children: [bankListTile],
       );
-    } else if (country == 'Belgium') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Croatia') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Cyprus') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Czechia (Czech Republic)') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Denmark') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Estonia') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Finland') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'France') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Germany') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Greece') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Hungary') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Iceland') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Italy') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Latvia') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Lithuania') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Luxembourg') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Malta') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Netherlands') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Poland') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Portugal') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Romania') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Slovakia') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Slovenia') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Spain') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'Sweden') {
-      return ListView(
-        children: [bankListTile],
-      );
-    } else if (country == 'United Kingdom') {
-      return ListView(
-        children: [bankListTile],
-      );
+      // } else if (country == 'Austria') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Belgium') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Croatia') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Cyprus') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Czechia (Czech Republic)') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Denmark') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Estonia') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Finland') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'France') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Germany') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Greece') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Hungary') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Iceland') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Italy') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Latvia') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Lithuania') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Luxembourg') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Malta') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Netherlands') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Poland') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Portugal') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Romania') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Slovakia') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Slovenia') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Spain') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'Sweden') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
+      // } else if (country == 'United Kingdom') {
+      //   return ListView(
+      //     children: [bankListTile],
+      //   );
     } else {
       return Container(
         child: Center(

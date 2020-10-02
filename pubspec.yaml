@@ -11,7 +11,7 @@ description: Paymint client
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.0+5
+version: 1.2.1+6
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -106,6 +106,8 @@ flutter:
     - assets/images/bank.png
     - assets/images/card.png
     - assets/images/404image.png
+    - assets/images/twitter-icon.png
+    - assets/images/telegram-icon.png
     - assets/rive/success.flr
     - assets/icon/icon.png
     - google_fonts/

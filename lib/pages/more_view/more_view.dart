@@ -119,7 +119,31 @@ class _MoreViewState extends State<MoreView> {
               },
             ),
             Expanded(
-              child: Container(),
+              child: Container(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Image.asset('assets/images/twitter-icon.png'),
+                            onPressed: () async => _launchTwitter(context),
+                          ),
+                          SizedBox(width: 16),
+                          IconButton(
+                            icon: Image.asset('assets/images/telegram-icon.png'),
+                            onPressed: () async => _launchTelegram(context),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+                      Text('Made with ❤ in Hong Kong', style: TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                ),
+              ),
             )
           ],
         ),
@@ -148,6 +172,15 @@ void _launchToS(BuildContext context) async {
 
 void _launchPrivacyPolicy(BuildContext context) async {
   final String url = 'https://paymint-privacy-policy.webflow.io/';
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    Toast.show('Cannot launch url', context, duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+  }
+}
+
+void _launchTelegram(BuildContext context) async {
+  final String url = 'https://t.me/paymintwallet';
   if (await canLaunch(url)) {
     await launch(url);
   } else {
