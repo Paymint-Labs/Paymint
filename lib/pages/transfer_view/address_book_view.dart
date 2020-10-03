@@ -35,7 +35,7 @@ class _AddressBookViewState extends State<AddressBookView> {
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  'Address Book',
+                  'Previous Addresses',
                   textScaleFactor: 1.5,
                   style: TextStyle(color: Colors.white),
                 ),
