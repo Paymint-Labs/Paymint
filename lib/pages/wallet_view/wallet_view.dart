@@ -127,7 +127,7 @@ class _WalletViewState extends State<WalletView> {
                                 final symbol = currency.data;
                                 final midDate = chartData.data.xAxis[chartData.data.xAxis.length - 35];
 
-                                FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: price.data);
+                                FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: price.data + .00);
 
                                 final String displayPrice = currencyMap[symbol] + fmf.output.nonSymbol ?? '???';
 

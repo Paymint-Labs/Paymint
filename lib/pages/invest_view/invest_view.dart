@@ -710,7 +710,7 @@ class _InvestViewState extends State<InvestView> with TickerProviderStateMixin {
                                   );
                                 }
 
-                                FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: priceData.data);
+                                FlutterMoneyFormatter fmf = FlutterMoneyFormatter(amount: priceData.data + .00);
                                 final String displayPriceNonSymbol = fmf.output.nonSymbol;
                                 // Triggers code below when no errors are found :D
                                 return Text(
