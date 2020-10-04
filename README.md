@@ -3,7 +3,7 @@ Paymint is a Bitcoin thin client written in Dart with powerful features.
 
 [![Playstore](https://bluewallet.io/img/play-store-badge.svg)](https://play.google.com/store/apps/details?id=com.paymintlabs.paymint)
 
-[Telegram Group](https://www.t.me/paymintwallet)
+[Join the Telegram Group](https://www.t.me/paymintwallet)
 
 ## Feature List
 ✅ Basic fee selection controls
