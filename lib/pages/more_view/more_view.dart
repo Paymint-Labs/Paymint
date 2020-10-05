@@ -114,7 +114,7 @@ class _MoreViewState extends State<MoreView> {
                   applicationName: 'Paymint',
                   applicationIcon: Image.asset('assets/icon/icon.png', height: 40, width: 40),
                   applicationLegalese: 'All rights reserved © Ready Systems Ltd.\n\nPaymint Labs',
-                  applicationVersion: '1.2.0',
+                  applicationVersion: '1.2.2',
                 );
               },
             ),

@@ -915,10 +915,6 @@ String _buildDateTimeForTx(int timestamp) {
   return time.toLocal().toString().substring(0, 16);
 }
 
-String _extractBtcFromSatoshis(int satoshis) {
-  return (satoshis / 100000000).toString() + ' BTC';
-}
-
 void _launchTransactionUrl(BuildContext context, String txid) async {
   final String url = 'https://blockstream.info/tx/' + txid;
   if (await canLaunch(url)) {
