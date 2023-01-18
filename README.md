@@ -1,3 +1,5 @@
+# NOTE: This project has been deprecated for a while now, I no longer maintain the application. I'm leaving the source code up for anyone who is still interested
+
 # Paymint - A secure bitcoin wallet
 Paymint is a Bitcoin thin client written in Dart with powerful features.
 
